@@ -69,6 +69,7 @@ public class UserAuthServiceImplementation implements UserAuthService {
 		}).switchIfEmpty(Mono.defer(() -> {
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			user.setPasswordLastChanged(LocalDateTime.now());
+			user.setEnabled(true);
 			return userauthRepo.save(user).doOnSuccess(
 					saved -> eventPublisher.publishUserRegistered(saved.getId(), saved.getEmail(), saved.getUsername()))
 					.then(Mono.just(ResponseEntity.status(HttpStatus.CREATED)

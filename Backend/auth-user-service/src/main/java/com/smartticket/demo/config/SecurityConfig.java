@@ -19,31 +19,39 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-	@Bean
-	public SecurityWebFilterChain security(ServerHttpSecurity http) {
-	    return http
-	        .csrf(ServerHttpSecurity.CsrfSpec::disable)
-	        .authorizeExchange(ex -> ex
-	            .pathMatchers("/auth/login", "/auth/register").permitAll()
-	            .pathMatchers("/auth/change-password","/auth/request-reset","/auth/reset-password","/auth/reset-password/**").permitAll()
-	            .anyExchange().authenticated()
-	        )
-	        .build();
-	}
+    @Bean
+    public SecurityWebFilterChain security(ServerHttpSecurity http) {
+        return http
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            .authorizeExchange(ex -> ex
+                .pathMatchers(
+                    "/auth/login",
+                    "/auth/register",
+                    "/auth/change-password",
+                    "/auth/request-reset",
+                    "/auth/reset-password",
+                    "/auth/reset-password/**",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/webjars/**"
+                ).permitAll()
+                .anyExchange().authenticated()
+            )
+            .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)   
+            .formLogin(ServerHttpSecurity.FormLoginSpec::disable)  
+            .build();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
     @Bean
     public ReactiveJwtDecoder jwtDecoder(@Value("${jwt.secret}") String secret) {
         return NimbusReactiveJwtDecoder.withSecretKey(
-                new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256")
+            new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256")
         ).build();
     }
-
 }
-
-
-

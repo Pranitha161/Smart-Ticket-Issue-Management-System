@@ -2,6 +2,7 @@ package com.smartticket.demo.service.implementation;
 
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,12 @@ import com.smartticket.demo.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
-@RequiredArgsConstructor
+
 @Service
+@RequiredArgsConstructor
 public class TicketServiceImplementation implements TicketService {
 
+	@Autowired
 	private final TicketRepository ticketRepo;
 
 	@Override
@@ -48,6 +51,8 @@ public class TicketServiceImplementation implements TicketService {
 				.switchIfEmpty(Mono.just(
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found"))));
 	}
+
+	
 
 //	public Mono<ResponseEntity<ApiResponse>> getTicketsByUser(String userId) {
 //		return ticketRepo.findCreatedBy(userId).collectList()

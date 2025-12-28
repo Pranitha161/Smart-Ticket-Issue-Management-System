@@ -30,7 +30,6 @@ public class UserAuthController {
 	
 	@PostMapping("/auth/register")
 	public Mono<ResponseEntity<SimpleApiResponse>> register(@Valid @RequestBody User user){
-		System.out.println("Controller "+user);
 		return userauthService.register(user);
 	}
 	

@@ -58,7 +58,6 @@ public class UserAuthServiceImplementation implements UserAuthService {
 
 	@Override
 	public Mono<ResponseEntity<SimpleApiResponse>> register(User user) {
-		System.out.println(user);
 		return userauthRepo.findByEmail(user.getEmail()).flatMap(existing -> {
 			return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT)
 					.body(new SimpleApiResponse(false, "Email already exists")));

@@ -11,6 +11,5 @@ import reactor.core.publisher.Mono;
 public interface TicketRepository extends ReactiveMongoRepository<Ticket, String> {
 
 	Mono<Ticket> findCreatedBy(String userId);
-
-	Mono<Ticket> findByAssignedTo(String agentId);
+	
 }

@@ -31,7 +31,7 @@ public class User {
 	@Email
 	private String email;
 	private Set<ROLE> roles;
-	private boolean enabled = true;
+	private boolean enabled;
 	private LocalDateTime passwordLastChanged;
 	private String resetToken;
 	private Instant resetTokenExpiry;

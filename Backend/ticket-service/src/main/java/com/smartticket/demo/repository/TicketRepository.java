@@ -10,5 +10,5 @@ public interface TicketRepository extends ReactiveMongoRepository<Ticket, String
 	
 	Mono<Ticket> findCreatedBy(String userId);
 	
-	Mono<Ticket> findAssignedTo(String agentId);
+	Mono<Ticket> findByAssignedTo(String agentId);
 }

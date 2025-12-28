@@ -24,7 +24,6 @@ public class Ticket {
 	private STATUS status; 
 	private PRIORITY priority;						
 	private String createdBy; 						
-	private String assignedTo; 
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 }

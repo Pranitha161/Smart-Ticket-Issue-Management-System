@@ -2,6 +2,7 @@ package com.smartticket.demo.service.implementation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.SlaRule;
@@ -11,6 +12,7 @@ import com.smartticket.demo.service.SlaRuleService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Service
 public class SlaRuleServiceImplementation implements SlaRuleService {
 
 	private final SlaRuleRepository slaRuleRepo;

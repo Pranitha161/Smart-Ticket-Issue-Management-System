@@ -18,6 +18,7 @@ import com.smartticket.demo.entity.AuthResponse;
 import com.smartticket.demo.entity.LoginRequest;
 import com.smartticket.demo.entity.SimpleApiResponse;
 import com.smartticket.demo.entity.User;
+import com.smartticket.demo.producer.UserEventPublisher;
 import com.smartticket.demo.repository.UserAuthRepository;
 import com.smartticket.demo.service.JwtService;
 import com.smartticket.demo.service.UserAuthService;
@@ -32,6 +33,7 @@ public class UserAuthServiceImplementation implements UserAuthService {
 	private final UserAuthRepository userauthRepo;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
+	private final UserEventPublisher eventPublisher;
 
 	private AuthResponse toResponse(User user) {
 		return new AuthResponse(user.getId(), user.getEmail(), user.getUsername(), user.getRoles());
@@ -67,10 +69,11 @@ public class UserAuthServiceImplementation implements UserAuthService {
 		}).switchIfEmpty(Mono.defer(() -> {
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			user.setPasswordLastChanged(LocalDateTime.now());
-			return userauthRepo.save(user).map(saved -> {
-				return ResponseEntity.status(HttpStatus.CREATED)
-						.body(new SimpleApiResponse(true, "User created with id: " + saved.getId()));
-			});
+			return userauthRepo.save(user).doOnSuccess(
+					saved -> eventPublisher.publishUserRegistered(saved.getId(), saved.getEmail(), saved.getUsername()))
+					.then(Mono.just(ResponseEntity.status(HttpStatus.CREATED)
+							.body(new SimpleApiResponse(true, "User created successfully"))));
+
 		})));
 	}
 
@@ -133,7 +136,7 @@ public class UserAuthServiceImplementation implements UserAuthService {
 			user.setResetTokenExpiry(Instant.now().plus(Duration.ofMinutes(15)));
 
 			return userauthRepo.save(user)
-//					.doOnSuccess(savedUser -> emailService.sendResetLink(savedUser.getEmail(), token))
+					.doOnSuccess(savedUser -> eventPublisher.publishPasswordReset("userId", email, token))
 					.thenReturn(ResponseEntity.ok(new SimpleApiResponse(true, "Reset link sent to your email")));
 		}).switchIfEmpty(Mono.just(
 				ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleApiResponse(false, "User not found"))));
@@ -166,8 +169,9 @@ public class UserAuthServiceImplementation implements UserAuthService {
 			}
 			user.setPassword(passwordEncoder.encode(newPassword));
 			user.setPasswordLastChanged(LocalDateTime.now());
-			return userauthRepo.save(user)
-					.thenReturn(ResponseEntity.ok(new SimpleApiResponse(true, "Password changed successfully")));
+			return userauthRepo.save(user).doOnSuccess(saved -> {
+				eventPublisher.publishPasswordChanged(saved.getId(), saved.getEmail());
+			}).thenReturn(ResponseEntity.ok(new SimpleApiResponse(true, "Password changed successfully")));
 		}).switchIfEmpty(Mono.just(
 				ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleApiResponse(false, "User not found"))));
 	}

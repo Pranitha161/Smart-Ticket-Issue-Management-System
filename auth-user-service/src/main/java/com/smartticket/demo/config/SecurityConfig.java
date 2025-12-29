@@ -36,7 +36,8 @@ public class SecurityConfig {
                     "/v3/api-docs/**",
                     "/webjars/**"
                 ).permitAll()
-                .anyExchange().authenticated()
+                .anyExchange().permitAll()
+//                .authenticated()
             )
             .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)   
             .formLogin(ServerHttpSecurity.FormLoginSpec::disable)  

@@ -14,24 +14,21 @@ import java.time.Instant;
 @Service
 public class TicketActivityServiceImplementation {
 
- private final TicketActivityRepository ticketActivityRepo;
+	private final TicketActivityRepository ticketActivityRepo;
 
- TicketActivityServiceImplementation(TicketActivityRepository ticketActivityRepo) {
-     this.ticketActivityRepo = ticketActivityRepo;
- }
+	TicketActivityServiceImplementation(TicketActivityRepository ticketActivityRepo) {
+		this.ticketActivityRepo = ticketActivityRepo;
+	}
 
- public Mono<TicketActivity> log(String ticketId, String actorId, ACTION_TYPE type, String details, Instant timestamp) {
-     TicketActivity activity =new TicketActivity();
-     activity.setTicketId(ticketId);
-     activity.setActorId(actorId);
-     activity.setActionType(type);
-     activity.setDetails(details);
-     activity.setTimestamp(timestamp != null ? timestamp : Instant.now());
-     return ticketActivityRepo.save(activity);
- }
+	public Mono<TicketActivity> log(String ticketId, String actorId, ACTION_TYPE type, String details,
+			Instant timestamp) {
+		TicketActivity activity = TicketActivity.builder().id(ticketId).actorId(actorId).actionType(type)
+				.details(details).timestamp(timestamp != null ? timestamp : Instant.now()).build();
 
- public Flux<TicketActivity> getTimeline(String ticketId) {
-     return ticketActivityRepo.findByTicketIdOrderByTimestampAsc(ticketId);
- }
+		return ticketActivityRepo.save(activity);
+	}
+
+	public Flux<TicketActivity> getTimeline(String ticketId) {
+		return ticketActivityRepo.findByTicketIdOrderByTimestampAsc(ticketId);
+	}
 }
-

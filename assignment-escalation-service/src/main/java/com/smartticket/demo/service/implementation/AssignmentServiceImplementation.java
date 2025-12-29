@@ -2,18 +2,22 @@ package com.smartticket.demo.service.implementation;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.smartticket.demo.dto.AgentSummaryDto;
+import com.smartticket.demo.dto.EscalationSummaryDto;
 import com.smartticket.demo.entity.Assignment;
 import com.smartticket.demo.enums.ASSIGNMENT_STATUS;
 import com.smartticket.demo.enums.ASSIGNMENT_TYPE;
 import com.smartticket.demo.enums.PRIORITY;
 import com.smartticket.demo.enums.STATUS;
+import com.smartticket.demo.feign.TicketClient;
 import com.smartticket.demo.repository.AssignmentRepository;
 import com.smartticket.demo.repository.SlaRuleRepository;
 import com.smartticket.demo.service.AssignmentService;
-import com.smartticket.demo.feign.TicketClient;
 
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -34,8 +38,7 @@ public class AssignmentServiceImplementation implements AssignmentService {
 
 	@Override
 	public Mono<Assignment> manualAssign(String ticketId, String agentId, PRIORITY priority) {
-		return Mono.fromCallable(() -> ticketClient.getTicketById(ticketId))
-				.subscribeOn(Schedulers.boundedElastic())
+		return Mono.fromCallable(() -> ticketClient.getTicketById(ticketId)).subscribeOn(Schedulers.boundedElastic())
 				.filter(ticket -> ticket.getStatus() != STATUS.CLOSED)
 				.switchIfEmpty(Mono.error(new RuntimeException("Ticket is not assignable")))
 				.flatMap(ticket -> slaRuleRepo.findByPriority(priority))
@@ -111,6 +114,37 @@ public class AssignmentServiceImplementation implements AssignmentService {
 		return null;
 	}
 
+	@Override
+	public Mono<List<AgentSummaryDto>> assignmentsPerAgent() {
+		return assignmentRepo.findAll().collect(Collectors.groupingBy(Assignment::getAgentId))
+				.map(grouped -> grouped.entrySet().stream().map(entry -> {
+					String agentId = entry.getKey();
+					List<Assignment> assignments = entry.getValue();
+					long assignedCount = assignments.stream().filter(a -> a.getStatus() == ASSIGNMENT_STATUS.ASSIGNED)
+							.count();
+					double avgResolutionTime = assignments.stream().filter(a -> a.getUnassignedAt() != null)
+							.mapToLong(a -> Duration.between(a.getAssignedAt(), a.getUnassignedAt()).toMinutes())
+							.average().orElse(0.0);
+					long resolvedCount = assignments.stream().filter(a -> a.getStatus() == ASSIGNMENT_STATUS.COMPLETED)
+							.count();
+					int avgEscalationLevel = (int) assignments.stream().mapToInt(Assignment::getEscalationLevel)
+							.average().orElse(0);
+					return AgentSummaryDto.builder().agentId(agentId).assignedCount(assignedCount)
+							.resolvedCount(resolvedCount).escalationLevel(avgEscalationLevel)
+							.averageResolutionTimeMinutes(avgResolutionTime).build();
+				}).collect(Collectors.toList()));
+	}
+	
+	@Override
+	public Mono<List<EscalationSummaryDto>> getEscalationSummary() {
+		return assignmentRepo.findAll()
+				.collect(Collectors.groupingBy(Assignment::getEscalationLevel, Collectors.counting()))
+				.map(grouped -> grouped.entrySet().stream().map(
+						entry -> EscalationSummaryDto.builder().level(entry.getKey()).count(entry.getValue()).build())
+						.collect(Collectors.toList()));
+	}
+}
+
 //	@Override
 //	public Mono<Assignment> autoAssign(String ticketId) {
 //	    return ticketClient.getTicketById(ticketId)
@@ -151,5 +185,3 @@ public class AssignmentServiceImplementation implements AssignmentService {
 //	                    return assignmentRepo.save(assignment);
 //	                }));
 //	}
-
-}

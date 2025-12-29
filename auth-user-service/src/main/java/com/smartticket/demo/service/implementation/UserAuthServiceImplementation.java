@@ -11,11 +11,11 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.AuthResponse;
 import com.smartticket.demo.entity.LoginRequest;
-import com.smartticket.demo.entity.SimpleApiResponse;
+import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.User;
+import com.smartticket.demo.enums.ROLE;
 import com.smartticket.demo.producer.UserEventPublisher;
 import com.smartticket.demo.repository.UserAuthRepository;
 import com.smartticket.demo.service.JwtService;
@@ -38,36 +38,40 @@ public class UserAuthServiceImplementation implements UserAuthService {
 	}
 
 	@Override
-	public Mono<SimpleApiResponse> login(LoginRequest request) {
+	public Mono<ApiResponse> login(LoginRequest request) {
 		return userauthRepo.findByEmail(request.getEmail()).flatMap(existing -> {
 			if (!passwordEncoder.matches(request.getPassword(), existing.getPassword())) {
-				return Mono.just(new SimpleApiResponse(false, "Invalid credentials"));
+				return Mono.just(new ApiResponse(false, "Invalid credentials"));
 			}
 			if (existing.getPasswordLastChanged() != null) {
 				long days = ChronoUnit.DAYS.between(existing.getPasswordLastChanged(), LocalDateTime.now());
 				if (days > 90) {
-					return Mono.just(new SimpleApiResponse(false, "PASSWORD_EXPIRED"));
+					return Mono.just(new ApiResponse(false, "PASSWORD_EXPIRED"));
 				}
 			}
 			String token = jwtService.generateToken(existing);
-			return Mono.just(new SimpleApiResponse(true, token));
-		}).switchIfEmpty(Mono.just(new SimpleApiResponse(false, "User not found")));
+			return Mono.just(new ApiResponse(true, token));
+		}).switchIfEmpty(Mono.just(new ApiResponse(false, "User not found")));
 	}
 
 	@Override
-	public Mono<SimpleApiResponse> register(User user) {
+	public Mono<ApiResponse> register(User user) {
 		return userauthRepo.findByEmail(user.getEmail())
-				.flatMap(existing -> Mono.just(new SimpleApiResponse(false, "Email already exists")))
+				.flatMap(existing -> Mono.just(new ApiResponse(false, "Email already exists")))
 				.switchIfEmpty(userauthRepo.findByUsername(user.getUsername())
-						.flatMap(existing -> Mono.just(new SimpleApiResponse(false, "Username already exists")))
+						.flatMap(existing -> Mono.just(new ApiResponse(false, "Username already exists")))
 						.switchIfEmpty(Mono.defer(() -> {
+							if (user.getRoles().contains(ROLE.ROLE_AGENT) && user.getAgentLevel() == null) {
+								return Mono
+										.just(new ApiResponse(false, "Agent must have an AgentLevel (L1/L2/L3)"));
+							}
 							user.setPassword(passwordEncoder.encode(user.getPassword()));
 							user.setPasswordLastChanged(LocalDateTime.now());
 							user.setEnabled(true);
 							return userauthRepo.save(user)
 									.doOnSuccess(saved -> eventPublisher.publishUserRegistered(saved.getId(),
 											saved.getEmail(), saved.getUsername()))
-									.thenReturn(new SimpleApiResponse(true, "User created successfully"));
+									.thenReturn(new ApiResponse(true, "User created successfully"));
 						})));
 	}
 
@@ -87,76 +91,76 @@ public class UserAuthServiceImplementation implements UserAuthService {
 	}
 
 	@Override
-	public Mono<SimpleApiResponse> updateUserById(String id, AuthResponse user) {
+	public Mono<ApiResponse> updateUserById(String id, AuthResponse user) {
 		return userauthRepo.findById(id)
 				.flatMap(existing -> userauthRepo.findByUsername(user.getUsername())
 						.filter(other -> !other.getId().equals(id))
-						.flatMap(conflict -> Mono.just(new SimpleApiResponse(false, "Username already exists")))
+						.flatMap(conflict -> Mono.just(new ApiResponse(false, "Username already exists")))
 						.switchIfEmpty(Mono.defer(() -> {
 							existing.setRoles(user.getRoles());
 							existing.setEmail(user.getEmail());
 							existing.setUsername(user.getUsername());
 							return userauthRepo.save(existing)
-									.map(saved -> new SimpleApiResponse(true, "User updated successfully"));
+									.map(saved -> new ApiResponse(true, "User updated successfully"));
 						})))
-				.switchIfEmpty(Mono.just(new SimpleApiResponse(false, "User not found")));
+				.switchIfEmpty(Mono.just(new ApiResponse(false, "User not found")));
 	}
 
 	@Override
-	public Mono<SimpleApiResponse> requestPasswordReset(String email) {
+	public Mono<ApiResponse> requestPasswordReset(String email) {
 		return userauthRepo.findByEmail(email).flatMap(user -> {
 			String token = UUID.randomUUID().toString();
 			user.setResetToken(token);
 			user.setResetTokenExpiry(Instant.now().plus(Duration.ofMinutes(15)));
 			return userauthRepo.save(user)
 					.doOnSuccess(saved -> eventPublisher.publishPasswordReset(saved.getId(), email, token))
-					.thenReturn(new SimpleApiResponse(true, "Reset link sent to your email"));
-		}).switchIfEmpty(Mono.just(new SimpleApiResponse(false, "User not found")));
+					.thenReturn(new ApiResponse(true, "Reset link sent to your email"));
+		}).switchIfEmpty(Mono.just(new ApiResponse(false, "User not found")));
 	}
 
 	@Override
-	public Mono<SimpleApiResponse> resetPassword(String token, String newPassword) {
+	public Mono<ApiResponse> resetPassword(String token, String newPassword) {
 		return userauthRepo.findByResetToken(token).flatMap(user -> {
 			if (user.getResetTokenExpiry() == null || user.getResetTokenExpiry().isBefore(Instant.now())) {
-				return Mono.just(new SimpleApiResponse(false, "Invalid or expired token"));
+				return Mono.just(new ApiResponse(false, "Invalid or expired token"));
 			}
 			user.setPassword(passwordEncoder.encode(newPassword));
 			user.setPasswordLastChanged(LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()));
 			user.setResetToken(null);
 			user.setResetTokenExpiry(null);
-			return userauthRepo.save(user).thenReturn(new SimpleApiResponse(true, "Password reset successful"));
-		}).switchIfEmpty(Mono.just(new SimpleApiResponse(false, "Invalid or expired token")));
+			return userauthRepo.save(user).thenReturn(new ApiResponse(true, "Password reset successful"));
+		}).switchIfEmpty(Mono.just(new ApiResponse(false, "Invalid or expired token")));
 	}
 
 	@Override
-	public Mono<SimpleApiResponse> changePassword(String userName, String oldPassword, String newPassword) {
+	public Mono<ApiResponse> changePassword(String userName, String oldPassword, String newPassword) {
 		return userauthRepo.findByUsername(userName).flatMap(user -> {
 			if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-				return Mono.just(new SimpleApiResponse(false, "Invalid current password"));
+				return Mono.just(new ApiResponse(false, "Invalid current password"));
 			}
 			user.setPassword(passwordEncoder.encode(newPassword));
 			user.setPasswordLastChanged(LocalDateTime.now());
 			return userauthRepo.save(user).doOnSuccess(saved -> {
 				eventPublisher.publishPasswordChanged(saved.getId(), saved.getEmail());
-			}).thenReturn(new SimpleApiResponse(true, "Password changed successfully"));
-		}).switchIfEmpty(Mono.just(new SimpleApiResponse(false, "User not found")));
+			}).thenReturn(new ApiResponse(true, "Password changed successfully"));
+		}).switchIfEmpty(Mono.just(new ApiResponse(false, "User not found")));
 	}
 
 	@Override
-	public Mono<ApiResponse<User>> me() {
+	public Mono<AuthResponse> me() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Mono<SimpleApiResponse> deleteUserById(String id) {
+	public Mono<ApiResponse> deleteUserById(String id) {
 		return userauthRepo.findById(id).flatMap(existing -> {
 			if (!existing.isEnabled()) {
-				return Mono.just(new SimpleApiResponse(false, "User already disabled"));
+				return Mono.just(new ApiResponse(false, "User already disabled"));
 			}
 			existing.setEnabled(false);
-			return userauthRepo.save(existing).map(saved -> new SimpleApiResponse(true, "User disabled successfully"));
-		}).switchIfEmpty(Mono.just(new SimpleApiResponse(false, "User not found")));
+			return userauthRepo.save(existing).map(saved -> new ApiResponse(true, "User disabled successfully"));
+		}).switchIfEmpty(Mono.just(new ApiResponse(false, "User not found")));
 	}
 
 }

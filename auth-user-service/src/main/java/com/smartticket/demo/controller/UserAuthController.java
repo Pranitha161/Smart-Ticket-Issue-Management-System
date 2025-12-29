@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.smartticket.demo.entity.AuthResponse;
 import com.smartticket.demo.entity.LoginRequest;
-import com.smartticket.demo.entity.SimpleApiResponse;
+import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.User;
 import com.smartticket.demo.service.implementation.UserAuthServiceImplementation;
 
@@ -30,7 +30,7 @@ public class UserAuthController {
 	}
 
 	@PostMapping("/auth/register")
-	public Mono<ResponseEntity<SimpleApiResponse>> register(@RequestBody User user) {
+	public Mono<ResponseEntity<ApiResponse>> register(@RequestBody User user) {
 		return userAuthService.register(user).map(response -> {
 			HttpStatus status = response.isSuccess() ? HttpStatus.CREATED : HttpStatus.CONFLICT;
 			return ResponseEntity.status(status).body(response);
@@ -38,7 +38,7 @@ public class UserAuthController {
 	}
 
 	@PostMapping("/auth/login")
-	public Mono<ResponseEntity<SimpleApiResponse>> login(@RequestBody LoginRequest request) {
+	public Mono<ResponseEntity<ApiResponse>> login(@RequestBody LoginRequest request) {
 		return userAuthService.login(request).map(response -> {
 			HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
 			return ResponseEntity.status(status).body(response);
@@ -63,7 +63,7 @@ public class UserAuthController {
 	}
 
 	@PutMapping("/users/{id}")
-	public Mono<ResponseEntity<SimpleApiResponse>> updateUserById(@PathVariable String id,
+	public Mono<ResponseEntity<ApiResponse>> updateUserById(@PathVariable String id,
 			@RequestBody AuthResponse user) {
 		return userAuthService.updateUserById(id, user).map(response -> {
 			HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
@@ -72,7 +72,7 @@ public class UserAuthController {
 	}
 
 	@DeleteMapping("/auth/{id}")
-	public Mono<ResponseEntity<SimpleApiResponse>> deleteUserById(@PathVariable String id) {
+	public Mono<ResponseEntity<ApiResponse>> deleteUserById(@PathVariable String id) {
 		return userAuthService.deleteUserById(id).map(response -> {
 			HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
 			return ResponseEntity.status(status).body(response);
@@ -83,7 +83,7 @@ public class UserAuthController {
 //	public Mono<ResponseEntity<ApiResponse<Void>>> getLoggedInUser(JwtAuth)
 
 	@PostMapping("/auth/request-reset")
-	public Mono<ResponseEntity<SimpleApiResponse>> requestPasswordReset(@RequestParam String email) {
+	public Mono<ResponseEntity<ApiResponse>> requestPasswordReset(@RequestParam String email) {
 		return userAuthService.requestPasswordReset(email).map(response -> {
 			HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
 			return ResponseEntity.status(status).body(response);
@@ -91,7 +91,7 @@ public class UserAuthController {
 	}
 
 	@PostMapping("/auth/reset-password")
-	public Mono<ResponseEntity<SimpleApiResponse>> resetPassword(@RequestParam String token,
+	public Mono<ResponseEntity<ApiResponse>> resetPassword(@RequestParam String token,
 			@RequestParam String newPassword) {
 		return userAuthService.resetPassword(token, newPassword).map(response -> {
 			HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
@@ -100,7 +100,7 @@ public class UserAuthController {
 	}
 
 	@PostMapping("/auth/change-password")
-	public Mono<ResponseEntity<SimpleApiResponse>> changePassword(@RequestParam String userName,
+	public Mono<ResponseEntity<ApiResponse>> changePassword(@RequestParam String userName,
 			@RequestParam String oldPassword, @RequestParam String newPassword) {
 		return userAuthService.changePassword(userName, oldPassword, newPassword).map(response -> {
 			HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;

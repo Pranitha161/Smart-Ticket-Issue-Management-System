@@ -2,19 +2,18 @@ package com.smartticket.demo.service;
 
 import java.util.List;
 
-import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.AuthResponse;
 import com.smartticket.demo.entity.LoginRequest;
-import com.smartticket.demo.entity.SimpleApiResponse;
+import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.User;
 
 import reactor.core.publisher.Mono;
 
 public interface UserAuthService {
 	
-	Mono<SimpleApiResponse> login(LoginRequest request);
+	Mono<ApiResponse> login(LoginRequest request);
 	
-	Mono<SimpleApiResponse> register(User user);
+	Mono<ApiResponse> register(User user);
 	
 	Mono<List<AuthResponse>> getUsers();
 	
@@ -22,16 +21,16 @@ public interface UserAuthService {
 	
 	Mono<AuthResponse> getUserByEmail(String email);
 	
-	Mono<SimpleApiResponse> updateUserById(String id,AuthResponse user);
+	Mono<ApiResponse> updateUserById(String id,AuthResponse user);
 
-	Mono<SimpleApiResponse> requestPasswordReset(String email);
+	Mono<ApiResponse> requestPasswordReset(String email);
 
-	Mono<SimpleApiResponse> resetPassword(String email, String token);
+	Mono<ApiResponse> resetPassword(String email, String token);
 
-	Mono<SimpleApiResponse> changePassword(String userName, String oldPassword, String newPassword);
+	Mono<ApiResponse> changePassword(String userName, String oldPassword, String newPassword);
 	
-	Mono<ApiResponse<User>> me();
+	Mono<AuthResponse> me();
 
-	Mono<SimpleApiResponse> deleteUserById(String id); 
+	Mono<ApiResponse> deleteUserById(String id); 
 
 }

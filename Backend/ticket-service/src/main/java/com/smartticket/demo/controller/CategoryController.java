@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.Category;
 import com.smartticket.demo.service.implementation.CategoryServiceImplementation;
 
@@ -29,16 +30,18 @@ public class CategoryController {
 	}
 
 	@PostMapping("/create")
-	public Mono<ResponseEntity<Category>> createCategory(@RequestBody Category category) {
+	public Mono<ResponseEntity<ApiResponse>> createCategory(@RequestBody Category category) {
 		return categoryService.createCategory(category)
-				.map(saved -> ResponseEntity.status(HttpStatus.CREATED).body(saved))
-				.onErrorResume(IllegalArgumentException.class, e -> Mono.just(ResponseEntity.badRequest().build()));
+				.map(saved -> ResponseEntity.status(HttpStatus.CREATED)
+						.body(new ApiResponse(true, "Created category successfully" + saved.getId())))
+				.onErrorResume(
+						e -> Mono.just(ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()))));
 	}
 
 	@GetMapping("/{id}")
 	public Mono<ResponseEntity<Category>> getCategoryById(@PathVariable String id) {
-		return categoryService.getCategoryById(id).map(ResponseEntity::ok)
-				.defaultIfEmpty(ResponseEntity.notFound().build());
+		return categoryService.getCategoryById(id).map(category -> ResponseEntity.ok(category))
+				.defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 
 	@GetMapping
@@ -47,15 +50,19 @@ public class CategoryController {
 	}
 
 	@PutMapping("/{id}")
-	public Mono<ResponseEntity<Category>> updateCategory(@PathVariable String id, @RequestBody Category category) {
-		return categoryService.updateCategory(id, category).map(ResponseEntity::ok)
-				.defaultIfEmpty(ResponseEntity.notFound().build());
+	public Mono<ResponseEntity<ApiResponse>> updateCategory(@PathVariable String id, @RequestBody Category category) {
+		return categoryService.updateCategory(id, category)
+				.map(updated -> ResponseEntity.ok(new ApiResponse(true, "Category updated successfully"+ updated.getId())))
+				.defaultIfEmpty(
+						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Category not found")));
 	}
 
 	@DeleteMapping("/{id}")
-	public Mono<ResponseEntity<Void>> deleteCategory(@PathVariable String id,
+	public Mono<ResponseEntity<ApiResponse>> deleteCategory(@PathVariable String id,
 			@RequestParam(required = false) String reassignTo) {
-		return categoryService.deleteCategory(id, reassignTo).map(v -> ResponseEntity.noContent().<Void>build())
-				.defaultIfEmpty(ResponseEntity.notFound().build());
+		return categoryService.deleteCategory(id, reassignTo)
+				.then(Mono.just(ResponseEntity.ok(new ApiResponse(true, "Category deleted successfully"))))
+				.onErrorResume(
+						e -> Mono.just(ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()))));
 	}
 }

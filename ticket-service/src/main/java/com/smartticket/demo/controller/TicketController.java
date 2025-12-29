@@ -38,7 +38,7 @@ public class TicketController {
 	public Mono<ResponseEntity<ApiResponse>> createTicket(@Valid @RequestBody Ticket ticket) {
 		return ticketService.createTicket(ticket)
 				.map(saved -> ResponseEntity.status(HttpStatus.CREATED)
-						.body(new ApiResponse(true, "Ticket created successfully" + saved.getId())))
+						.body(new ApiResponse(true, "Ticket created successfully" + saved.getDisplayId())))
 				.onErrorResume(e -> Mono.just(
 						ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()))));
 	}

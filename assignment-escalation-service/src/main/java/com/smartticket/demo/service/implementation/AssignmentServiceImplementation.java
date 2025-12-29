@@ -10,10 +10,10 @@ import com.smartticket.demo.enums.ASSIGNMENT_STATUS;
 import com.smartticket.demo.enums.ASSIGNMENT_TYPE;
 import com.smartticket.demo.enums.PRIORITY;
 import com.smartticket.demo.enums.STATUS;
-import com.smartticket.demo.feign.TicketClient;
 import com.smartticket.demo.repository.AssignmentRepository;
 import com.smartticket.demo.repository.SlaRuleRepository;
 import com.smartticket.demo.service.AssignmentService;
+import com.smartticket.demo.feign.TicketClient;
 
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;

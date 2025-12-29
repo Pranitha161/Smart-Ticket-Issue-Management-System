@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smartticket.demo.dto.AgentSummaryDto;
+import com.smartticket.demo.dto.CategorySummaryDto;
 import com.smartticket.demo.dto.EscalationSummaryDto;
 import com.smartticket.demo.dto.PrioritySummaryDto;
 import com.smartticket.demo.dto.StatusSummaryDto;
@@ -31,13 +32,18 @@ public class DashBoardController {
 	public Flux<PrioritySummaryDto> getTicketStatusPrioritySummary() {
 		return dashboardService.getTicketStatusPrioritySummary();
 	}
+	
+	@GetMapping("/tickets/category-summary")
+	public Flux<CategorySummaryDto> getCategorySummary() {
+		return dashboardService.getCategorySummary();
+	}
 
 	@GetMapping("/assignments/agent-summary")
 	public Flux<AgentSummaryDto> getAssignmentsPerAgent() {
 		return dashboardService.getAssignmentsPerAgent();
 	}
 
-	@GetMapping("/assignments/agent-summary")
+	@GetMapping("/assignments/escalation-summary")
 	public Flux<EscalationSummaryDto> getEscalationSummary() {
 		return dashboardService.getEscalationSummary();
 	}

@@ -20,7 +20,8 @@ public class Ticket {
 	@Id 
 	private String ticketId;
 	private String title;
-	private String description; 
+	private String description;
+	private String categoryId;
 	private STATUS status; 
 	private PRIORITY priority;						
 	private String createdBy; 						

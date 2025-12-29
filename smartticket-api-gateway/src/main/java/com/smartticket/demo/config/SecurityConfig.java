@@ -25,7 +25,7 @@ public class SecurityConfig {
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(ex -> ex
             		.pathMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-                .pathMatchers("/auth-user-service/auth/login", "/auth-user-service/auth/signup","/auth-user-service/auth/change-password","/auth-user-service/auth/request-reset","/auth-user-service/auth/reset-password","/auth-user-service/auth/reset-password/**").permitAll()
+                .pathMatchers("/auth-user-service/auth/login", "/auth-user-service/auth/register","/auth-user-service/auth/change-password","/auth-user-service/auth/request-reset","/auth-user-service/auth/reset-password","/auth-user-service/auth/reset-password/**").permitAll()
                 .pathMatchers("/actuator/**").permitAll()
                 .anyExchange().authenticated()
             )

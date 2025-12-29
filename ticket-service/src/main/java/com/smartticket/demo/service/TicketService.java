@@ -1,6 +1,9 @@
 package com.smartticket.demo.service;
 
+import java.util.Map;
+
 import com.smartticket.demo.entity.Ticket;
+import com.smartticket.demo.enums.STATUS;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -24,6 +27,8 @@ public interface TicketService {
 	Flux<Ticket> getAllTickets();
 
 	Flux<Ticket> getTicketsByUserId(String userId);
+
+	Mono<Map<STATUS, Long>> statusSummary();
 
 
 }

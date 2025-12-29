@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 public class Ticket {
 	@Id 
 	private String id;
+	private String displayId;
 	@NotBlank(message = "Title is required")
 	private String title;
 	@NotBlank(message = "Description is required")

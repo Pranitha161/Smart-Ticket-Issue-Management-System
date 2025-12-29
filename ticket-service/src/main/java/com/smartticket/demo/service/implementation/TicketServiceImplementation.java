@@ -37,7 +37,10 @@ public class TicketServiceImplementation implements TicketService {
 		ticket.setStatus(STATUS.OPEN);
 		ticket.setCreatedAt(LocalDateTime.now());
 		ticket.setUpdatedAt(LocalDateTime.now());
-		return ticketRepo.save(ticket);
+		return ticketRepo.save(ticket).map(saved -> {
+			saved.setDisplayId("TCK-" + saved.getId().substring(0, 6).toUpperCase());
+			return saved;
+		}).flatMap(ticketRepo::save);
 	}
 
 	@Override

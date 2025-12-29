@@ -33,7 +33,7 @@ public class CategoryController {
 	public Mono<ResponseEntity<ApiResponse>> createCategory(@RequestBody Category category) {
 		return categoryService.createCategory(category)
 				.map(saved -> ResponseEntity.status(HttpStatus.CREATED)
-						.body(new ApiResponse(true, "Created category successfully" + saved.getId())))
+						.body(new ApiResponse(true, "Created category successfully " + saved.getId())))
 				.onErrorResume(
 						e -> Mono.just(ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()))));
 	}

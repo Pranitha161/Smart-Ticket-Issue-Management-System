@@ -99,17 +99,17 @@ public class TicketController {
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found"))));
 	}
 
-	@GetMapping("/tickets/status-summary")
+	@GetMapping("/status-summary")
 	public Mono<List<StatusSummaryDto>> getTicketStatusSummary() {
 		return ticketService.statusSummary();
 	}
 
-	@GetMapping("/tickets/status-priority-summary")
+	@GetMapping("/status-priority-summary")
 	public Mono<List<PrioritySummaryDto>> getTicketStatusPrioritySummary() {
 		return ticketService.prioritySummary();
 	}
 
-	@GetMapping("/tickets/category-summary")
+	@GetMapping("/category-summary")
 	public Mono<List<CategorySummaryDto>> getCategorySummary() {
 		return ticketService.getCategorySummary();
 	}

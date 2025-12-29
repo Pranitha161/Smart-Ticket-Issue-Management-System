@@ -50,7 +50,7 @@ public class TicketController {
 	}
 
 	@PutMapping("/{id}")
-	public Mono<ResponseEntity<ApiResponse>> updateTicket(@PathVariable String id, @RequestBody Ticket updatedTicket) {
+	public Mono<ResponseEntity<ApiResponse>> updateTicket(@PathVariable String id,@Valid @RequestBody Ticket updatedTicket) {
 		return ticketService.updateTicketById(id, updatedTicket)
 				.map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket updated successfully"))).defaultIfEmpty(
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found")));

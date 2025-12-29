@@ -51,8 +51,8 @@ public class CategoryController {
 
 	@PutMapping("/{id}")
 	public Mono<ResponseEntity<ApiResponse>> updateCategory(@PathVariable String id, @RequestBody Category category) {
-		return categoryService.updateCategory(id, category)
-				.map(updated -> ResponseEntity.ok(new ApiResponse(true, "Category updated successfully"+ updated.getId())))
+		return categoryService.updateCategory(id, category).map(
+				updated -> ResponseEntity.ok(new ApiResponse(true, "Category updated successfully" + updated.getId())))
 				.defaultIfEmpty(
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Category not found")));
 	}
@@ -65,4 +65,5 @@ public class CategoryController {
 				.onErrorResume(
 						e -> Mono.just(ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()))));
 	}
+
 }

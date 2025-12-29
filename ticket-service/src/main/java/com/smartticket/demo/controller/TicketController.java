@@ -1,6 +1,6 @@
 package com.smartticket.demo.controller;
 
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smartticket.demo.dto.CategorySummaryDto;
+import com.smartticket.demo.dto.PrioritySummaryDto;
+import com.smartticket.demo.dto.StatusSummaryDto;
 import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.Ticket;
-import com.smartticket.demo.enums.STATUS;
 import com.smartticket.demo.service.implementation.TicketServiceImplementation;
 
 import jakarta.validation.Valid;
@@ -96,11 +98,20 @@ public class TicketController {
 				.onErrorResume(e -> Mono.just(
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found"))));
 	}
-	
+
 	@GetMapping("/tickets/status-summary")
-	public Mono<Map<STATUS, Long>> getTicketStatusSummary() {
-	    return ticketService.statusSummary();
+	public Mono<List<StatusSummaryDto>> getTicketStatusSummary() {
+		return ticketService.statusSummary();
 	}
 
+	@GetMapping("/tickets/status-priority-summary")
+	public Mono<List<PrioritySummaryDto>> getTicketStatusPrioritySummary() {
+		return ticketService.prioritySummary();
+	}
+
+	@GetMapping("/tickets/category-summary")
+	public Mono<List<CategorySummaryDto>> getCategorySummary() {
+		return ticketService.getCategorySummary();
+	}
 
 }

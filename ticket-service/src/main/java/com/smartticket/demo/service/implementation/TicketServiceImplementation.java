@@ -2,11 +2,14 @@ package com.smartticket.demo.service.implementation;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.smartticket.demo.dto.CategorySummaryDto;
+import com.smartticket.demo.dto.PrioritySummaryDto;
+import com.smartticket.demo.dto.StatusSummaryDto;
 import com.smartticket.demo.entity.Ticket;
 import com.smartticket.demo.entity.TicketActivity;
 import com.smartticket.demo.enums.ACTION_TYPE;
@@ -120,10 +123,30 @@ public class TicketServiceImplementation implements TicketService {
 	public Flux<Ticket> getTicketsByUserId(String userId) {
 		return ticketRepo.findByCreatedBy(userId);
 	}
+
 	@Override
-	public Mono<Map<STATUS,Long>> statusSummary(){
-		return ticketRepo.findAll()
-		        .collect(Collectors.groupingBy(Ticket::getStatus, Collectors.counting()));
+	public Mono<List<StatusSummaryDto>> statusSummary() {
+		return ticketRepo.findAll().collect(Collectors.groupingBy(Ticket::getStatus, Collectors.counting()))
+				.map(grouped -> grouped.entrySet().stream()
+						.map(entry -> StatusSummaryDto.builder().status(entry.getKey()).count(entry.getValue()).build())
+						.collect(Collectors.toList()));
+	}
+
+	@Override
+	public Mono<List<PrioritySummaryDto>> prioritySummary() {
+		return ticketRepo.findAll().collect(Collectors.groupingBy(Ticket::getPriority, Collectors.counting()))
+				.map(grouped -> grouped.entrySet().stream().map(
+						entry -> PrioritySummaryDto.builder().priority(entry.getKey()).count(entry.getValue()).build())
+						.collect(Collectors.toList()));
+	}
+
+	public Mono<List<CategorySummaryDto>> getCategorySummary() {
+		return ticketRepo
+				.findAll().collect(Collectors.groupingBy(Ticket::getCategoryId, Collectors.counting())).map(
+						grouped -> grouped
+								.entrySet().stream().map(entry -> CategorySummaryDto.builder()
+										.categoryId(entry.getKey()).count(entry.getValue()).build())
+								.collect(Collectors.toList()));
 	}
 
 }

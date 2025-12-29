@@ -38,6 +38,11 @@ public class TicketController {
 						ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()))));
 	}
 
+	@GetMapping("/user/{userId}")
+	public Flux<Ticket> getTicketsByUserId(@PathVariable String userId) {
+		return ticketService.getTicketsByUserId(userId);
+	}
+
 	@GetMapping("/{id}")
 	public Mono<ResponseEntity<Ticket>> getTicketById(@PathVariable String id) {
 		return ticketService.getTicketById(id).map(ResponseEntity::ok)
@@ -50,7 +55,8 @@ public class TicketController {
 	}
 
 	@PutMapping("/{id}")
-	public Mono<ResponseEntity<ApiResponse>> updateTicket(@PathVariable String id,@Valid @RequestBody Ticket updatedTicket) {
+	public Mono<ResponseEntity<ApiResponse>> updateTicket(@PathVariable String id,
+			@Valid @RequestBody Ticket updatedTicket) {
 		return ticketService.updateTicketById(id, updatedTicket)
 				.map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket updated successfully"))).defaultIfEmpty(
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found")));

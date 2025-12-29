@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.smartticket.demo.dto.AgentSummaryDto;
 import com.smartticket.demo.dto.EscalationSummaryDto;
 
-@FeignClient(name = "assignment-service")
+@FeignClient(name = "assignment-escalation-service")
 public interface AssignmentClient {
     @GetMapping("/assignments/agent-summary")
     List<AgentSummaryDto> getAssignmentsPerAgent();
     
-    @GetMapping("/escalations/summary")
+    @GetMapping("/assignments/escalations/summary")
 	List<EscalationSummaryDto> getEscalationSummary();
 }
 

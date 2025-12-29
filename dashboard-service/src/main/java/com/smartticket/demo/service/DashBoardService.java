@@ -1,6 +1,7 @@
 package com.smartticket.demo.service;
 
 import com.smartticket.demo.dto.AgentSummaryDto;
+import com.smartticket.demo.dto.CategorySummaryDto;
 import com.smartticket.demo.dto.EscalationSummaryDto;
 import com.smartticket.demo.dto.PrioritySummaryDto;
 import com.smartticket.demo.dto.StatusSummaryDto;
@@ -16,5 +17,7 @@ public interface DashBoardService {
 	Flux<AgentSummaryDto> getAssignmentsPerAgent();
 
 	Flux<EscalationSummaryDto> getEscalationSummary();
+
+	Flux<CategorySummaryDto> getCategorySummary();
 
 }

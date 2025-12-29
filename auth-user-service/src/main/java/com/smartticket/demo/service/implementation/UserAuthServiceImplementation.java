@@ -62,16 +62,19 @@ public class UserAuthServiceImplementation implements UserAuthService {
 						.flatMap(existing -> Mono.just(new ApiResponse(false, "Username already exists")))
 						.switchIfEmpty(Mono.defer(() -> {
 							if (user.getRoles().contains(ROLE.ROLE_AGENT) && user.getAgentLevel() == null) {
-								return Mono
-										.just(new ApiResponse(false, "Agent must have an AgentLevel (L1/L2/L3)"));
+								return Mono.just(new ApiResponse(false, "Agent must have an AgentLevel (L1/L2/L3)"));
 							}
 							user.setPassword(passwordEncoder.encode(user.getPassword()));
 							user.setPasswordLastChanged(LocalDateTime.now());
 							user.setEnabled(true);
-							return userauthRepo.save(user)
-									.doOnSuccess(saved -> eventPublisher.publishUserRegistered(saved.getId(),
-											saved.getEmail(), saved.getUsername()))
-									.thenReturn(new ApiResponse(true, "User created successfully"));
+							return userauthRepo.save(user).flatMap(saved -> {
+								saved.setDisplayId("USR-" + saved.getId().substring(0, 6).toUpperCase());
+								return userauthRepo.save(saved)
+										.doOnSuccess(u -> eventPublisher.publishUserRegistered(u.getId(), u.getEmail(),
+												u.getUsername()))
+										.thenReturn(new ApiResponse(true, "User created successfully"));
+							});
+
 						})));
 	}
 

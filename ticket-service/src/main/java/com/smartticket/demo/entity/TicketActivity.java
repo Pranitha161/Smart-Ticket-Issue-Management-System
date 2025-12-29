@@ -7,12 +7,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.smartticket.demo.enums.ACTION_TYPE;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Document(collection = "ticket_activity")
 @Data
-@RequiredArgsConstructor
+@Builder
 public class TicketActivity {
 	@Id
 	private String id;

@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.smartticket.demo.enums.PRIORITY;
 import com.smartticket.demo.enums.STATUS;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,10 @@ import lombok.NoArgsConstructor;
 @Data
 public class Ticket {
 	@Id 
-	private String ticketId;
+	private String id;
+	@NotBlank(message = "Title is required")
 	private String title;
+	@NotBlank(message = "Description is required")
 	private String description;
 	private String categoryId;
 	private STATUS status; 

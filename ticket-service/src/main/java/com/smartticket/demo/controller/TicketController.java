@@ -38,9 +38,7 @@ public class TicketController {
 	public Mono<ResponseEntity<ApiResponse>> createTicket(@Valid @RequestBody Ticket ticket) {
 		return ticketService.createTicket(ticket)
 				.map(saved -> ResponseEntity.status(HttpStatus.CREATED)
-						.body(new ApiResponse(true, "Ticket created successfully" + saved.getDisplayId())))
-				.onErrorResume(e -> Mono.just(
-						ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()))));
+						.body(new ApiResponse(true, "Ticket created successfully" + saved.getDisplayId())));
 	}
 
 	@GetMapping("/user/{userId}")
@@ -63,7 +61,8 @@ public class TicketController {
 	public Mono<ResponseEntity<ApiResponse>> updateTicket(@PathVariable String id,
 			@Valid @RequestBody Ticket updatedTicket) {
 		return ticketService.updateTicketById(id, updatedTicket)
-				.map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket updated successfully"))).defaultIfEmpty(
+				.map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket updated successfully")))
+				.defaultIfEmpty(
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found")));
 	}
 
@@ -84,9 +83,7 @@ public class TicketController {
 	@PutMapping("/{id}/reopen")
 	public Mono<ResponseEntity<ApiResponse>> reopenTicket(@PathVariable String id) {
 		return ticketService.reopenTicket(id)
-				.map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket reopened successfully")))
-				.onErrorResume(e -> Mono.just(
-						ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()))))
+				.map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket reopened successfully")))	
 				.defaultIfEmpty(
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found")));
 	}
@@ -94,9 +91,7 @@ public class TicketController {
 	@DeleteMapping("/{id}")
 	public Mono<ResponseEntity<ApiResponse>> deleteTicket(@PathVariable String id) {
 		return ticketService.deleteTicket(id)
-				.then(Mono.just(ResponseEntity.ok(new ApiResponse(true, "Ticket deleted successfully"))))
-				.onErrorResume(e -> Mono.just(
-						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found"))));
+				.then(Mono.just(ResponseEntity.ok(new ApiResponse(true, "Ticket deleted successfully"))));
 	}
 
 	@GetMapping("/status-summary")

@@ -31,11 +31,9 @@ public class CategoryController {
 
 	@PostMapping("/create")
 	public Mono<ResponseEntity<ApiResponse>> createCategory(@RequestBody Category category) {
-		return categoryService.createCategory(category)
-				.map(saved -> ResponseEntity.status(HttpStatus.CREATED)
-						.body(new ApiResponse(true, "Created category successfully " + saved.getId())))
-				.onErrorResume(
-						e -> Mono.just(ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()))));
+		return categoryService.createCategory(category).map(saved -> ResponseEntity.status(HttpStatus.CREATED)
+				.body(new ApiResponse(true, "Created category successfully " + saved.getId())));
+
 	}
 
 	@GetMapping("/{id}")
@@ -61,9 +59,8 @@ public class CategoryController {
 	public Mono<ResponseEntity<ApiResponse>> deleteCategory(@PathVariable String id,
 			@RequestParam(required = false) String reassignTo) {
 		return categoryService.deleteCategory(id, reassignTo)
-				.then(Mono.just(ResponseEntity.ok(new ApiResponse(true, "Category deleted successfully"))))
-				.onErrorResume(
-						e -> Mono.just(ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()))));
+				.then(Mono.just(ResponseEntity.ok(new ApiResponse(true, "Category deleted successfully"))));
+
 	}
 
 }

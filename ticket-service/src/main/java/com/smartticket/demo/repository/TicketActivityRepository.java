@@ -8,4 +8,6 @@ import reactor.core.publisher.Flux;
 
 public interface TicketActivityRepository extends ReactiveMongoRepository<TicketActivity, String> {
 	Flux<TicketActivity> findByTicketIdOrderByTimestampAsc(String ticketId);
+
+	Flux<TicketActivity> findByTicketId(String ticketId);
 }

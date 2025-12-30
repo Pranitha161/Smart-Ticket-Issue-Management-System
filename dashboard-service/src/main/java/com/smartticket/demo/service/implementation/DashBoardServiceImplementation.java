@@ -1,5 +1,6 @@
 package com.smartticket.demo.service.implementation;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.smartticket.demo.dto.AgentSummaryDto;
@@ -11,7 +12,9 @@ import com.smartticket.demo.feign.AssignmentClient;
 import com.smartticket.demo.feign.TicketClient;
 import com.smartticket.demo.service.DashBoardService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @Service
@@ -26,9 +29,14 @@ public class DashBoardServiceImplementation implements DashBoardService {
 	}
 
 	@Override
+	@CircuitBreaker(name = "dashboardServiceCircuitBreaker", fallbackMethod = "statusSummaryFallback")
 	public Flux<StatusSummaryDto> getTicketStatusSummary() {
 		return Flux.defer(() -> Flux.fromIterable(ticketClient.getTicketStatusSummary()))
 				.subscribeOn(Schedulers.boundedElastic());
+	}
+	
+	public Mono<ResponseEntity<String>> statusSummaryFallback(Throwable t) {
+		return Mono.error(new RuntimeException("Ticket service unavailable", t));
 	}
 
 	@Override
@@ -36,7 +44,7 @@ public class DashBoardServiceImplementation implements DashBoardService {
 		return Flux.defer(() -> Flux.fromIterable(ticketClient.getTicketStatusPrioritySummary()))
 				.subscribeOn(Schedulers.boundedElastic());
 	}
-	
+
 	@Override
 	public Flux<CategorySummaryDto> getCategorySummary() {
 		return Flux.defer(() -> Flux.fromIterable(ticketClient.getCategorySummary()))

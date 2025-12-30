@@ -30,12 +30,12 @@ public class UserTest {
 	@Test
 	void testUserBuilderCreatesValidUser() {
 		User user = User.builder().id("123").username("pranitha").password("securePass").email("test@example.com")
-				.roles(Set.of(ROLE.ROLE_ADMIN)).passwordLastChanged(LocalDateTime.now()).resetToken("reset123").enabled(true)
+				.roles(Set.of(ROLE.ADMIN)).passwordLastChanged(LocalDateTime.now()).resetToken("reset123").enabled(true)
 				.resetTokenExpiry(Instant.now().plusSeconds(3600)).build();
 
 		assertThat(user.getUsername()).isEqualTo("pranitha");
 		assertTrue(user.isEnabled());
-		assertThat(user.getRoles()).contains(ROLE.ROLE_ADMIN);
+		assertThat(user.getRoles()).contains(ROLE.ADMIN);
 	}
 
 	@Test

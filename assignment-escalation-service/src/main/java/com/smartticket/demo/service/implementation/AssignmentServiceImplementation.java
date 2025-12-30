@@ -15,10 +15,13 @@ import com.smartticket.demo.enums.ASSIGNMENT_TYPE;
 import com.smartticket.demo.enums.PRIORITY;
 import com.smartticket.demo.enums.STATUS;
 import com.smartticket.demo.feign.TicketClient;
+import com.smartticket.demo.producer.AssignmentEscalationEventProducer;
 import com.smartticket.demo.repository.AssignmentRepository;
 import com.smartticket.demo.repository.SlaRuleRepository;
 import com.smartticket.demo.service.AssignmentService;
 
+import jakarta.annotation.PostConstruct;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -28,12 +31,14 @@ public class AssignmentServiceImplementation implements AssignmentService {
 	private final AssignmentRepository assignmentRepo;
 	private final SlaRuleRepository slaRuleRepo;
 	private final TicketClient ticketClient;
+	private final AssignmentEscalationEventProducer assignmentEscalationEventProducer;
 
 	AssignmentServiceImplementation(AssignmentRepository assignmentRepo, SlaRuleRepository slaRuleRepo,
-			TicketClient ticketClient) {
+			TicketClient ticketClient, AssignmentEscalationEventProducer assignmentEscalationEventProducer) {
 		this.assignmentRepo = assignmentRepo;
 		this.slaRuleRepo = slaRuleRepo;
 		this.ticketClient = ticketClient;
+		this.assignmentEscalationEventProducer = assignmentEscalationEventProducer;
 	}
 
 	@Override
@@ -48,7 +53,8 @@ public class AssignmentServiceImplementation implements AssignmentService {
 							.dueAt(now.plus(Duration.ofMinutes(rule.getResolutionMinutes())))
 							.status(ASSIGNMENT_STATUS.ASSIGNED).type(ASSIGNMENT_TYPE.MANUAL).breached(false)
 							.escalationLevel(0).build();
-					return assignmentRepo.save(assignment);
+					return assignmentRepo.save(assignment).doOnSuccess(saved -> assignmentEscalationEventProducer
+							.publishAssignmentEvent(saved.getTicketId(), saved.getAgentId(), "ASSIGNED"));
 				});
 	}
 
@@ -69,28 +75,28 @@ public class AssignmentServiceImplementation implements AssignmentService {
 				});
 	}
 
-//	@PostConstruct
-//	public void scheduleEscalationChecks() {
-//		Flux.interval(Duration.ofMinutes(5)).flatMap(tick -> assignmentRepo.findByStatus(ASSIGNMENT_STATUS.ASSIGNED))
-//				.flatMap(this::checkAndEscalate)
-//				.doOnError(e -> System.err.println("Escalation check failed: " + e.getMessage()))
-//				.onErrorContinue((e, obj) -> {
-//					System.err.println("Skipping due to error: " + e.getMessage());
-//				}).subscribe();
-//	}
-//
-//	private Mono<Assignment> checkAndEscalate(Assignment assignment) {
-//		Instant now = Instant.now();
-//		if (assignment.getDueAt() != null && now.isAfter(assignment.getDueAt())) {
-//			assignment.setBreached(true);
-//			assignment.setBreachedAt(now);
-//			assignment.setStatus(ASSIGNMENT_STATUS.ESCALATED);
-//			assignment.setEscalationLevel(assignment.getEscalationLevel() + 1);
-//			return assignmentRepo.save(assignment);
-////	                .doOnSuccess(this::notifyEscalation);
-//		}
-//		return Mono.just(assignment);
-//	}
+	@PostConstruct
+	public void scheduleEscalationChecks() {
+		Flux.interval(Duration.ofMinutes(5)).flatMap(tick -> assignmentRepo.findByStatus(ASSIGNMENT_STATUS.ASSIGNED))
+				.flatMap(this::checkAndEscalate)
+				.doOnError(e -> System.err.println("Escalation check failed: " + e.getMessage()))
+				.onErrorContinue((e, obj) -> {
+					System.err.println("Skipping due to error: " + e.getMessage());
+				}).subscribe();
+	}
+
+	private Mono<Assignment> checkAndEscalate(Assignment assignment) {
+		Instant now = Instant.now();
+		if (assignment.getDueAt() != null && now.isAfter(assignment.getDueAt())) {
+			assignment.setBreached(true);
+			assignment.setBreachedAt(now);
+			assignment.setStatus(ASSIGNMENT_STATUS.ESCALATED);
+			assignment.setEscalationLevel(assignment.getEscalationLevel() + 1);
+			return assignmentRepo.save(assignment).doOnSuccess(saved -> assignmentEscalationEventProducer
+					.publishEscalationEvent(saved.getTicketId(), saved.getAgentId(), saved.getEscalationLevel()));
+		}
+		return Mono.just(assignment);
+	}
 
 	@Override
 	public Mono<Assignment> checkAndEscalate(String ticketId) {
@@ -107,6 +113,24 @@ public class AssignmentServiceImplementation implements AssignmentService {
 					return Mono.just(assignment);
 				});
 	}
+	@Override
+	public Mono<Assignment> reassign(String ticketId, String newAgentId) {
+	    return assignmentRepo.findTopByTicketIdOrderByAssignedAtDesc(ticketId)
+	        .switchIfEmpty(Mono.error(new RuntimeException("Assignment not found")))
+	        .flatMap(assignment -> {
+	            if (assignment.getStatus() == ASSIGNMENT_STATUS.COMPLETED) {
+	                return Mono.error(new RuntimeException("Cannot reassign a completed assignment"));
+	            }
+	            assignment.setAgentId(newAgentId);
+	            assignment.setStatus(ASSIGNMENT_STATUS.REASSIGNED);
+	            assignment.setUnassignedAt(Instant.now());
+	            return assignmentRepo.save(assignment)
+	                .doOnSuccess(saved -> assignmentEscalationEventProducer.publishAssignmentEvent(
+	                    saved.getTicketId(), saved.getAgentId(), "REASSIGNED"
+	                ));
+	        });
+	}
+
 
 	@Override
 	public Mono<Assignment> autoAssign(String ticketId) {
@@ -134,7 +158,7 @@ public class AssignmentServiceImplementation implements AssignmentService {
 							.averageResolutionTimeMinutes(avgResolutionTime).build();
 				}).collect(Collectors.toList()));
 	}
-	
+
 	@Override
 	public Mono<List<EscalationSummaryDto>> getEscalationSummary() {
 		return assignmentRepo.getEscalationSummary().collectList();

@@ -22,4 +22,6 @@ public interface AssignmentService {
 	Mono<List<AgentSummaryDto>> assignmentsPerAgent();
 
 	Mono<List<EscalationSummaryDto>> getEscalationSummary();
+
+	Mono<Assignment> reassign(String ticketId, String newAgentId);
 }

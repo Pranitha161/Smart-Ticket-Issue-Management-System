@@ -45,6 +45,12 @@ public class UserAuthController {
 		});
 	}
 
+	@GetMapping("/auth/{id}")
+	public Mono<ResponseEntity<String>> getEmail(@PathVariable String id) {
+		return userAuthService.getUserEmail(id).map(email -> ResponseEntity.ok(email))
+				.switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+	}
+
 	@GetMapping("/users")
 	public Mono<ResponseEntity<List<AuthResponse>>> getUsers() {
 		return userAuthService.getUsers().map(users -> ResponseEntity.ok(users));
@@ -63,8 +69,7 @@ public class UserAuthController {
 	}
 
 	@PutMapping("/users/{id}")
-	public Mono<ResponseEntity<ApiResponse>> updateUserById(@PathVariable String id,
-			@RequestBody AuthResponse user) {
+	public Mono<ResponseEntity<ApiResponse>> updateUserById(@PathVariable String id, @RequestBody AuthResponse user) {
 		return userAuthService.updateUserById(id, user).map(response -> {
 			HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
 			return ResponseEntity.status(status).body(response);

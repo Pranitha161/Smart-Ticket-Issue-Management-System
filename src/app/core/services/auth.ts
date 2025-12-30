@@ -4,12 +4,12 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private baseUrl = 'http://localhost:8765/auth-user-service/auth'; 
+  private baseUrl = 'http://localhost:8765/auth-user-service/auth';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   signup(user: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/signup`, user);
+    return this.http.post(`${this.baseUrl}/register`, user);
   }
 
   login(credentials: any): Observable<any> {
@@ -27,7 +27,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
   }
-  
+
   getUserRoles(): string[] {
     const token = this.getToken();
     if (!token) return [];
@@ -37,5 +37,23 @@ export class AuthService {
 
   hasRole(role: string): boolean {
     return this.getUserRoles().includes(role);
+  }
+
+  isLoggedIn() {
+    return !!this.getToken();
+  }
+
+  getUsername(): string | null { const token = this.getToken(); 
+    if (!token) return null; 
+    try { 
+      const payload = JSON.parse(atob(token.split('.')[1])); return payload.username || payload.sub || null; } catch (e) 
+      { console.error('Invalid token', e); return null; } }
+
+  getUserEmail(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.email;
   }
 }

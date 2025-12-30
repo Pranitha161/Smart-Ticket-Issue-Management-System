@@ -46,7 +46,7 @@ public class TicketServiceImplementation implements TicketService {
 			String last4 = hex.substring(hex.length() - 4).toUpperCase();
 			saved.setDisplayId("TCK-" + first2 + last4);
 			return saved;
-		}).flatMap(ticketRepo::save).doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CREATED"));
+		}).flatMap(ticketRepo::save).flatMap(saved -> logActivity(saved, ACTION_TYPE.CREATED)).doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CREATED"));
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class TicketServiceImplementation implements TicketService {
 			existing.setDescription(updatedTicket.getDescription());
 			existing.setPriority(updatedTicket.getPriority());
 			existing.setUpdatedAt(LocalDateTime.now());
-			return ticketRepo.save(existing);
+			return ticketRepo.save(existing).flatMap(saved -> logActivity(saved, ACTION_TYPE.UPDATED));
 		});
 	}
 
@@ -96,6 +96,7 @@ public class TicketServiceImplementation implements TicketService {
 			ticket.setStatus(STATUS.OPEN);
 			ticket.setUpdatedAt(LocalDateTime.now());
 			return ticketRepo.save(ticket)
+					.flatMap(saved -> logActivity(saved, ACTION_TYPE.REOPENED))
 					.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "REOPENED"));
 		});
 	}

@@ -137,11 +137,7 @@ public class AssignmentServiceImplementation implements AssignmentService {
 	
 	@Override
 	public Mono<List<EscalationSummaryDto>> getEscalationSummary() {
-		return assignmentRepo.findAll()
-				.collect(Collectors.groupingBy(Assignment::getEscalationLevel, Collectors.counting()))
-				.map(grouped -> grouped.entrySet().stream().map(
-						entry -> EscalationSummaryDto.builder().level(entry.getKey()).count(entry.getValue()).build())
-						.collect(Collectors.toList()));
+		return assignmentRepo.getEscalationSummary().collectList();
 	}
 }
 

@@ -61,7 +61,7 @@ public class UserAuthServiceImplementation implements UserAuthService {
 				.switchIfEmpty(userauthRepo.findByUsername(user.getUsername())
 						.flatMap(existing -> Mono.just(new ApiResponse(false, "Username already exists")))
 						.switchIfEmpty(Mono.defer(() -> {
-							if (user.getRoles().contains(ROLE.ROLE_AGENT) && user.getAgentLevel() == null) {
+							if (user.getRoles().contains(ROLE.AGENT) && user.getAgentLevel() == null) {
 								return Mono.just(new ApiResponse(false, "Agent must have an AgentLevel (L1/L2/L3)"));
 							}
 							user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -91,6 +91,11 @@ public class UserAuthServiceImplementation implements UserAuthService {
 	@Override
 	public Mono<AuthResponse> getUserByEmail(String email) {
 		return userauthRepo.findByEmail(email).map(this::toResponse);
+	}
+	
+	@Override
+	public Mono<String> getUserEmail(String id){
+		return userauthRepo.findById(id).map(User::getEmail);
 	}
 
 	@Override

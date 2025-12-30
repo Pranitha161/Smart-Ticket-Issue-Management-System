@@ -31,6 +31,8 @@ public interface UserAuthService {
 	
 	Mono<AuthResponse> me();
 
-	Mono<ApiResponse> deleteUserById(String id); 
+	Mono<ApiResponse> deleteUserById(String id);
+
+	Mono<String> getUserEmail(String id); 
 
 }

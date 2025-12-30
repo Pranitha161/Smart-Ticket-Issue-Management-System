@@ -28,10 +28,11 @@ public class TicketServiceImplementation implements TicketService {
 	private final TicketActivityRepository ticketActivityRepo;
 	private final TicketEventProducer ticketEventProducer;
 
-	TicketServiceImplementation(TicketRepository ticketRepo, TicketActivityRepository ticketActivityRepo,TicketEventProducer ticketEventProducer) {
+	TicketServiceImplementation(TicketRepository ticketRepo, TicketActivityRepository ticketActivityRepo,
+			TicketEventProducer ticketEventProducer) {
 		this.ticketRepo = ticketRepo;
 		this.ticketActivityRepo = ticketActivityRepo;
-		this.ticketEventProducer=ticketEventProducer;
+		this.ticketEventProducer = ticketEventProducer;
 	}
 
 	@Override
@@ -40,9 +41,12 @@ public class TicketServiceImplementation implements TicketService {
 		ticket.setCreatedAt(LocalDateTime.now());
 		ticket.setUpdatedAt(LocalDateTime.now());
 		return ticketRepo.save(ticket).map(saved -> {
-			saved.setDisplayId("TCK-" + saved.getId().substring(0, 6).toUpperCase());
+			String hex = saved.getId();
+			String first2 = hex.substring(0, 2).toUpperCase();
+			String last4 = hex.substring(hex.length() - 4).toUpperCase();
+			saved.setDisplayId("TCK-" + first2 + last4);
 			return saved;
-		}).flatMap(ticketRepo::save).doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CREATED") );
+		}).flatMap(ticketRepo::save).doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CREATED"));
 	}
 
 	@Override
@@ -79,7 +83,7 @@ public class TicketServiceImplementation implements TicketService {
 					ticket.setStatus(STATUS.CLOSED);
 					ticket.setUpdatedAt(LocalDateTime.now());
 					return ticketRepo.save(ticket).flatMap(saved -> logActivity(saved, ACTION_TYPE.RESOLVED))
-							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CLOSED") );
+							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CLOSED"));
 				});
 	}
 
@@ -91,7 +95,8 @@ public class TicketServiceImplementation implements TicketService {
 			}
 			ticket.setStatus(STATUS.OPEN);
 			ticket.setUpdatedAt(LocalDateTime.now());
-			return ticketRepo.save(ticket).doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "REOPENED") );
+			return ticketRepo.save(ticket)
+					.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "REOPENED"));
 		});
 	}
 
@@ -116,7 +121,7 @@ public class TicketServiceImplementation implements TicketService {
 					ticket.setStatus(STATUS.RESOLVED);
 					ticket.setUpdatedAt(LocalDateTime.now());
 					return ticketRepo.save(ticket).flatMap(saved -> logActivity(saved, ACTION_TYPE.RESOLVED))
-							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "RESOLVED") );
+							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "RESOLVED"));
 				});
 	}
 

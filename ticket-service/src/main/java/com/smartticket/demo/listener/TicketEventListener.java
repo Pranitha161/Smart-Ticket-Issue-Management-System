@@ -19,7 +19,7 @@ public class TicketEventListener {
 	@KafkaListener(topics = "ticket-events", groupId = "ticket-service")
 	public void onEvent(TicketEvent event) {
 		ACTION_TYPE type = map(event.getEventType());
-		activityService.log(event.getTicketId(), event.getActorId(), type, event.getDetails(), event.getTimestamp())
+		activityService.log(event.getTicketId(), event.getUserId(), type, event.getDetails(), event.getTimestamp())
 				.block();
 	}
 	

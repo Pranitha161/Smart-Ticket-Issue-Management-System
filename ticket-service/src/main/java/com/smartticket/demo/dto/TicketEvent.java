@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class TicketEvent {
 	private String ticketId;
-	private String actorId;
+	private String userId;
 	private String eventType;
 	private String details;
 	private Instant timestamp;

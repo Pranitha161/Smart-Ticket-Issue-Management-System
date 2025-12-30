@@ -26,6 +26,7 @@ public class JwtService {
 	public String generateToken(User user) {
 		Instant now = Instant.now();
 		return Jwts.builder().setSubject(user.getId()).claim("email", user.getEmail())
+				.claim("username",user.getUsername())
 				.claim("roles", user.getRoles().stream().map(Enum::name).toList()).setIssuedAt(Date.from(now))
 				.setExpiration(Date.from(now.plus(Duration.ofMinutes(expirationMinutes))))
 				.signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)

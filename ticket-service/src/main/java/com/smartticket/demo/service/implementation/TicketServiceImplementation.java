@@ -129,27 +129,16 @@ public class TicketServiceImplementation implements TicketService {
 
 	@Override
 	public Mono<List<StatusSummaryDto>> statusSummary() {
-		return ticketRepo.findAll().collect(Collectors.groupingBy(Ticket::getStatus, Collectors.counting()))
-				.map(grouped -> grouped.entrySet().stream()
-						.map(entry -> StatusSummaryDto.builder().status(entry.getKey()).count(entry.getValue()).build())
-						.collect(Collectors.toList()));
+		return ticketRepo.getStatusSummary().collectList();
 	}
 
 	@Override
 	public Mono<List<PrioritySummaryDto>> prioritySummary() {
-		return ticketRepo.findAll().collect(Collectors.groupingBy(Ticket::getPriority, Collectors.counting()))
-				.map(grouped -> grouped.entrySet().stream().map(
-						entry -> PrioritySummaryDto.builder().priority(entry.getKey()).count(entry.getValue()).build())
-						.collect(Collectors.toList()));
+		return ticketRepo.getPrioritySummary().collectList();
 	}
 
 	public Mono<List<CategorySummaryDto>> getCategorySummary() {
-		return ticketRepo
-				.findAll().collect(Collectors.groupingBy(Ticket::getCategoryId, Collectors.counting())).map(
-						grouped -> grouped
-								.entrySet().stream().map(entry -> CategorySummaryDto.builder()
-										.categoryId(entry.getKey()).count(entry.getValue()).build())
-								.collect(Collectors.toList()));
+		return ticketRepo.getCategorySummary().collectList();
 	}
 
 }

@@ -8,9 +8,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    // TicketComponent,
-    //  TicketForm,
-      // TicketDetailComponent
   ],
   imports: [
     CommonModule,

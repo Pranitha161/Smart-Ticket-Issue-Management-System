@@ -1,6 +1,12 @@
 package com.smartticket.demo.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import reactor.core.publisher.Mono;
+
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.smartticket.demo.entity.AuthResponse;
 import com.smartticket.demo.entity.LoginRequest;
+import com.smartticket.demo.dto.UserStatsDto;
 import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.User;
 import com.smartticket.demo.service.implementation.UserAuthServiceImplementation;
 
-import reactor.core.publisher.Mono;
 
 @RestController
 public class UserAuthController {
@@ -112,6 +118,23 @@ public class UserAuthController {
 			return ResponseEntity.status(status).body(response);
 		});
 	}
+	@GetMapping("/auth/users/stats")
+	public Mono<UserStatsDto> getUserStats() {
+	    return userAuthService.getUserStats();
+	}
+	@GetMapping("/tickets/debug-auth")
+	public Mono<String> debugAuth(Authentication auth) {
+	    if (auth == null) {
+	        System.out.println("No authentication found");
+	        return Mono.just("No authentication found");
+	    }
+	    String roles = auth.getAuthorities().stream()
+	            .map(GrantedAuthority::getAuthority)
+	            .collect(Collectors.joining(", "));
+	    System.out.println("Ticket endpoint authorities: [" + roles + "]");
+	    return Mono.just(roles);
+	}
+
 
 //	@GetMapping("/me")
 //	public Mono<ResponseEntity<AuthResponse>> me() {

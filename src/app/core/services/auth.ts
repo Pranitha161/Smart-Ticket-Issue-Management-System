@@ -56,4 +56,10 @@ export class AuthService {
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload.email;
   }
+  getUserId(): string {
+    const token = this.getToken();
+    if (!token) return '';
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.sub || '';
+  }
 }

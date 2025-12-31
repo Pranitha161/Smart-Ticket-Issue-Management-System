@@ -1,5 +1,17 @@
-.user-icon {
-  font-weight: bold;
-  font-size: 1rem;
-  background-color: rgb(211, 211, 211 ,0.75);
+.navbar{
+    border-right: 1px solid #dee2e6;
+    position: sticky;
+}
+/* Reduce toggle button size */
+.custom-toggler {
+  padding: 2px 6px;       /* smaller padding */
+  font-size: 0.8rem;      /* shrink icon size */
+  width: 32px;            /* narrower button */
+  height: 32px;           /* shorter button */
+}
+
+/* Adjust the icon inside */
+.custom-toggler .navbar-toggler-icon {
+  width: 18px;
+  height: 18px;
 }

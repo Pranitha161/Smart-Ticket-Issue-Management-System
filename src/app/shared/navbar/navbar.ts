@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import {Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 import { CommonModule } from '@angular/common';
 
@@ -11,12 +11,19 @@ import { CommonModule } from '@angular/common';
 })
 export class Navbar {
   username: string | null = null;
-  constructor(private authService: AuthService) { }
+  userRole:string[]=[];
+  currentUrl: string = '';
+  constructor(private authService: AuthService,private router:Router) { }
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.username = this.authService.getUsername();
+      this.userRole=this.authService.getUserRoles();
     }
+    this.router.events.subscribe(() => { this.currentUrl = this.router.url; });
   }
+
+  hasUserRole(): boolean { return this.userRole.includes('USER'); }
   get firstLetter(): string { return this.username ? this.username.charAt(0).toUpperCase() : ''; }
+  isOnCreateTicket(): boolean { return this.currentUrl.includes('/tickets/create'); }
 
 }

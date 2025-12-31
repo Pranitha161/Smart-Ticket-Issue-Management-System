@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .pathMatchers("/tickets/**").hasRole("USER")
                 .pathMatchers("/tickets/assign/**", "/tickets/update/**").hasRole("AGENT")
                 .pathMatchers("/dashboard/**", "/reports/**").hasRole("MANAGER")
-                .pathMatchers("/admin/**", "/categories/**", "/users/**").hasRole("ADMIN")
+                .pathMatchers("/admin/**", "/ticket-service/categories/**", "/users/**").hasRole("ADMIN")
                 .anyExchange().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
@@ -68,7 +68,7 @@ public class SecurityConfig {
 
         JwtAuthenticationConverter delegate = new JwtAuthenticationConverter();
         delegate.setJwtGrantedAuthoritiesConverter(converter);
-
+        System.out.println("JWT roles claim: " +delegate);
         return new ReactiveJwtAuthenticationConverterAdapter(delegate);
     }
 }

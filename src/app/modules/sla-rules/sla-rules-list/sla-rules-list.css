@@ -1,0 +1,34 @@
+/* .sla-dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.sla-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  width: 250px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  h3 {
+    margin-top: 0;
+  }
+
+  &.low { background-color: #e0f7e9; }
+  &.medium { background-color: #e0f0ff; }
+  &.high { background-color: #fff3e0; }
+  &.critical { background-color: #ffe0e0; }
+} */
+.sla-card.low {
+  background-color: #e0f7e9;
+}
+.sla-card.medium {
+  background-color: #e0f0ff;
+}
+.sla-card.high {
+  background-color: #fff3e0;
+}
+.sla-card.critical {
+  background-color: #ffe0e0;
+}

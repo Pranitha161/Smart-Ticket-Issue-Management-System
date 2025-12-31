@@ -1,0 +1,157 @@
+<div class="admin-panel-wrapper p-3 p-md-5">
+  <div class="admin-header mb-4">
+    <h1>Admin Panel</h1>
+    <p class="sub-text">Manage system settings, users, and configurations</p>
+  </div>
+
+  <div class="nav-pills-custom mb-4 overflow-auto text-nowrap">
+    <button class="nav-link-custom active">
+      <i class="bi bi-people me-2"></i>User Management
+    </button>
+    <button class="nav-link-custom">
+      <i class="bi bi-gear me-2"></i>Categories & Priorities
+    </button>
+    <button class="nav-link-custom">
+      <i class="bi bi-shield-check me-2"></i>SLA Settings
+    </button>
+  </div>
+
+  <div class="main-card shadow-sm">
+    <div class="card-header-content d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+      <div>
+        <h5 class="fw-bold mb-0">User Management</h5>
+        <small class="text-muted">Manage user accounts and roles</small>
+      </div>
+      <button class="btn btn-add-user" (click)="openCreateForm()">
+        <i class="bi bi-person-plus me-1"></i> Add User
+      </button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table mb-0 align-middle">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th class="d-none d-md-table-cell">Tickets</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td class="fw-bold">{{ user.username }}</td>
+            <td class="text-muted">{{ user.email }}</td>
+            <td>
+              <span class="badge-role" [ngClass]="'role-' + user.roles[0].toLowerCase()">
+                {{ user.roles[0].toLowerCase() }}
+              </span>
+            </td>
+            <td>
+              <span class="status-pill" [ngClass]="user.enabled ? 'status-active' : 'status-inactive'">
+                {{ user.enabled ? 'active' : 'inactive' }}
+              </span>
+            </td>
+            <td class="d-none d-md-table-cell">8</td>
+            <td class="text-end">
+              <button class="btn btn-link text-dark p-1 me-2" (click)="editUser(user)">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-link text-danger p-1" (click)="deleteUser(user.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-4" *ngIf="userStats">
+    <div class="col-6 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-value">{{ userStats.totalUsers }}</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-value">{{ userStats.supportAgents }}</div>
+        <div class="stat-label">Agents</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-value">{{ userStats.endUsers }}</div>
+        <div class="stat-label">End Users</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-value">{{ userStats.activeUsers }}</div>
+        <div class="stat-label">Active</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-value">{{ userStats.managers }}</div>
+        <div class="stat-label">Managers</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-value">{{ userStats.admins }}</div>
+        <div class="stat-label">Admins</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="main-card shadow-sm">
+  </div>
+
+<div class="modal-backdrop-custom" *ngIf="modalMode">
+  <div class="modal-content-custom shadow-lg">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="fw-bold mb-0">
+        {{ modalMode === 'edit' ? 'Edit User' : 'Create New User' }}
+      </h4>
+      <button class="btn-close" (click)="cancel()"></button>
+    </div>
+
+    <div class="form-group mb-3">
+      <label class="form-label-custom">Username</label>
+      <input [(ngModel)]="formUser.username" class="form-control custom-input">
+    </div>
+
+    <div class="form-group mb-3">
+      <label class="form-label-custom">Email Address</label>
+      <input [(ngModel)]="formUser.email" class="form-control custom-input">
+    </div>
+
+    <div class="form-group mb-3">
+      <label class="form-label-custom">Assign Role</label>
+      <select [(ngModel)]="formUser.roles[0]" class="form-select custom-input">
+        <option value="ADMIN">Admin</option>
+        <option value="AGENT">Support Agent</option>
+        <option value="MANAGER">Support Manager</option>
+        <option value="USER">User</option>
+      </select>
+    </div>
+
+    <!-- Show password only when creating -->
+    <div class="form-group mb-4" *ngIf="modalMode === 'create'">
+      <label class="form-label-custom">Password</label>
+      <input [(ngModel)]="formUser.password" type="password" class="form-control custom-input">
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-dark w-100 py-2 fw-bold" (click)="saveUser()">
+        {{ modalMode === 'edit' ? 'Update User' : 'Create Account' }}
+      </button>
+      <button class="btn btn-light border w-100 py-2 fw-bold" (click)="cancel()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

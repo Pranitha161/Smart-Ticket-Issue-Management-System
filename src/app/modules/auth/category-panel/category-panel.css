@@ -1,0 +1,93 @@
+/* Container */
+.category-panel-wrapper {
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
+}
+
+/* Category Cards */
+.category-card {
+  background: white;
+  border: 1px solid #eaecf0;
+  border-radius: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Badge styling from inspo */
+.badge-category {
+  background: white;
+  border: 1px solid #d0d5dd;
+  color: #1a1a1a;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.ticket-count {
+  color: #667085;
+}
+
+/* Add Category Button */
+.btn-add-category {
+  background: white;
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+  color: #1a1a1a;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-add-category:hover {
+  background: #f9fafb;
+  border-color: #d0d5dd;
+}
+
+/* Action Buttons */
+.btn-action {
+  border: none;
+  background: transparent;
+  color: #667085;
+  font-size: 1.1rem;
+  padding: 4px 8px;
+  transition: color 0.2s;
+}
+
+.btn-action:hover {
+  color: #1a1a1a;
+}
+
+/* Modal Overlay Styling (Consistent with Admin Panel) */
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1050;
+}
+
+.modal-content-custom {
+  background: white;
+  width: 100%; max-width: 450px;
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.custom-input {
+  background: #f9fafb;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.form-label-custom {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 6px;
+}

@@ -1,0 +1,73 @@
+<!-- <div class="container my-4">
+  <h2 class="mb-4">SLA Configuration</h2>
+
+  <div class="row">
+    <div *ngFor="let rule of slaRules" class="col-md-3 col-sm-6 mb-4">
+      <div class="card text-center sla-card" [ngClass]="rule.priority.toLowerCase()">
+        <div class="card-body">
+          <h5 class="card-title">{{ rule.priority }} Priority</h5>
+          <p class="card-text">
+            <strong>Response:</strong> {{ rule.responseMinutes }} minutes
+          </p>
+          <p class="card-text">
+            <strong>Resolution:</strong> {{ rule.resolutionMinutes }} minutes
+          </p>
+          <button class="btn btn-primary btn-sm me-2" (click)="editRule(rule)">Edit</button>
+          <button *ngIf="!isBaseline(rule.priority)" class="btn btn-danger btn-sm"
+                  (click)="deleteRule(rule.id!, rule.priority)">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <button class="btn btn-success" routerLink="/sla-rules/new">Add Rule</button>
+  </div>
+</div> -->
+<div class="container my-4">
+  <h2 class="mb-4">SLA Configuration</h2>
+
+  <!-- SLA Rules List -->
+  <div class="row">
+    <div *ngFor="let rule of slaRules" class="col-md-3 col-sm-6 mb-4">
+      <div class="card text-center sla-card" [ngClass]="rule.priority.toLowerCase()">
+        <div class="card-body">
+          <h5 class="card-title">{{ rule.priority }} Priority</h5>
+          <p class="card-text"><strong>Response:</strong> {{ rule.responseMinutes }} minutes</p>
+          <p class="card-text"><strong>Resolution:</strong> {{ rule.resolutionMinutes }} minutes</p>
+          <button class="btn btn-primary btn-sm me-2" (click)="editRule(rule)">Edit</button>
+          <button *ngIf="!['LOW','MEDIUM','HIGH','CRITICAL'].includes(rule.priority)" 
+                  class="btn btn-danger btn-sm"
+                  (click)="deleteRule(rule.id!, rule.priority)">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Form (only visible when editingRule is set) -->
+  <div *ngIf="editingRule" class="card mt-4">
+    <div class="card-body">
+      <h4>Edit {{ editingRule.priority }} Rule</h4>
+      <form [formGroup]="form" (ngSubmit)="saveRule()">
+        <div class="mb-3">
+          <label class="form-label">Priority</label>
+          <input type="text" class="form-control" formControlName="priority" >
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Response Minutes</label>
+          <input type="number" class="form-control" formControlName="responseMinutes">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Resolution Minutes</label>
+          <input type="number" class="form-control" formControlName="resolutionMinutes">
+        </div>
+        <button type="submit" class="btn btn-success">Update Rule</button>
+        <button type="button" class="btn btn-secondary ms-2" (click)="cancelEdit()">Cancel</button>
+      </form>
+    </div>
+  </div>
+</div>

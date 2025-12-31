@@ -1,0 +1,54 @@
+.ticket-page {
+  min-height: 80vh;
+  width: 75%;
+  padding-top: 30px;
+  margin: auto;
+}
+
+.back-arrow {
+  font-size: 1rem;
+  color: #0d6efd;
+}
+
+.back-arrow:hover {
+  color: #a3badd;
+}
+
+.form-section {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+}
+
+.priority-box {
+  background-color: #fff;
+  border-left: 4px solid #0d6efd;
+}
+
+.priority-box h6 {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 767px) {
+  .ticket-page {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .form-section {
+    padding: 15px !important;
+  }
+
+  .priority-box {
+    margin-top: 20px;
+  }
+
+  .col-12.d-flex {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .col-12.d-flex button {
+    width: 100%;
+  }
+}

@@ -1,1 +1,66 @@
-<p>ticket-form works!</p>
+<div class="ticket-page d-flex">
+
+  <main class="form-section flex-grow-1 p-4">
+    <div class="d-flex align-items-center mb-4">
+  <!-- Back Arrow -->
+  <button type="button" class="btn btn-link p-0 back-arrow" routerLink="/tickets">
+    <i class="bi bi-arrow-left"></i>
+  </button>
+
+  <!-- Title -->
+  <h4 class="ms-2 mb-0">Create New Ticket</h4>
+</div>
+
+    <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()" class="row g-3 ">
+
+      <div class="col-md-12">
+        <label class="form-label">Title *</label>
+        <input type="text" class="form-control" formControlName="title" />
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Description *</label>
+        <textarea class="form-control" rows="4" formControlName="description"></textarea>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Priority *</label>
+        <select class="form-select" formControlName="priority">
+          <option value="CRITICAL">Critical</option>
+          <option value="HIGH">High</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="LOW">Low</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Category *</label>
+        <select class="form-select" formControlName="categoryId">
+          <option value="">Select Category</option>
+          <option value="GEN">General Inquiry</option>
+          <option value="TECH">Technical Issue</option>
+          <option value="BILL">Billing</option>
+        </select>
+      </div>
+
+      <div class="col-12 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-secondary" routerLink="/tickets">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="ticketForm.invalid">Create Ticket</button>
+      </div>
+    </form>
+
+    <div class="priority-box card mt-4 p-3">
+      <h6>Priority Guidelines</h6>
+      <ul class="mb-0">
+        <li><strong>Critical:</strong> System down, major functionality broken</li>
+        <li><strong>High:</strong> Significant impact on operations</li>
+        <li><strong>Medium:</strong> Moderate impact, workaround available</li>
+        <li><strong>Low:</strong> Minor issue, cosmetic or enhancement</li>
+      </ul>
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  </main>
+</div>

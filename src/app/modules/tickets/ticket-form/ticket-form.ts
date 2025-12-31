@@ -1,11 +1,43 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TicketService } from '../../../core/services/ticket';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-ticket-form',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule,RouterLink],
   templateUrl: './ticket-form.html',
   styleUrl: './ticket-form.css',
 })
-export class TicketForm {
-
+export class TicketForm implements OnInit {
+  ticketForm!: FormGroup;
+  successMessage = ''; errorMessage = '';
+  constructor(private fb: FormBuilder, private ticketService: TicketService, private authService: AuthService, private cd: ChangeDetectorRef) { }
+  ngOnInit(): void {
+    this.ticketForm = this.fb.group({
+      title: ['', Validators.required],
+      description: ['', Validators.required],
+      categoryId: ['', Validators.required],
+      priority: ['MEDIUM', Validators.required],
+      createdBy: [this.authService.getUserId()]
+    });
+  }
+  onSubmit(): void {
+    if (this.ticketForm.valid) {
+      this.ticketService.createTicket(this.ticketForm.value).subscribe({
+        next: (res) => {
+          this.successMessage = res.message || 'Ticket created successfully!'; this.errorMessage = '';
+          this.ticketForm.reset({ priority: 'MEDIUM', status: 'OPEN' });
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          this.errorMessage = 'Failed to create ticket. Please try again.'; this.successMessage = '';
+          this.cd.detectChanges();
+        }
+      });
+    }
+  }
 }

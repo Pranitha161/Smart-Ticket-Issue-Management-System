@@ -1,0 +1,176 @@
+/* .ticket-list {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.ticket-list h4 {
+  font-weight: 600;
+  color: #333;
+}
+.table {
+  font-size: 0.95rem;
+  border-radius: 8px;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+}
+
+.table td {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f1f1f1;
+}
+.badge {
+  font-size: 0.75rem;
+  padding: 0.4em 0.6em;
+  border-radius: 6px;
+  text-transform: capitalize;
+}
+
+ .badge.bg-danger { background-color: #dc3545; }
+.badge.bg-warning { background-color: #ffc107; color: #212529; }
+.badge.bg-info { background-color: #17a2b8; }
+.badge.bg-secondary { background-color: #6c757d; }
+.btn-sm {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+} 
+
+.bi-eye {
+  font-size: 1rem;
+}
+@media (max-width: 768px) {
+  .table th, .table td {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+
+  .ticket-list h4 {
+    font-size: 1.1rem;
+  }
+
+  .btn-sm {
+    padding: 0.2rem 0.4rem;
+  }
+} */
+.ticket-list {
+    background-color: #fff;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.ticket-list h4 {
+    font-weight: 600;
+    color: #333;
+}
+
+.table {
+    font-size: 0.95rem;
+    border-collapse: collapse;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+    white-space: nowrap;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.6em;
+    border-radius: 6px;
+    text-transform: capitalize;
+}
+
+.pagination .page-link {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+}
+
+.form-control,
+.form-select {
+    font-size: 16px;
+    /* prevents zoom */
+    line-height: 1.4;
+    padding: 0.5rem 0.75rem;
+}
+.no-tickets {
+  font-size: 16px !important; /* prevent zoom */
+  text-align: center;
+  color: #888;
+  padding: 1rem;
+}
+
+
+
+
+/* Card layout for mobile */
+@media (max-width: 768px) {
+
+
+    .ticket-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .ticket-card h6 {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .ticket-meta {
+        font-size: 0.85rem;
+        color: #555;
+        margin-bottom: 0.25rem;
+    }
+
+    .ticket-actions {
+        margin-top: 0.5rem;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 16px;
+        /* keep ≥16px to avoid zoom */
+        line-height: 1.2;
+        padding: 0.25rem 0.5rem;
+        /* slimmer padding */
+        max-width: 180px;
+        /* narrower dropdown */
+    }
+
+    /* Optional: scale down visually */
+    .form-control.small,
+    .form-select.small {
+        transform: scale(0.9);
+        transform-origin: left center;
+    }
+}

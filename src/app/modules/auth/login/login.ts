@@ -37,9 +37,10 @@ export class Login implements OnInit {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (res: any) => {
-          if (res.token) {
-            this.authService.setToken(res.token);
-            this.router.navigate(['/dashboard']);
+          console.log(res);
+          if (res.message) {
+            this.authService.setToken(res.message);
+            this.router.navigate(['/tickets']);
           } else {
             this.message = 'Login failed. No token received.';
           }

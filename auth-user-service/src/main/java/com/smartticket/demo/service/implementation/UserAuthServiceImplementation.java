@@ -6,13 +6,16 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import org.bson.Document;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.smartticket.demo.entity.AuthResponse;
 import com.smartticket.demo.entity.LoginRequest;
+import com.smartticket.demo.dto.UserStatsDto;
 import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.User;
 import com.smartticket.demo.enums.ROLE;
@@ -34,7 +37,8 @@ public class UserAuthServiceImplementation implements UserAuthService {
 	private final UserEventPublisher eventPublisher;
 
 	private AuthResponse toResponse(User user) {
-		return new AuthResponse(user.getId(), user.getEmail(), user.getUsername(), user.getRoles());
+		return new AuthResponse(user.getId(), user.getDisplayId(), user.getEmail(), user.getUsername(),
+				user.isEnabled(), user.getRoles());
 	}
 
 	@Override
@@ -67,7 +71,9 @@ public class UserAuthServiceImplementation implements UserAuthService {
 							user.setPassword(passwordEncoder.encode(user.getPassword()));
 							user.setPasswordLastChanged(LocalDateTime.now());
 							user.setEnabled(true);
+							System.out.println("Hello");
 							return userauthRepo.save(user).flatMap(saved -> {
+								System.out.println(saved.getId());
 								saved.setDisplayId("USR-" + saved.getId().substring(0, 6).toUpperCase());
 								return userauthRepo.save(saved)
 										.doOnSuccess(u -> eventPublisher.publishUserRegistered(u.getId(), u.getEmail(),
@@ -92,9 +98,9 @@ public class UserAuthServiceImplementation implements UserAuthService {
 	public Mono<AuthResponse> getUserByEmail(String email) {
 		return userauthRepo.findByEmail(email).map(this::toResponse);
 	}
-	
+
 	@Override
-	public Mono<String> getUserEmail(String id){
+	public Mono<String> getUserEmail(String id) {
 		return userauthRepo.findById(id).map(User::getEmail);
 	}
 
@@ -169,6 +175,49 @@ public class UserAuthServiceImplementation implements UserAuthService {
 			existing.setEnabled(false);
 			return userauthRepo.save(existing).map(saved -> new ApiResponse(true, "User disabled successfully"));
 		}).switchIfEmpty(Mono.just(new ApiResponse(false, "User not found")));
+	}
+	@Override
+	public Mono<UserStatsDto> getUserStats() {
+	    Mono<Long> totalUsersMono = userauthRepo.countTotalUsers()
+	        .next()
+	        .map(doc -> {
+	            Number n = doc.get("totalUsers", Number.class);
+	            return n == null ? 0L : n.longValue();
+	        })
+	        .defaultIfEmpty(0L);
+
+	    Mono<Long> activeUsersMono = userauthRepo.countActiveUsers()
+	        .next()
+	        .map(doc -> {
+	            Number n = doc.get("activeUsers", Number.class);
+	            return n == null ? 0L : n.longValue();
+	        })
+	        .defaultIfEmpty(0L);
+
+	    Mono<Map<String, Long>> roleCountsMono = userauthRepo.countUsersByRole()
+	        .collectMap(
+	            doc -> doc.getString("_id"),
+	            doc -> {
+	                Number n = doc.get("count", Number.class);
+	                return n == null ? 0L : n.longValue();
+	            }
+	        );
+
+	    return Mono.zip(totalUsersMono, activeUsersMono, roleCountsMono)
+	        .map(tuple -> {
+	            long totalUsers = tuple.getT1();
+	            long activeUsers = tuple.getT2();
+	            Map<String, Long> roleCounts = tuple.getT3();
+
+	            return new UserStatsDto(
+	                totalUsers,
+	                activeUsers,
+	                roleCounts.getOrDefault("AGENT", 0L),
+	                roleCounts.getOrDefault("USER", 0L),
+	                roleCounts.getOrDefault("MANAGER", 0L),
+	                roleCounts.getOrDefault("ADMIN", 0L)
+	            );
+	        });
 	}
 
 }

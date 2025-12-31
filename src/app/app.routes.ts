@@ -6,5 +6,6 @@ export const routes: Routes = [
         path: 'auth',
         loadChildren: () => import('./modules/auth/auth-module').then(m => m.AuthModule),
     },
-    { path: 'tickets', loadChildren: () => import('./modules/tickets/tickets-module').then(m => m.TicketsModule) }
+    { path: 'tickets', loadChildren: () => import('./modules/tickets/tickets-module').then(m => m.TicketsModule) },
+    {path:'sla-rules',loadChildren:()=>import('./modules/sla-rules/sla-rules-module').then(m=>m.SlaRulesModule)}
 ];

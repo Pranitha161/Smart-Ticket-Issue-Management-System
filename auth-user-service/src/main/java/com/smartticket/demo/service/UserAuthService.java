@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.smartticket.demo.entity.AuthResponse;
 import com.smartticket.demo.entity.LoginRequest;
+import com.smartticket.demo.dto.UserStatsDto;
 import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.User;
 
@@ -33,6 +34,8 @@ public interface UserAuthService {
 
 	Mono<ApiResponse> deleteUserById(String id);
 
-	Mono<String> getUserEmail(String id); 
+	Mono<String> getUserEmail(String id);
+
+	Mono<UserStatsDto> getUserStats(); 
 
 }

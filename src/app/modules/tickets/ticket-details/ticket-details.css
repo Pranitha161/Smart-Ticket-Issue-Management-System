@@ -1,0 +1,94 @@
+.ticket-detail-wrapper {
+  background-color: #f9fafb;
+  min-height: 80vh;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
+}
+.back-btn {
+  color: #1a1a1a;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.ticket-header h1 {
+  font-size: 2rem;
+  /* font-weight: 800; */
+  margin-bottom: 0;
+}
+
+.created-at {
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+
+/* Card Styling */
+.detail-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #eaecf0;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+/* Sidebar Labels */
+.meta-label {
+  color: #667085;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 16px;
+  margin-bottom: 4px;
+}
+
+.meta-value {
+  font-weight: 500;
+  color: #101828;
+}
+
+/* Badges */
+.badge-pill {
+  padding: 4px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.bg-in-progress { background-color: #fef9c3; color: #856404; }
+.bg-high        { background-color: #fee4e2; color: #b42318; }
+
+/* Tags */
+.tag {
+  background: #f2f4f7;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  margin-right: 8px;
+}
+
+/* Activity & Comment Area */
+.comment-box {
+  background: #f2f4f7;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.btn-comment {
+  background-color: #6c757d;
+  color: white;
+  border-radius: 8px;
+  border: none;
+  padding: 8px 16px;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .ticket-header h1 { font-size: 1.5rem; }
+}

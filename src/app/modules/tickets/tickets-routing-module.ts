@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TicketList } from './ticket-list/ticket-list';
 
 const routes: Routes = [ 
-  { path: '', component: TicketList }, 
-   { path: 'create', loadComponent: () => import('./ticket-form/ticket-form').then(m => m.TicketForm) }
-  //  { path: ':id', component: TicketDetailComponent } 
+  { path: '', loadComponent:()=>import('./ticket-list/ticket-list').then(m=>m.TicketList) }, 
+   { path: 'create', loadComponent: () => import('./ticket-form/ticket-form').then(m => m.TicketForm) },
+   { path: ':id', loadComponent:()=>import('./ticket-details/ticket-details').then(m=>m.TicketDetails) } 
   ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

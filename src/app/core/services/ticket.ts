@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 export class TicketService {
   private baseUrl = 'http://localhost:8765/ticket-service/tickets';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Create Ticket
   createTicket(ticket: any): Observable<any> {
@@ -51,5 +51,13 @@ export class TicketService {
   // Delete ticket
   deleteTicket(id: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
+  }
+
+  getTicketActivity(ticketId: string): Observable<any[]> { 
+    return this.http.get<any[]>(`${this.baseUrl}/${ticketId}/activity`); 
+  } 
+  
+  addTicketComment(ticketId: string, actorId: string, comment: string): Observable<any> { 
+    return this.http.post<any>(`${this.baseUrl}/${ticketId}/activity/comment`, null, { params: { actorId, comment } }); 
   }
 }

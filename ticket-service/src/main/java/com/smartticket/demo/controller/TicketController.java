@@ -3,7 +3,6 @@ package com.smartticket.demo.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.smartticket.demo.dto.CategorySummaryDto;
 import com.smartticket.demo.dto.PrioritySummaryDto;
 import com.smartticket.demo.dto.StatusSummaryDto;
+import com.smartticket.demo.dto.UserTicketStatsDto;
 import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.Ticket;
 import com.smartticket.demo.service.implementation.TicketServiceImplementation;
@@ -106,6 +106,28 @@ public class TicketController {
 	@GetMapping("/category-summary")
 	public Mono<List<CategorySummaryDto>> getCategorySummary() {
 		return ticketService.getCategorySummary();
+	}
+
+	@GetMapping("/user/{userId}/stats")
+	public Mono<ResponseEntity<UserTicketStatsDto>> getUserStats(@PathVariable String userId) {
+		return ticketService.getUserStats(userId).map(ResponseEntity::ok)
+				.defaultIfEmpty(ResponseEntity.notFound().build());
+	}
+	
+	@GetMapping("/user/stats")
+	public Mono<ResponseEntity<UserTicketStatsDto>> getGlobalStats() {
+		return ticketService.getGlobalStats().map(ResponseEntity::ok)
+				.defaultIfEmpty(ResponseEntity.notFound().build());
+	}
+
+	@GetMapping("/recent")
+	public Mono<List<Ticket>> getRecentTickets() {
+		return ticketService.getRecentTickets();
+	}
+
+	@GetMapping("/recent/{userId}")
+	public Mono<List<Ticket>>  getRecentTicketsByUser(@PathVariable String userId) {
+		return ticketService.getRecentTicketsByUser(userId);
 	}
 
 }

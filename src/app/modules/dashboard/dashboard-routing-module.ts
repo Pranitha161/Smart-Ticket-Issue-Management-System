@@ -6,8 +6,9 @@ import { Dashboard } from './dashboard/dashboard';
 const routes: Routes = [
   { path: '',  
     component: Dashboard, 
-    canActivate: [roleGuard], 
-    data: { roles: ['ADMIN', 'MANAGER'] } }
+    // canActivate: [roleGuard], 
+    // data: { roles: ['ADMIN', 'MANAGER'] }
+   }
 ];
 
 @NgModule({

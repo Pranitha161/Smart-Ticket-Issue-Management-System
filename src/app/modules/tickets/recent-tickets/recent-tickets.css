@@ -1,0 +1,39 @@
+.recent-tickets {
+  background: #fff;
+  border-radius: 16px;
+}
+
+.ticket-item {
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+.ticket-item:hover {
+  background-color: #fafafa;
+}
+
+.badge-custom {
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+.badge-priority.high { background-color: #ffedd5; color: #9a3412; }
+.badge-priority.medium { background-color: #fef9c3; color: #854d0e; }
+
+
+.badge-status.in-progress { background-color: #fef9c3; color: #854d0e; }
+.badge-status.assigned { background-color: #dbeafe; color: #1e40af; }
+
+@media (max-width: 576px) {
+  .ticket-item .card-body {
+    padding: 0.75rem;
+  }
+  .badge-custom {
+    padding: 2px 8px;
+    font-size: 0.7rem;
+  }
+}

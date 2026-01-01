@@ -7,5 +7,6 @@ export const routes: Routes = [
         loadChildren: () => import('./modules/auth/auth-module').then(m => m.AuthModule),
     },
     { path: 'tickets', loadChildren: () => import('./modules/tickets/tickets-module').then(m => m.TicketsModule) },
-    {path:'sla-rules',loadChildren:()=>import('./modules/sla-rules/sla-rules-module').then(m=>m.SlaRulesModule)}
+    {path:'sla-rules',loadChildren:()=>import('./modules/sla-rules/sla-rules-module').then(m=>m.SlaRulesModule)},
+    {path:'dashboard',loadChildren:()=>import('./modules/dashboard/dashboard-module').then(m=>m.DashboardModule)}
 ];

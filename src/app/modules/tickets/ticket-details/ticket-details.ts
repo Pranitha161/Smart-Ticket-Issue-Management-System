@@ -23,14 +23,12 @@ export class TicketDetails implements OnInit {
     const id = this.route.snapshot.paramMap.get('id')!;
     this.ticketService.getTicketById(id).subscribe(res =>{
       this.ticket = res;
-      this.cd.detectChanges();
     }
     );
     this.ticketService.getTicketActivity(id).subscribe(res => {
       this.activities = Array.isArray(res) ? res : [res];
-        this.cd.detectChanges();
     });
-  
+    this.cd.detectChanges();
   }
 
   addComment(): void {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { PrioritySummaryDto, StatusSummaryDto, Ticket, UserTicketStats } from '../../shared/models/ticket.model';
 
 @Injectable({ providedIn: 'root' })
 export class TicketService {
@@ -8,56 +9,76 @@ export class TicketService {
 
   constructor(private http: HttpClient) { }
 
-  // Create Ticket
   createTicket(ticket: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/create`, ticket);
   }
 
-  // Get all tickets
   getTickets(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}`);
   }
 
-  // Get tickets by userId
   getTicketsByUserId(userId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/user/${userId}`);
   }
 
-  // Get ticket by id
   getTicketById(id: string): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/${id}`);
   }
 
-  // Update ticket
   updateTicket(id: string, ticket: any): Observable<any> {
     return this.http.put(`${this.baseUrl}/${id}`, ticket);
   }
 
-  // Close ticket
   closeTicket(id: string): Observable<any> {
     return this.http.put(`${this.baseUrl}/${id}/close`, {});
   }
 
-  // Resolve ticket
   resolveTicket(id: string): Observable<any> {
     return this.http.put(`${this.baseUrl}/${id}/resolve`, {});
   }
 
-  // Reopen ticket
   reopenTicket(id: string): Observable<any> {
     return this.http.put(`${this.baseUrl}/${id}/reopen`, {});
   }
 
-  // Delete ticket
   deleteTicket(id: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
 
-  getTicketActivity(ticketId: string): Observable<any[]> { 
-    return this.http.get<any[]>(`${this.baseUrl}/${ticketId}/activity`); 
-  } 
-  
-  addTicketComment(ticketId: string, actorId: string, comment: string): Observable<any> { 
-    return this.http.post<any>(`${this.baseUrl}/${ticketId}/activity/comment`, null, { params: { actorId, comment } }); 
+  getTicketActivity(ticketId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/${ticketId}/activity`);
   }
+
+  addTicketComment(ticketId: string, actorId: string, comment: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/${ticketId}/activity/comment`, null, { params: { actorId, comment } });
+  }
+
+  getUserStats(userId: string): Observable<UserTicketStats> {
+    return this.http.get<UserTicketStats>(`${this.baseUrl}/user/${userId}/stats`);
+  }
+
+  getGlobalStats(): Observable<UserTicketStats> { 
+    return this.http.get<UserTicketStats>(`${this.baseUrl}/user/stats`); 
+  }
+
+  getStatusSummary(): Observable<StatusSummaryDto[]> {
+    return this.http.get<StatusSummaryDto[]>(`${this.baseUrl}/status-summary`);
+  }
+
+  getPrioritySummary(): Observable<PrioritySummaryDto[]> {
+    return this.http.get<PrioritySummaryDto[]>(`${this.baseUrl}/status-priority-summary`);
+  }
+  getRecentTickets(): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.baseUrl}/recent`);
+  }
+
+  getRecentTicketsByUser(userId: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.baseUrl}/recent/${userId}`);
+  }
+
+  getRecentTicketsByAgent(agentId: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.baseUrl}/recent/agent/${agentId}`);
+  }
+
+
 }

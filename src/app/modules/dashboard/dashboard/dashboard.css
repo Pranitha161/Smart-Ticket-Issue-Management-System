@@ -1,0 +1,65 @@
+/* Base Card Styling */
+.stat-card {
+  background: #fff;
+  border-radius: 12px; /* Slightly rounder like the inspo */
+  padding: 1.25rem;
+  height: 100%;
+  border: 1px solid #f0f0f0; 
+  background-clip: padding-box;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+/* Accent Borders (Left Side) */
+.border-secondary-thick { border-left: 5px solid #6c757d !important; }
+.border-primary-thick   { border-left: 5px solid #0d6efd !important; }
+.border-success-thick   { border-left: 5px solid #198754 !important; }
+.border-danger-thick    { border-left: 5px solid #dc3545 !important; }
+
+/* Text Styling */
+.stat-label {
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+/* Mobile Responsive Tweaks */
+@media (max-width: 576px) {
+  .stat-card {
+    padding: 1rem;
+  }
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  .stat-label {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem !important;
+  }
+}
+
+
+.stat-card:hover {
+  /* Lifts the card up by 5 pixels */
+  transform: translateY(-5px);
+  
+  /* Adds a more pronounced shadow to simulate depth */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12) !important;
+  
+  /* Optional: slightly brighten the left border color */
+  filter: brightness(1.02);
+}
+
+/* Mobile optimization: Disable hover on touch devices to prevent "sticky" clicks */
+@media (hover: none) {
+  .stat-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}

@@ -1,1 +1,106 @@
-<p>dashboard works!</p>
+<!-- <div class="row g-3 mb-4" *ngIf="stats">
+  <div class="col-6 col-lg-3">
+    <div class="stat-card shadow-sm">
+      <div class="stat-value">{{ stats.total }}</div>
+      <div class="stat-label">Total Tickets</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card shadow-sm">
+      <div class="stat-value">{{ stats.open }}</div>
+      <div class="stat-label">Open Tickets</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card shadow-sm">
+      <div class="stat-value">{{ stats.resolved }}</div>
+      <div class="stat-label">Resolved Tickets</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card shadow-sm">
+      <div class="stat-value">{{ stats.critical }}</div>
+      <div class="stat-label">Critical Tickets</div>
+    </div>
+  </div>
+  <app-ticket-list></app-ticket-list>
+</div> -->
+<div class="row g-3 p-3 mb-4" *ngIf="stats">
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="stat-card shadow-sm border-secondary-thick">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <h6 class="stat-label mb-3">Total Tickets</h6>
+          <div class="stat-value">{{ stats.total }}</div>
+          <small class="text-muted">All time tickets</small>
+        </div>
+        <i class="bi bi-ticket-perforated text-muted fs-4"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="stat-card shadow-sm border-primary-thick">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <h6 class="stat-label mb-3">Open Tickets</h6>
+          <div class="stat-value">{{ stats.open }}</div>
+          <small class="text-muted">Currently active</small>
+        </div>
+        <i class="bi bi-clock text-muted fs-4"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="stat-card shadow-sm border-success-thick">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <h6 class="stat-label mb-3">Resolved</h6>
+          <div class="stat-value">{{ stats.resolved }}</div>
+          <small class="text-muted">Successfully resolved</small>
+        </div>
+        <i class="bi bi-check2-circle text-muted fs-4"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="stat-card shadow-sm border-danger-thick">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <h6 class="stat-label mb-3">Critical Issues</h6>
+          <div class="stat-value">{{ stats.critical }}</div>
+          <small class="text-muted">Needs immediate attention</small>
+        </div>
+        <i class="bi bi-exclamation-circle text-muted fs-4"></i>
+      </div>
+    </div>
+  </div>
+ 
+
+
+
+<!-- Charts for ADMIN / MANAGER -->
+<div class="row mt-4" *ngIf="role === 'ADMIN' || role === 'MANAGER'">
+  <div class="col-md-6">
+    <h5>Tickets by Status</h5>
+    <canvas baseChart
+      [data]="statusChartData"
+      [options]="statusChartOptions"
+      [type]="'bar'">
+    </canvas>
+  </div>
+  <div class="col-md-6">
+    <h5>Tickets by Priority</h5>
+    <canvas baseChart
+      [data]="priorityChartData"
+      [options]="priorityChartOptions"
+      [type]="'pie'">
+    </canvas>
+  </div>
+</div>
+
+  <app-recent-tickets></app-recent-tickets>
+
+</div>

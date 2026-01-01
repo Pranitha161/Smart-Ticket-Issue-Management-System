@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import com.smartticket.demo.dto.CategorySummaryDto;
 import com.smartticket.demo.dto.PrioritySummaryDto;
 import com.smartticket.demo.dto.StatusSummaryDto;
+import com.smartticket.demo.dto.UserTicketStatsDto;
 import com.smartticket.demo.entity.Ticket;
 import com.smartticket.demo.entity.TicketActivity;
 import com.smartticket.demo.enums.ACTION_TYPE;
+import com.smartticket.demo.enums.PRIORITY;
 import com.smartticket.demo.enums.STATUS;
 import com.smartticket.demo.producer.TicketEventProducer;
 import com.smartticket.demo.repository.TicketActivityRepository;
@@ -146,9 +148,79 @@ public class TicketServiceImplementation implements TicketService {
 	public Mono<List<PrioritySummaryDto>> prioritySummary() {
 		return ticketRepo.getPrioritySummary().collectList();
 	}
-
+	
+	@Override
 	public Mono<List<CategorySummaryDto>> getCategorySummary() {
 		return ticketRepo.getCategorySummary().collectList();
 	}
+	
+	@Override
+	public Mono<UserTicketStatsDto> getUserStats(String userId) {
+	    Mono<Long> total = ticketRepo.findByCreatedBy(userId).count();
+	    Mono<Long> open = ticketRepo.getStatusSummaryByUserId(userId)
+	            .filter(s -> s.getStatus() == STATUS.OPEN)
+	            .map(StatusSummaryDto::getCount)
+	            .next()
+	            .defaultIfEmpty(0L);
+	    Mono<Long> resolved = ticketRepo.getStatusSummaryByUserId(userId)
+	            .filter(s -> s.getStatus() == STATUS.RESOLVED)
+	            .map(StatusSummaryDto::getCount)
+	            .next()
+	            .defaultIfEmpty(0L);
+	    Mono<Long> critical = ticketRepo.getPrioritySummaryByUserId(userId)
+	            .filter(p -> p.getPriority() == PRIORITY.CRITICAL)
+	            .map(PrioritySummaryDto::getCount)
+	            .next()
+	            .defaultIfEmpty(0L);
+
+	    return Mono.zip(total, open, resolved, critical)
+	            .map(tuple -> new UserTicketStatsDto(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()));
+	}
+	@Override
+	public Mono<UserTicketStatsDto> getGlobalStats() {
+	    
+	        // Admin case → stats across all tickets
+	        Mono<Long> total = ticketRepo.count();
+
+	        Mono<Long> open = ticketRepo.getStatusSummary()
+	            .filter(s -> s.getStatus().equals(STATUS.OPEN))
+	            .map(StatusSummaryDto::getCount)
+	            .next()
+	            .defaultIfEmpty(0L);
+
+	        Mono<Long> resolved = ticketRepo.getStatusSummary()
+	            .filter(s -> s.getStatus().equals(STATUS.RESOLVED))
+	            .map(StatusSummaryDto::getCount)
+	            .next()
+	            .defaultIfEmpty(0L);
+
+	        Mono<Long> critical = ticketRepo.getPrioritySummary()
+	            .filter(p -> p.getPriority().equals(PRIORITY.CRITICAL))
+	            .map(PrioritySummaryDto::getCount)
+	            .next()
+	            .defaultIfEmpty(0L);
+
+	        return Mono.zip(total, open, resolved, critical)
+	            .map(tuple -> new UserTicketStatsDto(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()));
+	  
+	}
+
+	
+	@Override
+	public Mono<List<Ticket>> getRecentTickets() { 
+		return ticketRepo.findTop5ByOrderByCreatedAtDesc().collectList(); 
+	} 
+	
+	@Override
+	public Mono<List<Ticket>> getRecentTicketsByUser(String userId) { 
+		return ticketRepo.findTop5ByCreatedByOrderByCreatedAtDesc(userId).collectList(); 
+	}
+	
+	@Override
+	public Mono<List<Ticket>> getRecentTicketsByAgent(String agentId) {
+	    return ticketRepo.findTop5ByAssignedToOrderByCreatedAtDesc(agentId).collectList();
+	}
+
+
 
 }

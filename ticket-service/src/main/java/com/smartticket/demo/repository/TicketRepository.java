@@ -19,6 +19,12 @@ public interface TicketRepository extends ReactiveMongoRepository<Ticket, String
 
 	Mono<Ticket> findByCategoryId(String categoryId);
 
+	Flux<Ticket> findTop5ByOrderByCreatedAtDesc();
+
+	Flux<Ticket> findTop5ByCreatedByOrderByCreatedAtDesc(String createdBy);
+	
+	Flux<Ticket> findTop5ByAssignedToOrderByCreatedAtDesc(String agentId);
+
 	@Aggregation(pipeline = { "{ $group: { _id: '$status', count: { $sum: 1 } } }",
 			"{ $project: { status: '$_id', count: 1, _id: 0 } }" })
 	Flux<StatusSummaryDto> getStatusSummary();
@@ -26,12 +32,17 @@ public interface TicketRepository extends ReactiveMongoRepository<Ticket, String
 	@Aggregation(pipeline = { "{ $group: { _id: '$priority', count: { $sum: 1 } } }",
 			"{ $project: { priority: '$_id', count: 1, _id: 0 } }" })
 	Flux<PrioritySummaryDto> getPrioritySummary();
-	
-	@Aggregation(pipeline = {
-		    "{ $group: { _id: '$categoryId', count: { $sum: 1 } } }",
-		    "{ $project: { categoryId: '$_id', count: 1, _id: 0 } }"
-		})
-		Flux<CategorySummaryDto> getCategorySummary();
 
+	@Aggregation(pipeline = { "{ $group: { _id: '$categoryId', count: { $sum: 1 } } }",
+			"{ $project: { categoryId: '$_id', count: 1, _id: 0 } }" })
+	Flux<CategorySummaryDto> getCategorySummary();
+
+	@Aggregation(pipeline = { "{ $match: { createdBy: ?0 } }", "{ $group: { _id: '$status', count: { $sum: 1 } } }",
+			"{ $project: { status: '$_id', count: 1, _id: 0 } }" })
+	Flux<StatusSummaryDto> getStatusSummaryByUserId(String userId);
+
+	@Aggregation(pipeline = { "{ $match: { createdBy: ?0 } }", "{ $group: { _id: '$priority', count: { $sum: 1 } } }",
+			"{ $project: { priority: '$_id', count: 1, _id: 0 } }" })
+	Flux<PrioritySummaryDto> getPrioritySummaryByUserId(String userId);
 
 }

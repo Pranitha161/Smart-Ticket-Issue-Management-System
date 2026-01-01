@@ -2,8 +2,10 @@ package com.smartticket.demo.service;
 
 import java.util.List;
 
+import com.smartticket.demo.dto.CategorySummaryDto;
 import com.smartticket.demo.dto.PrioritySummaryDto;
 import com.smartticket.demo.dto.StatusSummaryDto;
+import com.smartticket.demo.dto.UserTicketStatsDto;
 import com.smartticket.demo.entity.Ticket;
 
 import reactor.core.publisher.Flux;
@@ -32,5 +34,17 @@ public interface TicketService {
 	Mono<List<StatusSummaryDto>> statusSummary();
 
 	Mono<List<PrioritySummaryDto>> prioritySummary();
+
+	Mono<UserTicketStatsDto> getUserStats(String userId);
+
+	Mono<List<CategorySummaryDto>> getCategorySummary();
+
+	Mono<List<Ticket>> getRecentTickets();
+
+	Mono<List<Ticket>> getRecentTicketsByUser(String userId);
+
+	Mono<List<Ticket>> getRecentTicketsByAgent(String agentId);
+
+	Mono<UserTicketStatsDto> getGlobalStats();
 
 }

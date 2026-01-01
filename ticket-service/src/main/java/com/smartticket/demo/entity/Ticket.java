@@ -28,7 +28,8 @@ public class Ticket {
 	private String categoryId;
 	private STATUS status; 
 	private PRIORITY priority;						
-	private String createdBy; 						
+	private String createdBy; 	
+	private String assignedTo;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 }

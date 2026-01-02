@@ -72,7 +72,7 @@ public class AssignmentController {
 	@PostMapping("/{ticketId}/auto")
 	public Mono<ResponseEntity<Assignment>> autoAssign(@PathVariable String ticketId) {
 		return assignmentService.autoAssign(ticketId).map(ResponseEntity::ok)
-				.onErrorResume(e -> Mono.just(ResponseEntity.badRequest().build()));
+		;
 	}
 
 	@GetMapping("/agent-summary")

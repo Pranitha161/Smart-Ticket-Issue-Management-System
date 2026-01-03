@@ -24,7 +24,7 @@ public class TicketActivityServiceImplementation {
 
 	public Mono<TicketActivity> log(String ticketId, String actorId, ACTION_TYPE type, String details,
 			Instant timestamp) {
-		TicketActivity activity = TicketActivity.builder().id(ticketId).actorId(actorId).actionType(type)
+		TicketActivity activity = TicketActivity.builder().ticketId(ticketId).actorId(actorId).actionType(type)
 				.details(details).timestamp(timestamp != null ? timestamp : Instant.now()).build();
 
 		return ticketActivityRepo.save(activity);
@@ -38,7 +38,7 @@ public class TicketActivityServiceImplementation {
 	    return ticketActivityRepo.findAll()
 	        .filter(activity -> activity.getActionType() == ACTION_TYPE.RESOLVED)
 	        .flatMap(closed -> ticketActivityRepo.findByTicketId(closed.getTicketId())
-	            .filter(act -> act.getActionType() == ACTION_TYPE.ASSIGNMENT)
+	            .filter(act -> act.getActionType() == ACTION_TYPE.ASSIGNED)
 	            .next()
 	            .map(created -> {
 	                long resolutionMinutes = Duration.between(created.getTimestamp(), closed.getTimestamp()).toMinutes();

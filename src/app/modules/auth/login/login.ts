@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core'; // Added inject
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
+import { Toast } from '../../../core/services/toast';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -13,7 +14,7 @@ import { CommonModule } from '@angular/common';
 })
 export class Login implements OnInit {
   loginForm!: FormGroup;
-  message = '';
+  private toast = inject(Toast);
 
   constructor(
     private fb: FormBuilder,
@@ -37,18 +38,17 @@ export class Login implements OnInit {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (res: any) => {
-          console.log(res);
           if (res.message) {
             this.authService.setToken(res.message);
+            this.toast.show('Login successful! Redirecting...', 'success');
             this.router.navigate(['/tickets']);
           } else {
-            this.message = 'Login failed. No token received.';
+            this.toast.show('Login failed. No token received.', 'error');
           }
-        },
-        error: (err) => {
-          this.message = err.error?.message || 'Invalid email or password.';
         }
       });
+    } else {
+      this.toast.show('Please fill in all required fields.', 'error');
     }
   }
 }

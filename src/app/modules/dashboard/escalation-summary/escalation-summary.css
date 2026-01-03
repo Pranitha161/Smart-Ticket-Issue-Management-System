@@ -1,0 +1,8 @@
+/* src/app/modules/dashboard/escalation-summary/escalation-summary.component.css */
+.card {
+  border-radius: 8px;
+}
+
+.list-group-item {
+  font-size: 0.95rem;
+}

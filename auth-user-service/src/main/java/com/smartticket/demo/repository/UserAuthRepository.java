@@ -1,7 +1,5 @@
 package com.smartticket.demo.repository;
 
-import java.util.List;
-
 import org.bson.Document;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
@@ -20,6 +18,8 @@ public interface UserAuthRepository extends ReactiveMongoRepository<User, String
 	Mono<User> findByUsername(String username);
 	
 	Mono<User> findByResetToken(String token);
+	
+	Flux<User> findByRolesContainingAndAgentProfileCategoryId(String role, String category);
 	
 	@Aggregation(pipeline = { "{ $count: 'totalUsers' }" })
 	Flux<Document> countTotalUsers();

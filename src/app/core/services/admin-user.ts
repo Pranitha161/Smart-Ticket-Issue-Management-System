@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
+export interface AgentProfile { agentLevel: string; category: string; skills: string[]; currentAssignments: number; }
 export interface User {
   id: string;
   displayId: string;
@@ -10,6 +12,7 @@ export interface User {
   username: string;
   enabled: boolean;
   roles: string[];
+  agentProfile?: AgentProfile;
 }
 export interface CreateUserRequest {
   username: string;
@@ -31,11 +34,11 @@ export interface UserStatsDto {
   providedIn: 'root'
 })
 export class AdminUser {
-  private baseUrl = 'http://localhost:8765/auth-user-service';
+  private baseUrl = `${environment.apiGatewayUrl}${environment.endpoints.auth}`;
 
   constructor(private http: HttpClient) { }
 
-  getAllUsers(): Observable<User[]> {
+  getAllUsers(options: any = {}): Observable<User[]> {
     return this.http.get<User[]>(`${this.baseUrl}/users`);
   }
 
@@ -58,4 +61,39 @@ export class AdminUser {
   getUserStats(): Observable<UserStatsDto> {
     return this.http.get<UserStatsDto>(`${this.baseUrl}/auth/users/stats`);
   }
+
+  getAgentsByCategory(categoryId: string): Observable<any[]> {
+  return this.http.get<any[]>(`${this.baseUrl}/agents?category=${categoryId}`);
+}
+  changePassword(userName: string, oldPassword: string, newPassword: string): Observable<any> {
+  return this.http.post<any>(
+    `${this.baseUrl}/auth/change-password`,
+    null, 
+    {
+      params: {
+        userName: userName,
+        oldPassword: oldPassword,
+        newPassword: newPassword
+      }
+    }
+  );
+}
+
+requestPasswordReset(email: string): Observable<any> {
+  return this.http.post<any>(
+    `${this.baseUrl}/auth/request-reset`,
+    null,
+    { params: { email } }
+  );
+}
+
+resetPassword(token: string, newPassword: string): Observable<any> {
+  return this.http.post<any>(
+    `${this.baseUrl}/auth/reset-password`,
+    null,
+    { params: { token, newPassword } }
+  );
+}
+
+
 }

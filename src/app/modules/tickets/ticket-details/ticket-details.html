@@ -36,7 +36,7 @@
     <div class="col-lg-8">
       <div class="detail-card">
         <h4 class="fw-bold mb-4">{{ ticket?.title }}</h4>
-        
+
         <div class="section-title">Description</div>
         <p class="text-muted mb-4">{{ ticket?.description }}</p>
 
@@ -49,21 +49,22 @@
 
       <div class="detail-card">
         <div class="section-title mb-4">Activity</div>
-        
+
         <div *ngIf="activities.length === 0" class="text-center py-5">
           <p class="text-muted">No activity yet</p>
         </div>
 
         <div class="timeline" *ngIf="activities.length > 0">
-           <div *ngFor="let act of activities" class="mb-3 pb-3 border-bottom">
-             <div class="fw-bold">{{ act.actionType }}</div>
-             <small class="text-muted">{{ act.timestamp | date:'short' }}</small>
-           </div>
+          <div *ngFor="let act of activities" class="mb-3 pb-3 border-bottom">
+            <div class="fw-bold">{{ act?.actionType }}</div>
+            <div>{{ act?.details }}</div>
+            <small class="text-muted">{{ act?.timestamp | date:'short' }}</small>
+          </div>
         </div>
 
         <div class="mt-4">
-          <textarea [(ngModel)]="newComment" class="form-control comment-box" 
-                    rows="3" placeholder="Add a comment..."></textarea>
+          <textarea [(ngModel)]="newComment" class="form-control comment-box" rows="3"
+            placeholder="Add a comment..."></textarea>
           <div class="d-flex justify-content-start mt-3">
             <button class="btn btn-comment" (click)="addComment()">
               <i class="bi bi-send me-2"></i> Add Comment
@@ -84,23 +85,26 @@
         <div class="badge-pill bg-high">{{ ticket?.priority?.toLowerCase() || 'high' }}</div>
 
         <div class="meta-label">Category</div>
-        <div class="meta-value">{{ ticket?.categoryId || 'Technical' }}</div>
+        <div class="meta-value">{{ ticket?.categoryName }}</div>
 
         <hr class="my-4">
 
         <div class="d-flex align-items-center mb-3">
           <i class="bi bi-person me-2 text-muted"></i>
           <div>
-            <div class="meta-label mt-0">Created By</div>
-            <div class="meta-value">{{ ticket?.createdBy || 'user@ticket.com' }}</div>
+            <div class="meta-label">Created By</div>
+            <div class="meta-value">{{ ticket?.createdByName }}</div>
+            <span>{{ticket?.createdByEmail}}</span>
           </div>
         </div>
 
         <div class="d-flex align-items-center mb-3">
           <i class="bi bi-person-check me-2 text-muted"></i>
           <div>
-            <div class="meta-label mt-0">Assigned To</div>
-            <div class="meta-value">{{ ticket?.assignedTo || 'agent@ticket.com' }}</div>
+            <div class="meta-label">Assigned To</div>
+            <div class="meta-value">{{ ticket?.assignedToName }}</div>
+            <span>{{ticket?.assignedToEmail}}</span>
+            
           </div>
         </div>
 

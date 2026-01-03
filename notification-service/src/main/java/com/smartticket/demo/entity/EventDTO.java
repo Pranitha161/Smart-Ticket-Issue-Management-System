@@ -8,8 +8,10 @@ public class EventDTO {
 	private String eventId;
 	private String eventType;
 	private String timestamp;
-
+	
+	private String creatorId;
 	private String userId;
+	private String agentId;
 	private String email;
 	private String username;
 	private String ticketId;

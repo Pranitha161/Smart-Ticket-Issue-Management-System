@@ -15,10 +15,12 @@ import com.smartticket.demo.enums.ASSIGNMENT_TYPE;
 import com.smartticket.demo.enums.PRIORITY;
 import com.smartticket.demo.enums.STATUS;
 import com.smartticket.demo.feign.TicketClient;
+import com.smartticket.demo.feign.UserClient;
 import com.smartticket.demo.producer.AssignmentEscalationEventProducer;
 import com.smartticket.demo.repository.AssignmentRepository;
 import com.smartticket.demo.repository.SlaRuleRepository;
 import com.smartticket.demo.service.AssignmentService;
+import com.smartticket.demo.service.RuleEngine;
 
 import jakarta.annotation.PostConstruct;
 import reactor.core.publisher.Flux;
@@ -29,34 +31,68 @@ import reactor.core.scheduler.Schedulers;
 public class AssignmentServiceImplementation implements AssignmentService {
 
 	private final AssignmentRepository assignmentRepo;
+	private final RuleEngine ruleEngine;
 	private final SlaRuleRepository slaRuleRepo;
 	private final TicketClient ticketClient;
+	private final UserClient userClient;
 	private final AssignmentEscalationEventProducer assignmentEscalationEventProducer;
 
 	AssignmentServiceImplementation(AssignmentRepository assignmentRepo, SlaRuleRepository slaRuleRepo,
-			TicketClient ticketClient, AssignmentEscalationEventProducer assignmentEscalationEventProducer) {
+			TicketClient ticketClient, AssignmentEscalationEventProducer assignmentEscalationEventProducer,
+			RuleEngine ruleEngine,UserClient userClient) {
 		this.assignmentRepo = assignmentRepo;
 		this.slaRuleRepo = slaRuleRepo;
+		this.ruleEngine = ruleEngine;
 		this.ticketClient = ticketClient;
+		this.userClient=userClient;
 		this.assignmentEscalationEventProducer = assignmentEscalationEventProducer;
 	}
 
 	@Override
 	public Mono<Assignment> manualAssign(String ticketId, String agentId, PRIORITY priority) {
-		return Mono.fromCallable(() -> ticketClient.getTicketById(ticketId)).subscribeOn(Schedulers.boundedElastic())
-				.filter(ticket -> ticket.getStatus() != STATUS.CLOSED)
-				.switchIfEmpty(Mono.error(new RuntimeException("Ticket is not assignable")))
-				.flatMap(ticket -> slaRuleRepo.findByPriority(priority))
-				.switchIfEmpty(Mono.error(new RuntimeException("No SLA rule for " + priority))).flatMap(rule -> {
-					Instant now = Instant.now();
-					Assignment assignment = Assignment.builder().ticketId(ticketId).agentId(agentId).assignedAt(now)
-							.dueAt(now.plus(Duration.ofMinutes(rule.getResolutionMinutes())))
-							.status(ASSIGNMENT_STATUS.ASSIGNED).type(ASSIGNMENT_TYPE.MANUAL).breached(false)
-							.escalationLevel(0).build();
-					return assignmentRepo.save(assignment).doOnSuccess(saved -> assignmentEscalationEventProducer
-							.publishAssignmentEvent(saved.getTicketId(), saved.getAgentId(), "ASSIGNED"));
-				});
+	    return Mono.fromCallable(() -> ticketClient.getTicketById(ticketId))
+	        .subscribeOn(Schedulers.boundedElastic())
+	        .flatMap(ticket -> {
+	            if (ticket == null) {
+	                return Mono.error(new RuntimeException("Ticket not found: " + ticketId));
+	            }
+	            if (ticket.getStatus() == STATUS.CLOSED) {
+	                return Mono.error(new RuntimeException("Ticket is already closed and cannot be assigned"));
+	            }
+	            if (ticket.getStatus() == STATUS.ASSIGNED) {
+	                return Mono.error(new RuntimeException("Ticket is already assigned to an agent"));
+	            }
+	           
+//	            if (userClient.getAgentById(agentId) == null) {
+//	                return Mono.error(new RuntimeException("Agent not found: " + agentId));
+//	            }
+	            return slaRuleRepo.findByPriority(priority)
+	                .switchIfEmpty(Mono.error(new RuntimeException("No SLA rule for " + priority)))
+	                .flatMap(rule -> {
+	                    Instant now = Instant.now();
+	                    Assignment assignment = Assignment.builder()
+	                        .ticketId(ticketId)
+	                        .agentId(agentId)
+	                        .assignedAt(now)
+	                        .dueAt(now.plus(Duration.ofMinutes(rule.getResolutionMinutes())))
+	                        .status(ASSIGNMENT_STATUS.ASSIGNED)
+	                        .type(ASSIGNMENT_TYPE.MANUAL)
+	                        .breached(false)
+	                        .escalationLevel(0)
+	                        .build();
+
+	                    return assignmentRepo.save(assignment)
+	                        .doOnSuccess(saved -> {
+	                            assignmentEscalationEventProducer.publishAssignmentEvent(
+	                                saved.getTicketId(), saved.getAgentId(), "ASSIGNED"
+	                            );
+	                            userClient.incrementAssignments(saved.getAgentId());
+	                            ticketClient.assignTicket(saved.getTicketId());
+	                        });
+	                });
+	        });
 	}
+
 
 	@Override
 	public Mono<Assignment> completeAssignment(String ticketId) {
@@ -71,7 +107,7 @@ public class AssignmentServiceImplementation implements AssignmentService {
 					}
 					assignment.setStatus(ASSIGNMENT_STATUS.COMPLETED);
 					assignment.setUnassignedAt(Instant.now());
-					return assignmentRepo.save(assignment);
+					return assignmentRepo.save(assignment).doOnSuccess(saved -> { userClient.decrementAssignments(saved.getAgentId()); ticketClient.resolveTicket(saved.getTicketId()); });
 				});
 	}
 
@@ -86,57 +122,125 @@ public class AssignmentServiceImplementation implements AssignmentService {
 	}
 
 	private Mono<Assignment> checkAndEscalate(Assignment assignment) {
-		Instant now = Instant.now();
-		if (assignment.getDueAt() != null && now.isAfter(assignment.getDueAt())) {
-			assignment.setBreached(true);
-			assignment.setBreachedAt(now);
-			assignment.setStatus(ASSIGNMENT_STATUS.ESCALATED);
-			assignment.setEscalationLevel(assignment.getEscalationLevel() + 1);
-			return assignmentRepo.save(assignment).doOnSuccess(saved -> assignmentEscalationEventProducer
-					.publishEscalationEvent(saved.getTicketId(), saved.getAgentId(), saved.getEscalationLevel()));
-		}
-		return Mono.just(assignment);
+	    Instant now = Instant.now();
+	    if (assignment.getDueAt() != null && now.isAfter(assignment.getDueAt())) {
+	        if (assignment.getEscalationLevel() < 3) {
+	            assignment.setBreached(true);
+	            assignment.setBreachedAt(now);
+	            assignment.setStatus(ASSIGNMENT_STATUS.ESCALATED);
+	            assignment.setEscalationLevel(assignment.getEscalationLevel() + 1);
+
+	            return assignmentRepo.save(assignment).doOnSuccess(saved -> {
+	                assignmentEscalationEventProducer.publishEscalationEvent(
+	                    saved.getTicketId(), saved.getAgentId(), saved.getEscalationLevel()
+	                );
+	                ticketClient.logActivity(
+                            saved.getTicketId(),
+                            saved.getAgentId(),
+                            "ESCALATED Ticket escalated to level" + saved.getEscalationLevel()	                        
+                        );
+	            });
+	        }
+	    }
+	    return Mono.just(assignment);
 	}
 
 	@Override
 	public Mono<Assignment> checkAndEscalate(String ticketId) {
-		return assignmentRepo.findTopByTicketIdOrderByAssignedAtDesc(ticketId)
-				.switchIfEmpty(Mono.error(new RuntimeException("Assignment not found"))).flatMap(assignment -> {
-					Instant now = Instant.now();
-					if (assignment.getDueAt() != null && now.isAfter(assignment.getDueAt())) {
-						assignment.setBreached(true);
-						assignment.setBreachedAt(now);
-						assignment.setStatus(ASSIGNMENT_STATUS.ESCALATED);
-						assignment.setEscalationLevel(assignment.getEscalationLevel() + 1);
-						return assignmentRepo.save(assignment);
-					}
-					return Mono.just(assignment);
-				});
-	}
-	@Override
-	public Mono<Assignment> reassign(String ticketId, String newAgentId) {
 	    return assignmentRepo.findTopByTicketIdOrderByAssignedAtDesc(ticketId)
 	        .switchIfEmpty(Mono.error(new RuntimeException("Assignment not found")))
 	        .flatMap(assignment -> {
-	            if (assignment.getStatus() == ASSIGNMENT_STATUS.COMPLETED) {
-	                return Mono.error(new RuntimeException("Cannot reassign a completed assignment"));
+	            Instant now = Instant.now();
+	            if (assignment.getDueAt() != null && now.isAfter(assignment.getDueAt())) {
+	                if (assignment.getEscalationLevel() < 3) {
+	                    assignment.setBreached(true);
+	                    assignment.setBreachedAt(now);
+	                    assignment.setStatus(ASSIGNMENT_STATUS.ESCALATED);
+	                    assignment.setEscalationLevel(assignment.getEscalationLevel() + 1);
+
+	                    return assignmentRepo.save(assignment).doOnSuccess(saved -> {
+	                        assignmentEscalationEventProducer.publishEscalationEvent(
+	                            saved.getTicketId(), saved.getAgentId(), saved.getEscalationLevel()
+	                        );
+
+	                        ticketClient.logActivity(
+	                            saved.getTicketId(),
+	                            saved.getAgentId(),
+	                            "ESCALATED Ticket escalated to level" + saved.getEscalationLevel()	                        
+	                        );
+	                    });
+	                }
 	            }
-	            assignment.setAgentId(newAgentId);
-	            assignment.setStatus(ASSIGNMENT_STATUS.REASSIGNED);
-	            assignment.setUnassignedAt(Instant.now());
-	            return assignmentRepo.save(assignment)
-	                .doOnSuccess(saved -> assignmentEscalationEventProducer.publishAssignmentEvent(
-	                    saved.getTicketId(), saved.getAgentId(), "REASSIGNED"
-	                ));
+	            return Mono.just(assignment);
 	        });
 	}
 
 
 	@Override
-	public Mono<Assignment> autoAssign(String ticketId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Mono<Assignment> reassign(String ticketId, String newAgentId) {
+		return assignmentRepo.findTopByTicketIdOrderByAssignedAtDesc(ticketId)
+				.switchIfEmpty(Mono.error(new RuntimeException("Assignment not found"))).flatMap(assignment -> {
+					if (assignment.getStatus() == ASSIGNMENT_STATUS.COMPLETED) {
+						return Mono.error(new RuntimeException("Cannot reassign a completed assignment"));
+					}
+					String oldAgentId = assignment.getAgentId();
+					assignment.setAgentId(newAgentId);
+					assignment.setStatus(ASSIGNMENT_STATUS.REASSIGNED);
+					assignment.setUnassignedAt(Instant.now());
+					return assignmentRepo.save(assignment).doOnSuccess(saved -> { 
+						assignmentEscalationEventProducer.publishAssignmentEvent( saved.getTicketId(), saved.getAgentId(), "REASSIGNED" ); 
+						userClient.decrementAssignments(oldAgentId); userClient.incrementAssignments(saved.getAgentId()); 
+						ticketClient.assignTicket(saved.getTicketId()); });
+				});
 	}
+
+	@Override
+	public Mono<Assignment> autoAssign(String ticketId) {
+	    return Mono.fromCallable(() -> ticketClient.getTicketById(ticketId))
+	        .subscribeOn(Schedulers.boundedElastic())
+	        .flatMap(ticket -> {
+	            if (ticket == null) {
+	                return Mono.error(new RuntimeException("Ticket not found: " + ticketId));
+	            }
+	            if (ticket.getStatus() == STATUS.CLOSED) {
+	                return Mono.error(new RuntimeException("Ticket is already closed and cannot be auto-assigned"));
+	            }
+	            if (ticket.getStatus() == STATUS.ASSIGNED) {
+	                return Mono.error(new RuntimeException("Ticket is already assigned to an agent"));
+	            }
+	            return slaRuleRepo.findByPriority(ticket.getPriority())
+	                .switchIfEmpty(Mono.error(new RuntimeException("No SLA rule for " + ticket.getPriority())))
+	                .flatMap(rule -> {
+	                    Instant now = Instant.now();
+	                    String agentId = ruleEngine.pickAgentForTicket(ticket);
+
+	                    if (agentId == null) {
+	                        return Mono.error(new RuntimeException("No valid agent available for auto-assignment"));
+	                    }
+
+	                    Assignment assignment = Assignment.builder()
+	                        .ticketId(ticketId)
+	                        .agentId(agentId)
+	                        .assignedAt(now)
+	                        .dueAt(now.plus(Duration.ofMinutes(rule.getResolutionMinutes())))
+	                        .status(ASSIGNMENT_STATUS.ASSIGNED)
+	                        .type(ASSIGNMENT_TYPE.AUTO)
+	                        .breached(false)
+	                        .escalationLevel(0)
+	                        .build();
+
+	                    return assignmentRepo.save(assignment)
+	                        .doOnSuccess(saved -> {
+	                            assignmentEscalationEventProducer.publishAssignmentEvent(
+	                                saved.getTicketId(), saved.getAgentId(), "AUTO"
+	                            );
+	                            userClient.incrementAssignments(saved.getAgentId());
+	                            ticketClient.assignTicket(saved.getTicketId());
+	                        });
+	                });
+	        });
+	}
+
 
 	@Override
 	public Mono<List<AgentSummaryDto>> assignmentsPerAgent() {
@@ -164,44 +268,3 @@ public class AssignmentServiceImplementation implements AssignmentService {
 		return assignmentRepo.getEscalationSummary().collectList();
 	}
 }
-
-//	@Override
-//	public Mono<Assignment> autoAssign(String ticketId) {
-//	    return ticketClient.getTicketById(ticketId)
-//	            .filter(ticket -> ticket.getStatus() != STATUS.CLOSED)
-//	            .switchIfEmpty(Mono.error(new RuntimeException("Ticket is not assignable")))
-//	            .flatMap(ticket -> slaRuleRepo.findByPriority(ticket.getPriority())
-//	                .switchIfEmpty(Mono.error(new RuntimeException("No SLA rule for " + ticket.getPriority())))
-//	                .flatMap(rule -> {
-//	                    Instant now = Instant.now();
-//
-//	                    // Agent selection strategy based on priority
-//	                    String agentId;
-//	                    switch (ticket.getPriority()) {
-//	                        case HIGH:
-//	                            agentId = pickSeniorAgent(); // e.g., least workload senior
-//	                            break;
-//	                        case MEDIUM:
-//	                            agentId = pickBalancedAgent(); // e.g., round‑robin
-//	                            break;
-//	                        case LOW:
-//	                            agentId = pickJuniorAgent(); // e.g., first available junior
-//	                            break;
-//	                        default:
-//	                            agentId = "agent123"; // fallback
-//	                    }
-//
-//	                    Assignment assignment = Assignment.builder()
-//	                            .ticketId(ticketId)
-//	                            .agentId(agentId)
-//	                            .assignedAt(now)
-//	                            .dueAt(now.plus(Duration.ofMinutes(rule.getResolutionMinutes())))
-//	                            .status(ASSIGNMENT_STATUS.ASSIGNED)
-//	                            .type(ASSIGNMENT_TYPE.RULE_BASED)
-//	                            .breached(false)
-//	                            .escalationLevel(0)
-//	                            .build();
-//
-//	                    return assignmentRepo.save(assignment);
-//	                }));
-//	}

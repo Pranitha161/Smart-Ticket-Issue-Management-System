@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TicketService {
-  private baseUrl =   `${environment.apiGatewayUrl}${environment.endpoints.tickets}/tickets`;
+  private baseUrl = `${environment.apiGatewayUrl}${environment.endpoints.tickets}/tickets`;
 
   constructor(private http: HttpClient) { }
 
@@ -50,8 +50,8 @@ export class TicketService {
     return this.http.get<UserTicketStats>(`${this.baseUrl}/user/${userId}/stats`);
   }
 
-  getGlobalStats(): Observable<UserTicketStats> { 
-    return this.http.get<UserTicketStats>(`${this.baseUrl}/user/stats`); 
+  getGlobalStats(): Observable<UserTicketStats> {
+    return this.http.get<UserTicketStats>(`${this.baseUrl}/user/stats`);
   }
 
   getStatusSummary(): Observable<StatusSummaryDto[]> {
@@ -74,10 +74,10 @@ export class TicketService {
   }
 
   getTicketsByAgentId(agentId: string): Observable<Ticket[]> {
-  return this.http.get<Ticket[]>(`${this.baseUrl}/agent/${agentId}`);
-}
+    return this.http.get<Ticket[]>(`${this.baseUrl}/agent/${agentId}`);
+  }
 
-getAgentStats(agentId: string): Observable<UserTicketStats> {
+  getAgentStats(agentId: string): Observable<UserTicketStats> {
     return this.http.get<UserTicketStats>(`${this.baseUrl}/agent/${agentId}/stats`);
   }
 

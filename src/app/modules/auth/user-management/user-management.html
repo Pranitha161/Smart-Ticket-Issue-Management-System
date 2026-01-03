@@ -1,0 +1,126 @@
+<div class="user-management-container">
+    <div class="row g-3 mb-4 p-3" *ngIf="userStats">
+        <div class="col-6 col-lg-3">
+            <div class="stat-glass-card">
+                <div class="stat-icon users"><i class="bi bi-people"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ userStats.totalUsers }}</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-glass-card">
+                <div class="stat-icon agents"><i class="bi bi-headset"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ userStats.supportAgents }}</div>
+                    <div class="stat-label">Agents</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-glass-card">
+                <div class="stat-icon end-users"><i class="bi bi-person-badge"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ userStats.endUsers }}</div>
+                    <div class="stat-label">End Users</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-glass-card">
+                <div class="stat-icon managers"><i class="bi bi-person-gear"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ userStats.managers }}</div>
+                    <div class="stat-label">Managers</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center m-4">
+        <div>
+            <h5 class="fw-bold mb-0 text-dark">User Directory</h5>
+            <p class="text-muted small">Update user roles and system access</p>
+        </div>
+        <button class="btn btn-primary-custom" (click)="openCreateForm()">
+            <i class="bi bi-person-plus me-2"></i>Add New User
+        </button>
+    </div>
+
+    <div class="table-responsive custom-table-wrapper p-3 m-3">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>User Info</th>
+                    <th>Access Role</th>
+                    <th>Status</th>
+                    <th class="d-none d-md-table-cell">Activity</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of users" class="user-row">
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="user-avatar-circle">
+                                {{ user.username[0] | uppercase }}
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">{{ user.username }}</div>
+                                <div class="small text-muted">{{ user.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="role-badge" [attr.data-role]="user.roles[0]">
+                            {{ user.roles[0] }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-indicator" [class.active]="user.enabled">
+                            <span class="dot"></span> {{ user.enabled ? 'Active' : 'Disabled' }}
+                        </span>
+                    </td>
+                    <td class="d-none d-md-table-cell text-muted small">
+                        <i class="bi bi-ticket-perforated me-1"></i> 8 Tickets
+                    </td>
+                    <td class="text-end">
+                        <div class="action-buttons">
+                            <button class="btn btn-icon" (click)="editUser(user)" title="Edit User">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-icon delete" (click)="deleteUser(user)" title="Delete User">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="custom-modal-overlay" *ngIf="userToDelete">
+    <div class="custom-modal-card delete-confirm-card animate-slide-up">
+        <div class="text-center p-4">
+            <div class="warning-icon-wrapper mb-3">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <h4 class="fw-bold text-dark">Confirm Deletion</h4>
+            <p class="text-muted">
+                Are you sure you want to delete <strong>{{ userToDelete.username }}</strong>?
+                This action cannot be undone.
+            </p>
+
+            <div class="d-flex gap-3 mt-4">
+                <button class="btn btn-danger-custom flex-grow-1 py-2 fw-bold" (click)="confirmDelete()">
+                    Delete User
+                </button>
+                <button class="btn btn-light-custom flex-grow-1 py-2 fw-bold" (click)="userToDelete = null">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

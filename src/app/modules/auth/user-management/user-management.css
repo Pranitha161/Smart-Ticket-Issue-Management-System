@@ -1,0 +1,291 @@
+.stat-glass-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease;
+}
+
+.stat-glass-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.stat-icon.users {
+    background: #eef2ff;
+    color: #6366f1;
+}
+
+.stat-icon.agents {
+    background: #ecfdf5;
+    color: #10b981;
+}
+
+.stat-icon.end-users {
+    background: #fff7ed;
+    color: #f59e0b;
+}
+
+.stat-icon.managers {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.stat-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.custom-table-wrapper {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+}
+
+.user-row:hover {
+    background-color: #fcfcfd;
+}
+
+.user-avatar-circle {
+    width: 40px;
+    height: 40px;
+    background: #6c5ce7;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.role-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.role-badge[data-role="ADMIN"] {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.role-badge[data-role="AGENT"] {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.role-badge[data-role="USER"] {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.role-badge[data-role="MANAGER"] {
+    background: #fffee1;
+    color: #ffc404;
+}
+
+.status-indicator {
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+}
+
+.status-indicator.active {
+    color: #10b981;
+}
+
+.status-indicator .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #cbd5e1;
+}
+
+.status-indicator.active .dot {
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+}
+
+
+.custom-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.custom-modal-card {
+    background: white;
+    width: 100%;
+    max-width: 550px;
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.custom-input,
+.custom-select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.custom-input:focus {
+    border-color: #6c5ce7;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+}
+
+.agent-fields-box {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+}
+
+.btn-save {
+    background: #6c5ce7;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.btn-save:hover {
+    background: #5a49d1;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: #f1f5f9;
+    color: #475569;
+    margin-left: 5px;
+}
+
+.btn-icon:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-icon.delete:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.user-row {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.user-row:hover {
+    background-color: #f8f7ff !important;
+    transform: scale(1.002);
+    border-left: 4px solid #6c5ce7;
+
+}
+
+.btn-icon {
+    border-radius: 8px;
+    transition: all 0.2s;
+    opacity: 0.6;
+}
+
+.btn-icon:hover {
+    opacity: 1;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-icon.edit:hover {
+    color: #3a20fc;
+}
+
+.btn-icon.delete:hover {
+    color: #dc3545;
+}
+
+.search-container {
+    position: relative;
+    max-width: 400px;
+}
+
+.search-input {
+    padding-left: 40px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    height: 45px;
+}
+
+.delete-confirm-card {
+    max-width: 400px !important;
+    border-top: 5px solid #ef4444;
+}
+
+.warning-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: #fef2f2;
+    color: #ef4444;
+    font-size: 2rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-danger-custom {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    transition: background 0.2s;
+}
+
+.btn-danger-custom:hover {
+    background-color: #dc2626;
+}
+
+.btn-light-custom {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.btn-light-custom:hover {
+    background-color: #e2e8f0;
+}

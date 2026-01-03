@@ -1,7 +1,5 @@
 package com.smartticket.demo.dto;
 
-import java.time.Instant;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AssignmentEvent {
 	private String ticketId;
-	private String action;
-	private String agentId;
-	private Instant timestamp;
+	private String eventType;
+	private String userId; 
+	private String timestamp;
 }

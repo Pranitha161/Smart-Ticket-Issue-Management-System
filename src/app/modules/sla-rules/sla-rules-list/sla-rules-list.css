@@ -1,26 +1,4 @@
-/* .sla-dashboard {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.sla-card {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 1rem;
-  width: 250px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
-  h3 {
-    margin-top: 0;
-  }
-
-  &.low { background-color: #e0f7e9; }
-  &.medium { background-color: #e0f0ff; }
-  &.high { background-color: #fff3e0; }
-  &.critical { background-color: #ffe0e0; }
-} */
-.sla-card.low {
+/* .sla-card.low {
   background-color: #e0f7e9;
 }
 .sla-card.medium {
@@ -31,4 +9,120 @@
 }
 .sla-card.critical {
   background-color: #ffe0e0;
+} */
+ /* --- SLA Grid & Glassmorphism --- */
+.sla-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
 }
+
+.sla-glass-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.sla-glass-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border-color: #e2e8f0;
+}
+
+/* --- Priority Colors & Accents --- */
+.card-top-accent {
+  height: 5px;
+  width: 100%;
+}
+
+.critical .card-top-accent { background: linear-gradient(90deg, #ef4444, #f87171); }
+.high .card-top-accent { background: linear-gradient(90deg, #f97316, #fb923c); }
+.medium .card-top-accent { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.low .card-top-accent { background: linear-gradient(90deg, #10b981, #34d399); }
+
+.priority-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.priority-label {
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  color: #1e293b;
+  text-transform: uppercase;
+}
+
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.critical .priority-dot { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+.high .priority-dot { background: #f97316; box-shadow: 0 0 8px rgba(249, 115, 22, 0.4); }
+.medium .priority-dot { background: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.4); }
+.low .priority-dot { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+
+/* --- Metrics & Visualization --- */
+.metrics-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 20px;
+}
+
+.metric-block { text-align: center; flex: 1; }
+.metric-title { font-size: 0.65rem; font-weight: 800; color: #94a3b8; display: block; margin-bottom: 5px; }
+.metric-value { font-size: 1.6rem; font-weight: 900; color: #0f172a; letter-spacing: -1px; }
+.metric-value small { font-size: 0.8rem; color: #64748b; margin-left: 2px; }
+
+.metric-divider { width: 1.5px; height: 40px; background: #e2e8f0; }
+
+.sla-timeline-viz { padding: 0 5px; }
+.timeline-bar {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.response-segment {
+  height: 100%;
+  background: #5c67f2;
+  border-radius: 10px;
+}
+
+/* --- Interactive Icons --- */
+.btn-blur-icon {
+  width: 38px; height: 38px; border-radius: 12px; border: none;
+  background: #ffffff; color: #64748b; display: inline-flex;
+  align-items: center; justify-content: center;
+  transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.btn-blur-icon:hover {
+  background: #5c67f2; color: white; transform: rotate(8deg);
+}
+
+.btn-blur-icon.text-danger:hover { background: #ef4444; color: white; }
+
+/* --- Forms & Modals --- */
+.input-with-unit {
+  position: relative;
+}
+
+.unit-tag {
+  position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+  font-size: 0.65rem; font-weight: 800; color: #94a3b8;
+}
+
+.read-only { background: #f1f5f9; color: #64748b; cursor: not-allowed; }

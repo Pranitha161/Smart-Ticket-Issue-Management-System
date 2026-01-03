@@ -77,27 +77,28 @@
       </div>
     </div>
   </div>
- 
 
-
-
-<!-- Charts for ADMIN / MANAGER -->
 <div class="row mt-4" *ngIf="role === 'ADMIN' || role === 'MANAGER'">
   <div class="col-md-6">
-    <h5>Tickets by Status</h5>
+    <!-- <h5>Tickets by Status</h5>
     <canvas baseChart
       [data]="statusChartData"
       [options]="statusChartOptions"
       [type]="'bar'">
-    </canvas>
+    </canvas> -->
+   
+
+    <app-status-summary></app-status-summary>
+
   </div>
   <div class="col-md-6">
-    <h5>Tickets by Priority</h5>
+    <!-- <h5>Tickets by Priority</h5>
     <canvas baseChart
       [data]="priorityChartData"
       [options]="priorityChartOptions"
       [type]="'pie'">
-    </canvas>
+    </canvas> -->
+    <app-priority-summary></app-priority-summary>
   </div>
 </div>
 

@@ -24,7 +24,7 @@ public class NotificationConsumer {
 	public void consume(String message) {
 		try {
 			EventDTO payload = objectMapper.readValue(message, EventDTO.class);
-
+			System.out.println(payload);
 			Notification notification = new Notification();
 			notification.setEventType(payload.getEventType());
 			notification.setCreatedAt(java.time.Instant.now());

@@ -3,6 +3,12 @@
     <h5 class="fw-bold mb-0">Recent Tickets</h5>
     <button class="btn btn-outline-secondary btn-sm px-3" [routerLink]="['/tickets']">View All</button>
   </div>
+  <!-- <span *ngIf="ticket.status === 'ESCALATED'" class="badge bg-danger ms-2">
+  SLA Breached
+</span>
+<span *ngIf="ticket.dueAt && isNearBreach(ticket.dueAt)" class="badge bg-warning ms-2">
+  SLA Due Soon
+</span> -->
 
   <div *ngIf="tickets.length > 0; else empty">
     <div class="ticket-item card mb-3 border-light shadow-none" *ngFor="let ticket of tickets">
@@ -24,7 +30,7 @@
 
           <div class="ms-3">
             <button class="btn btn-link text-dark p-0">
-              <i class="bi bi-eye fs-5"></i>
+              <i class="bi bi-eye fs-5"  [routerLink]="['/tickets', ticket.id]"></i>
             </button>
           </div>
         </div>

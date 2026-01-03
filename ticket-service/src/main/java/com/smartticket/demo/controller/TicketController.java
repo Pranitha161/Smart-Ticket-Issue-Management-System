@@ -1,7 +1,6 @@
 package com.smartticket.demo.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -129,5 +128,14 @@ public class TicketController {
 	public Mono<List<Ticket>>  getRecentTicketsByUser(@PathVariable String userId) {
 		return ticketService.getRecentTicketsByUser(userId);
 	}
+	
+	@PutMapping("/{id}/assign")
+	public Mono<ResponseEntity<ApiResponse>> assignTicket(@PathVariable String id) {
+	    return ticketService.assignTicket(id)
+	            .map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket assigned successfully")))
+	            .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                    .body(new ApiResponse(false, "Ticket not found")));
+	}
+
 
 }

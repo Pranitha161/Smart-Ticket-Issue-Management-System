@@ -7,7 +7,6 @@ import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.smartticket.demo.enums.AGENT_LEVEL;
 import com.smartticket.demo.enums.ROLE;
 
 import jakarta.validation.constraints.Email;
@@ -37,5 +36,5 @@ public class User {
 	private LocalDateTime passwordLastChanged;
 	private String resetToken;
 	private Instant resetTokenExpiry;
-	private AGENT_LEVEL agentLevel;
+	private AgentProfile agentProfile;
 }

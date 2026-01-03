@@ -23,7 +23,8 @@
                             <input type="checkbox" class="form-check-input mt-0" id="remember">
                             <label class="form-check-label text-white small" for="remember">Remember Me</label>
                         </div>
-                        <a href="#" class="text-white small text-decoration-none">Forgot Password?</a>
+                        <a [routerLink]="['/auth/forgot-password']" class="text-white small text-decoration-none">Forgot
+                            Password?</a>
                     </div>
                     <button type="submit" class="btn btn-light w-100 fw-bold py-2 rounded-3"
                         [disabled]="loginForm.invalid">
@@ -31,7 +32,8 @@
                     </button>
                 </form>
                 <p class="mt-4 text-center text-white small">
-                    Don't have an account? <a [routerLink]="['/auth/signup']" class="text-white fw-bold">Create Account</a>
+                    Don't have an account? <a [routerLink]="['/auth/signup']" class="text-white fw-bold">Create
+                        Account</a>
                 </p>
             </div>
         </div>

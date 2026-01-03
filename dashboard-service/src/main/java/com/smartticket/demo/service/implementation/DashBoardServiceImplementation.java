@@ -35,9 +35,10 @@ public class DashBoardServiceImplementation implements DashBoardService {
 				.subscribeOn(Schedulers.boundedElastic());
 	}
 	
-	public Mono<ResponseEntity<String>> statusSummaryFallback(Throwable t) {
-		return Mono.error(new RuntimeException("Ticket service unavailable", t));
-	}
+	public Flux<StatusSummaryDto> statusSummaryFallback(Throwable t) { 
+		System.err.println("Fallback triggered: " + t.getMessage());  return Flux.empty();
+		}
+	
 
 	@Override
 	public Flux<PrioritySummaryDto> getTicketStatusPrioritySummary() {

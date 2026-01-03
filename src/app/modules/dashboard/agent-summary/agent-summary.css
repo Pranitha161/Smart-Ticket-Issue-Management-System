@@ -1,0 +1,8 @@
+/* src/app/modules/dashboard/agent-summary/agent-summary.component.css */
+.card {
+  border-radius: 8px;
+}
+
+table {
+  font-size: 0.9rem;
+}

@@ -1,23 +1,51 @@
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { LookupService } from './lookup-service';
+import { Router, RouterLink } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private baseUrl = 'http://localhost:8765/auth-user-service/auth';
+  private baseUrl = `${environment.apiGatewayUrl}${environment.endpoints.auth}`;
 
-  constructor(private http: HttpClient) { }
+  // Signals
+  loggedIn = signal(false);
+  username = signal<string | null>(null);
+  roles = signal<string[]>([]);
+  userId = signal<string | null>(null);   // ✅ new signal
+
+  constructor(private http: HttpClient,
+    private lookup:LookupService,
+    private router:Router
+  ) {
+    const token = this.getToken();
+    if (token) {
+      this.loggedIn.set(true);
+      this.username.set(this.extractUsername(token));
+      this.roles.set(this.extractRoles(token));
+      this.userId.set(this.extractUserId(token));   
+    }
+  }
 
   signup(user: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`, user);
+    return this.http.post(`${this.baseUrl}/auth/register`, user);
   }
 
   login(credentials: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/login`, credentials);
+    return this.http.post(`${this.baseUrl}/auth/login`, credentials);
+  }
+
+  create(user: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/create`, user);
   }
 
   setToken(token: string): void {
     localStorage.setItem('token', token);
+    this.loggedIn.set(true);
+    this.username.set(this.extractUsername(token));
+    this.roles.set(this.extractRoles(token));
+    this.userId.set(this.extractUserId(token));   // ✅ update userId
   }
 
   getToken(): string | null {
@@ -26,40 +54,39 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('token');
+    this.loggedIn.set(false);
+    this.username.set(null);
+    this.roles.set([]);
+    this.userId.set(null); 
+    this.lookup.clear(); 
+    this.router.navigate(['/auth/login']);
+    console.log('🚪 User logged out and cache cleared');
   }
 
-  getUserRoles(): string[] {
-    const token = this.getToken();
-    if (!token) return [];
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.roles || [];
+  private extractRoles(token: string): string[] {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.roles || [];
+    } catch {
+      return [];
+    }
   }
 
-  hasRole(role: string): boolean {
-    return this.getUserRoles().includes(role);
+  private extractUsername(token: string): string | null {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.username || payload.sub || null;
+    } catch {
+      return null;
+    }
   }
 
-  isLoggedIn() {
-    return !!this.getToken();
-  }
-
-  getUsername(): string | null { const token = this.getToken(); 
-    if (!token) return null; 
-    try { 
-      const payload = JSON.parse(atob(token.split('.')[1])); return payload.username || payload.sub || null; } catch (e) 
-      { console.error('Invalid token', e); return null; } }
-
-  getUserEmail(): string | null {
-    const token = this.getToken();
-    if (!token) return null;
-
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.email;
-  }
-  getUserId(): string {
-    const token = this.getToken();
-    if (!token) return '';
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.sub || '';
+  private extractUserId(token: string): string | null {   
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.sub || payload.userId || null;
+    } catch {
+      return null;
+    }
   }
 }

@@ -1,9 +1,33 @@
-<div class="content-wrapper d-flex">
-  <aside *ngIf="isLoggedIn" id="sidebarMenu" class="sidebar collapse d-md-block bg-light p-3">
-    <ul class="nav flex-column text-center">
-      <li class="nav-item"> <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a> </li>
-      <li class="nav-item"> <a class="nav-link" routerLink="/tickets" routerLinkActive="active">My Tickets</a> </li>
-      
+<div class="content-wrapper d-flex mt-3">
+  <aside *ngIf="isLoggedIn" id="sidebarMenu" class="sidebar d-md-block shadow-sm">
+
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          <i class="bi bi-speedometer2"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/tickets" routerLinkActive="active">
+          <i class="bi bi-ticket-perforated"></i>
+          <span>My Tickets</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="dashboard/report" routerLinkActive="active">
+          <i class="bi bi-bar-chart-line"></i>
+          <span>Reports</span>
+        </a>
+      </li>
+
+      <li class="nav-item" >
+        <a class="nav-link admin-link" routerLink="auth/admin-panel" routerLinkActive="active">
+          <i class="bi bi-shield-lock"></i>
+          <span>Admin Panel</span>
+        </a>
+      </li>
+     
     </ul>
   </aside>
 </div>

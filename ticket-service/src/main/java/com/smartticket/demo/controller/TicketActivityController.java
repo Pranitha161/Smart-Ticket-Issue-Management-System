@@ -21,13 +21,13 @@ public class TicketActivityController {
 		this.service = service;
 	}
 
-	@GetMapping(produces = MediaType.APPLICATION_NDJSON_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public Flux<TicketActivity> getTimeline(@PathVariable String ticketId) {
 		return service.getTimeline(ticketId);
 	}
 
 	@PostMapping("/comment")
-	public Mono<TicketActivity> addComment(@PathVariable String ticketId, @RequestParam String actorId,
+	public Mono<TicketActivity> logActivity(@PathVariable String ticketId, @RequestParam String actorId,
 			@RequestParam String comment) {
 		return service.log(ticketId, actorId, ACTION_TYPE.COMMENT, comment, null);
 	}

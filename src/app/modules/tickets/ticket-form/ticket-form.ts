@@ -4,26 +4,36 @@ import { TicketService } from '../../../core/services/ticket';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth';
 import { RouterLink } from '@angular/router';
+import { Category, CategoryDto } from '../../../core/services/category';
+import { LookupService } from '../../../core/services/lookup-service';
 
 @Component({
   selector: 'app-ticket-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './ticket-form.html',
   styleUrl: './ticket-form.css',
 })
 export class TicketForm implements OnInit {
   ticketForm!: FormGroup;
   successMessage = ''; errorMessage = '';
-  constructor(private fb: FormBuilder, private ticketService: TicketService, private authService: AuthService, private cd: ChangeDetectorRef) { }
+  categories: CategoryDto[] = [];
+  constructor(
+    private fb: FormBuilder,
+    private ticketService: TicketService, 
+    private authService: AuthService, 
+    private categoryService: Category,
+    private lookup: LookupService, 
+    private cd: ChangeDetectorRef) { }
   ngOnInit(): void {
     this.ticketForm = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
       categoryId: ['', Validators.required],
       priority: ['MEDIUM', Validators.required],
-      createdBy: [this.authService.getUserId()]
+      createdBy: [this.authService.userId()]
     });
+    this.categories = this.lookup.getCategoryList();
   }
   onSubmit(): void {
     if (this.ticketForm.valid) {

@@ -34,14 +34,15 @@
       </div>
 
       <div class="col-md-6">
-        <label class="form-label">Category *</label>
-        <select class="form-select" formControlName="categoryId">
-          <option value="">Select Category</option>
-          <option value="GEN">General Inquiry</option>
-          <option value="TECH">Technical Issue</option>
-          <option value="BILL">Billing</option>
-        </select>
-      </div>
+  <label class="form-label">Category *</label>
+  <select class="form-select" formControlName="categoryId">
+    <option value="">Select Category</option>
+    <option *ngFor="let cat of categories" [value]="cat.id">
+      {{ cat.name }}
+    </option>
+  </select>
+</div>
+
 
       <div class="col-12 d-flex justify-content-end gap-2">
         <button type="button" class="btn btn-outline-secondary" routerLink="/tickets">Cancel</button>

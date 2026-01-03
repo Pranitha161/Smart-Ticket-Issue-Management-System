@@ -1,8 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SlaRule } from '../../../core/services/sla-rule';
 import { SlaRuleModel } from '../../../shared/models/sla-rule.model';
+import { Toast } from '../../../core/services/toast';
+import { LookupService } from '../../../core/services/lookup-service';
 
 @Component({
   selector: 'app-sla-rules-list',
@@ -12,20 +14,25 @@ import { SlaRuleModel } from '../../../shared/models/sla-rule.model';
   styleUrls: ['./sla-rules-list.css']
 })
 export class SlaRulesList implements OnInit {
+  private slaRuleService = inject(SlaRule);
+  private toast = inject(Toast);
+  private lookup = inject(LookupService);
+  private cd = inject(ChangeDetectorRef);
+  private fb = inject(FormBuilder);
+
   slaRules: SlaRuleModel[] = [];
   form!: FormGroup;
   editingRule: SlaRuleModel | null = null;
-
-  constructor(
-    private slaRuleService: SlaRule,
-    private cd: ChangeDetectorRef,
-    private fb: FormBuilder
-  ) { }
+  ruleToDelete: SlaRuleModel | null = null; // Staging for custom confirmation
 
   ngOnInit(): void {
     this.loadRules();
+    this.initForm();
+  }
+
+  initForm(): void {
     this.form = this.fb.group({
-      priority: [{ value: '', disabled: true }, Validators.required],
+      priority: ['', Validators.required],
       responseMinutes: ['', [Validators.required, Validators.min(1)]],
       resolutionMinutes: ['', [Validators.required, Validators.min(1)]],
     });
@@ -37,37 +44,65 @@ export class SlaRulesList implements OnInit {
         this.slaRules = rules;
         this.cd.detectChanges();
       },
-      error: (err) => console.error('Error loading SLA rules', err)
+      error: (err) => this.toast.show(err.message, 'error')
     });
   }
-  editRule(rule: SlaRuleModel): void 
-  { 
-    this.editingRule = rule; 
-    this.form.patchValue(rule); 
-    this.form.get('priority')?.disable(); 
-  }
 
-  cancelEdit(): void { this.editingRule = null; this.form.reset(); this.form.get('priority')?.enable();}
+  editRule(rule: SlaRuleModel): void {
+    this.editingRule = rule;
+    this.form.patchValue(rule);
+    // Disable priority field if it's a baseline system rule
+    if (['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(rule.priority.toUpperCase())) {
+      this.form.get('priority')?.disable();
+    } else {
+      this.form.get('priority')?.enable();
+    }
+  }
 
   saveRule(): void {
-    if (!this.editingRule || this.form.invalid) return;
+    if (this.form.invalid) return;
 
-    const updated: SlaRuleModel = {
-      ...this.editingRule,
-      ...this.form.getRawValue()
-    };
+    const updated: SlaRuleModel = { ...this.editingRule, ...this.form.getRawValue() };
+    const request = updated.id 
+      ? this.slaRuleService.updateRule(updated.id, updated)
+      : this.slaRuleService.addRule(updated);
 
-    this.slaRuleService.updateRule(this.editingRule.id!, updated).subscribe(() => {
-      this.loadRules();
-      this.cancelEdit();
+    request.subscribe({
+      next: () => {
+        this.toast.show(`SLA Rule for ${updated.priority} updated successfully`, 'success');
+        this.lookup.refreshSlas(); // Sync categories dropdown
+        this.loadRules();
+        this.cancelEdit();
+      },
+      error: (err) => this.toast.show(err.error?.message || err.message, 'error')
     });
   }
 
-  deleteRule(id: string, priority: string): void {
-    if (['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(priority)) {
-      alert('Cannot delete baseline SLA rule');
+  // staged deletion logic
+  confirmDelete(rule: SlaRuleModel): void {
+    if (['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(rule.priority.toUpperCase())) {
+      this.toast.show('System baseline rules cannot be deleted', 'error');
       return;
     }
-    this.slaRuleService.deleteRule(id).subscribe(() => this.loadRules());
+    this.ruleToDelete = rule;
+  }
+
+  executeDelete(): void {
+    if (this.ruleToDelete?.id) {
+      this.slaRuleService.deleteRule(this.ruleToDelete.id).subscribe({
+        next: () => {
+          this.toast.show('SLA Rule removed', 'success');
+          this.lookup.refreshSlas();
+          this.ruleToDelete = null;
+          this.loadRules();
+        },
+        error: (err) => this.toast.show(err.message, 'error')
+      });
+    }
+  }
+
+  cancelEdit(): void {
+    this.editingRule = null;
+    this.form.reset();
   }
 }

@@ -88,6 +88,26 @@ public class TicketServiceImplementation implements TicketService {
 							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CLOSED"));
 				});
 	}
+	
+	@Override
+	public Mono<Ticket> assignTicket(String id) {
+	    return ticketRepo.findById(id)
+	            .switchIfEmpty(Mono.error(new RuntimeException("Ticket not found")))
+	            .flatMap(ticket -> {
+	                if (ticket.getStatus() == STATUS.CLOSED) {
+	                    return Mono.error(new RuntimeException("Cannot assign a closed ticket"));
+	                }
+	                if (ticket.getStatus() == STATUS.RESOLVED) {
+	                    return Mono.error(new RuntimeException("Cannot assign a resolved ticket"));
+	                }
+	                ticket.setStatus(STATUS.ASSIGNED);
+	                ticket.setUpdatedAt(LocalDateTime.now());
+	                return ticketRepo.save(ticket)
+	                        .flatMap(saved -> logActivity(saved, ACTION_TYPE.ASSIGNED))
+	                        .doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "ASSIGNED"));
+	            });
+	}
+
 
 	@Override
 	public Mono<Ticket> reopenTicket(String id) {
@@ -179,7 +199,7 @@ public class TicketServiceImplementation implements TicketService {
 	@Override
 	public Mono<UserTicketStatsDto> getGlobalStats() {
 	    
-	        // Admin case → stats across all tickets
+	       
 	        Mono<Long> total = ticketRepo.count();
 
 	        Mono<Long> open = ticketRepo.getStatusSummary()

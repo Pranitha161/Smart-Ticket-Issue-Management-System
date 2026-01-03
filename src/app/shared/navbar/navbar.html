@@ -1,54 +1,50 @@
-<!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" [routerLink]="['/']">TicketSystem</a>
-        <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu"
-            aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation"> <span
-                class="navbar-toggler-icon"></span> </button>
-        <div class="d-flex align-items-center ms-auto">
-            <div class="d-flex align-items-center gap-3">
-                <ng-container *ngIf="!username">
-                    <a class="nav-link fw-semibold" [routerLink]="['/']">Home</a>
-                </ng-container>
-                <ng-container *ngIf="hasUserRole()">
-                    <a class="btn btn-outline-primary fw-semibold" [routerLink]="['/tickets/create']">+ New Ticket</a>
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="user-icon bg-primary text-white rounded-circle d-flex justify-content-center align-items-center"
-                            style="width: 32px; height: 32px;">
-                            {{ firstLetter }}
-                        </div>
-                        
-                    </div>
-                </ng-container>
-            </div>
+<nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom shadow-sm py-2">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" [routerLink]="['/']">
+      <div class="brand-logo">
+        <i class="bi bi-ticket-detailed-fill"></i>
+      </div>
+      <span class="fw-bold tracking-tight">TicketSystem</span>
+    </a>
+
+    <div class="d-flex align-items-center ms-auto gap-3">
+      <ng-container *ngIf="!hasLoggedIn">
+        <a class="nav-link fw-semibold text-secondary px-3" [routerLink]="['/']">Home</a>
+      </ng-container>
+
+      <a *ngIf="!isOnCreateTicket() && hasUserRole()"
+        class="btn btn-primary d-flex align-items-center gap-2 px-3 fw-semibold rounded-pill shadow-sm"
+        [routerLink]="['/tickets/create']">
+        <i class="bi bi-plus-lg"></i>
+        <span class="d-none d-sm-inline">New Ticket</span>
+      </a>
+
+      <div class="d-flex align-items-center gap-2" *ngIf="hasLoggedIn">
+        <div class="dropdown">
+          <button class="btn user-avatar-btn dropdown-toggle shadow-sm" type="button" id="userMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            {{ firstLetter }}
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userMenu">
+            <li class="px-3 py-2 border-bottom mb-1">
+              <small class="text-muted d-block">Signed in as</small>
+              <strong class="text-dark">{{ username() | titlecase }}</strong>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2 py-2" [routerLink]="['/auth/profile']">
+                <i class="bi bi-person-circle"></i> Profile
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li>
+              <button class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger" (click)="logout()">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </button>
+            </li>
+          </ul>
         </div>
-    </div>
-</nav> -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold" [routerLink]="['/']">TicketSystem</a>
-
-    <div class="d-flex align-items-center ms-auto">
-      <div class="d-flex align-items-center gap-3">
-        <ng-container *ngIf="!username">
-          <a class="nav-link fw-semibold" [routerLink]="['/']">Home</a>
-        </ng-container>
-        <ng-container >
-          <a *ngIf=" !isOnCreateTicket() && hasUserRole()" class="btn btn-outline-primary fw-semibold" [routerLink]="['/tickets/create']">+ New Ticket</a>
-
-       
-          <div class="d-flex align-items-center gap-2">
-     
-            <div class="user-icon bg-primary text-white rounded-circle d-flex justify-content-center align-items-center"
-                 style="width: 32px; height: 32px;">
-              {{ firstLetter }}
-            </div>
-            <button class="navbar-toggler d-md-none custom-toggler" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#sidebarMenu"
-                    aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-          </div>
-        </ng-container>
       </div>
     </div>
   </div>

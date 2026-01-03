@@ -47,4 +47,6 @@ public interface TicketService {
 
 	Mono<UserTicketStatsDto> getGlobalStats();
 
+	Mono<Ticket> assignTicket(String id);
+
 }

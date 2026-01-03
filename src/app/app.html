@@ -1,9 +1,12 @@
-<!-- Top navbar (your existing component or inline markup) -->
-<app-navbar></app-navbar>
+<app-navbar *ngIf="isLoggedIn()"></app-navbar>
 
-<div class="content-wrapper d-flex">
-    <app-sidebar></app-sidebar>
-    <main class="main-content flex-grow-1">
-        <router-outlet></router-outlet>
-    </main>
+<div class="content-wrapper">
+  <app-sidebar *ngIf="isLoggedIn()"></app-sidebar>
+  
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
 </div>
+
+  <app-toast></app-toast>

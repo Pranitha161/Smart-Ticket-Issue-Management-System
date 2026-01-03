@@ -15,12 +15,16 @@ import { RouterLink } from '@angular/router';
 export class RecentTickets implements OnInit {
   tickets: Ticket[] = [];
   role: string = '';
+  isNearBreach(dueAt: string): boolean {
+  const due = new Date(dueAt).getTime();
+  return due - Date.now() < 60 * 60 * 1000; 
+}
 
   constructor(private ticketService: TicketService, private authService: AuthService,private cd:ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    const userId = this.authService.getUserId();
-    this.role = this.authService.getUserRoles()[0];
+    const userId = this.authService.userId()!;
+    this.role = this.authService.roles()[0];
 
     if (this.role === 'ADMIN' || this.role === 'MANAGER') {
       this.ticketService.getRecentTickets().subscribe(data => {this.tickets = data;
@@ -28,10 +32,12 @@ export class RecentTickets implements OnInit {
       });
     }
     else if (this.role === 'AGENT') {
-      const agentId = this.authService.getUserId();
+      const agentId = this.authService.userId()!;
       this.ticketService.getRecentTicketsByAgent(agentId).subscribe(data => {this.tickets = data;
         this.cd.detectChanges();
       });
+      
+      
     }
     else {
       this.ticketService.getRecentTicketsByUser(userId).subscribe(data => {this.tickets = data

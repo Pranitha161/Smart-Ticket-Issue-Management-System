@@ -2,7 +2,6 @@ package com.smartticket.demo.producer;
 
 import java.time.Instant;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,20 +11,41 @@ import com.smartticket.demo.dto.EscalationEvent;
 @Service
 public class AssignmentEscalationEventProducer {
 
-	@Autowired
-	private KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, AssignmentEvent> assignmentKafkaTemplate;
+    private final KafkaTemplate<String, EscalationEvent> escalationKafkaTemplate;
 
-	public void publishAssignmentEvent(String ticketId, String agentId, String action) {
-		AssignmentEvent event = AssignmentEvent.builder().ticketId(ticketId).action(action).agentId(agentId)
-				.timestamp(Instant.now()).build();
+    public AssignmentEscalationEventProducer(KafkaTemplate<String, AssignmentEvent> assignmentKafkaTemplate,
+                                             KafkaTemplate<String, EscalationEvent> escalationKafkaTemplate) {
+        this.assignmentKafkaTemplate = assignmentKafkaTemplate;
+        this.escalationKafkaTemplate = escalationKafkaTemplate;
+    }
 
-		kafkaTemplate.send("assignment-events", event);
-	}
+    public void publishAssignmentEvent(String ticketId, String agentId, String action) {
+        AssignmentEvent event = AssignmentEvent.builder()
+                .ticketId(ticketId)
+                .userId(agentId)
+                .eventType(action)
+                .timestamp(Instant.now().toString())
+                .build();
+        try {
+            assignmentKafkaTemplate.send("assignment-events", event);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public void publishEscalationEvent(String ticketId, String agentId, int level) {
-		EscalationEvent event = EscalationEvent.builder().ticketId(ticketId).action("ESCALATED").agentId(agentId)
-				.escalationLevel(level).timestamp(Instant.now()).build();
-
-		kafkaTemplate.send("escalation-events", event);
-	}
+    public void publishEscalationEvent(String ticketId, String agentId, int level) {
+        EscalationEvent event = EscalationEvent.builder()
+                .ticketId(ticketId)
+                .userId(agentId)
+                .eventType("ESCALATED")
+                .escalationLevel(level)
+                .timestamp(Instant.now().toString())
+                .build();
+        try {
+            escalationKafkaTemplate.send("escalation-events", event);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

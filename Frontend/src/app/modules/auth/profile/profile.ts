@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
-import { AdminUser, User } from '../../../core/services/admin-user';
+import { AdminUser } from '../../../core/services/admin-user';
 import { Toast } from '../../../core/services/toast';
+import { User } from '../../../shared/models/authuser.model';
 
 
 @Component({

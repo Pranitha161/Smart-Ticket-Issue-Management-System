@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketService } from '../../../core/services/ticket';
 import { AuthService } from '../../../core/services/auth';
 import { Ticket } from '../../../shared/models/ticket.model';
 import { RouterLink } from '@angular/router';
+import { LookupService } from '../../../core/services/lookup-service';
 
 @Component({
   selector: 'app-recent-tickets',
@@ -19,6 +20,7 @@ export class RecentTickets implements OnInit {
   const due = new Date(dueAt).getTime();
   return due - Date.now() < 60 * 60 * 1000; 
 }
+ public lookup = inject(LookupService);
 
   constructor(private ticketService: TicketService, private authService: AuthService,private cd:ChangeDetectorRef) { }
 

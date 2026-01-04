@@ -63,37 +63,37 @@ export class AdminUser {
   }
 
   getAgentsByCategory(categoryId: string): Observable<any[]> {
-  return this.http.get<any[]>(`${this.baseUrl}/agents?category=${categoryId}`);
-}
+    return this.http.get<any[]>(`${this.baseUrl}/agents?category=${categoryId}`);
+  }
   changePassword(userName: string, oldPassword: string, newPassword: string): Observable<any> {
-  return this.http.post<any>(
-    `${this.baseUrl}/auth/change-password`,
-    null, 
-    {
-      params: {
-        userName: userName,
-        oldPassword: oldPassword,
-        newPassword: newPassword
+    return this.http.post<any>(
+      `${this.baseUrl}/auth/change-password`,
+      null,
+      {
+        params: {
+          userName: userName,
+          oldPassword: oldPassword,
+          newPassword: newPassword
+        }
       }
-    }
-  );
-}
+    );
+  }
 
-requestPasswordReset(email: string): Observable<any> {
-  return this.http.post<any>(
-    `${this.baseUrl}/auth/request-reset`,
-    null,
-    { params: { email } }
-  );
-}
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUrl}/auth/request-reset`,
+      null,
+      { params: { email } }
+    );
+  }
 
-resetPassword(token: string, newPassword: string): Observable<any> {
-  return this.http.post<any>(
-    `${this.baseUrl}/auth/reset-password`,
-    null,
-    { params: { token, newPassword } }
-  );
-}
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUrl}/auth/reset-password`,
+      null,
+      { params: { token, newPassword } }
+    );
+  }
 
 
 }

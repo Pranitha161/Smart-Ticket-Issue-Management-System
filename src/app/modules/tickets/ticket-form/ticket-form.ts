@@ -1,11 +1,12 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TicketService } from '../../../core/services/ticket';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth';
 import { RouterLink } from '@angular/router';
 import { Category, CategoryDto } from '../../../core/services/category';
 import { LookupService } from '../../../core/services/lookup-service';
+import { Toast } from '../../../core/services/toast';
 
 @Component({
   selector: 'app-ticket-form',
@@ -22,7 +23,7 @@ export class TicketForm implements OnInit {
     private fb: FormBuilder,
     private ticketService: TicketService, 
     private authService: AuthService, 
-    private categoryService: Category,
+    private toast:Toast,
     private lookup: LookupService, 
     private cd: ChangeDetectorRef) { }
   ngOnInit(): void {
@@ -34,18 +35,25 @@ export class TicketForm implements OnInit {
       createdBy: [this.authService.userId()]
     });
     this.categories = this.lookup.getCategoryList();
+    
   }
+  getPriorityClass() {
+  const val = this.ticketForm.get('priority')?.value;
+  return val ? `priority-${val}` : '';
+}
   onSubmit(): void {
+    
     if (this.ticketForm.valid) {
       this.ticketService.createTicket(this.ticketForm.value).subscribe({
         next: (res) => {
-          this.successMessage = res.message || 'Ticket created successfully!'; this.errorMessage = '';
+          this.toast.show(res.message||'Ticket created successfully!', 'success');
           this.ticketForm.reset({ priority: 'MEDIUM', status: 'OPEN' });
-          this.cd.detectChanges();
+          
         },
         error: (err) => {
-          this.errorMessage = 'Failed to create ticket. Please try again.'; this.successMessage = '';
-          this.cd.detectChanges();
+          const errorMsg = err.error?.message ||'Failed to create ticket. Please try again.'; 
+          this.toast.show(errorMsg, 'error');
+         
         }
       });
     }

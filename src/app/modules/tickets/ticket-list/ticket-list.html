@@ -1,4 +1,4 @@
-<div class="ticket-list p-4">
+<!-- <div class="ticket-list p-4">
   <h1>Tickets Queue</h1>
   <div class="d-flex justify-content-between align-items-center mb-3">
 
@@ -63,7 +63,7 @@
         </td>
         <td class="d-none d-md-table-cell">{{ ticket.categoryName }}</td>
         <td class="d-none d-md-table-cell">{{ ticket.createdAt | date:'shortDate' }}</td>
-        <!-- <td data-label="Actions" class="text-center">
+        <td data-label="Actions" class="text-center">
           <button class="btn btn-link text-dark p-0" [routerLink]="['/tickets', ticket.id]">
             <i class="bi bi-eye fs-5"></i>
           </button><button *ngIf="role === 'ADMIN' || role === 'MANAGER'" class="btn btn-sm btn-outline-primary me-2"
@@ -71,20 +71,18 @@
             <i class="bi bi-person-plus"></i> Assign </button> <button
             *ngIf="role === 'ADMIN' || role === 'MANAGER'" class="btn btn-sm btn-outline-secondary"
             (click)="autoAssign(ticket)"> <i class="bi bi-magic"></i> Auto </button>
-        </td> -->
+        </td>
         <td data-label="Actions" class="text-center">
   <button class="btn btn-link text-dark p-0" [routerLink]="['/tickets', ticket.id]">
     <i class="bi bi-eye fs-5"></i>
   </button>
 
-  <!-- Assign button (only if not already assigned) -->
   <button *ngIf="(role === 'ADMIN' || role === 'MANAGER') && ticket.status !== 'ASSIGNED'" 
           class="btn btn-sm btn-outline-primary me-2"
           (click)="manualAssign(ticket)">
     <i class="bi bi-person-plus"></i> Assign
   </button>
 
-  <!-- Agent list dropdown (shown only for the ticket being assigned) -->
   <div *ngIf="assigningTicketId === ticket.id">
     <select #agentSelect class="form-select form-select-sm mt-2">
       <option value="">Select Agent</option>
@@ -102,7 +100,6 @@
     </button>
   </div>
 
-  <!-- Auto assign (only if not already assigned) -->
   <button *ngIf="(role === 'ADMIN' || role === 'MANAGER') && ticket.status !== 'ASSIGNED'" 
           class="btn btn-sm btn-outline-secondary"
           (click)="autoAssign(ticket)">
@@ -143,7 +140,9 @@
       </li>
     </ul>
   </nav>
-</div>
+</div> -->
+
+
 <!-- <div class="ticket-list-wrapper p-3 p-md-5">
   
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
@@ -248,3 +247,106 @@
     </ul>
   </nav>
 </div> -->
+
+<div class="ticket-container p-4">
+  <div class="header-section d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-0">Ticket Queue</h2>
+      <p class="text-muted small">Overview of all support requests</p>
+    </div>
+    <button class="btn-refresh" (click)="loadTickets()" title="Refresh Data">
+      <i class="bi bi-arrow-clockwise"></i>
+    </button>
+  </div>
+
+  <div class="filter-bar mb-4">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" placeholder="Search title, ID, or category...">
+    </div>
+    <div class="select-group">
+      <select class="form-select-sm" [(ngModel)]="selectedPriority" (change)="applyFilters()">
+        <option value="">All Priorities</option>
+        <option value="CRITICAL">Critical</option>
+        <option value="HIGH">High</option>
+        <option value="MEDIUM">Medium</option>
+        <option value="LOW">Low</option>
+      </select>
+      <select class="form-select-sm" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="OPEN">Open</option>
+        <option value="ASSIGNED">Assigned</option>
+        <option value="RESOLVED">Resolved</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-responsive shadow-sm rounded-4 bg-white">
+    <table class="table align-middle mb-0">
+      <thead class="bg-light">
+        <tr>
+          <th class="ps-4">Ticket</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Category</th>
+          <th class="text-end pe-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ticket of pagedTickets" class="ticket-row">
+          <td class="ps-4">
+            <div class="d-flex align-items-center">
+              <span class="id-badge me-3">#{{ticket.displayId}}</span>
+              <div>
+                <div class="fw-bold text-dark">{{ticket.title}}</div>
+                <div class="text-muted tiny">By: {{lookup.getUserName(ticket.createdBy)}}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="priority-pill" [attr.data-priority]="ticket.priority">{{ticket.priority}}</span>
+          </td>
+          <td>
+            <span class="status-indicator" [attr.data-status]="ticket.status">
+              <span class="dot"></span> {{ticket.status | lowercase}}
+            </span>
+          </td>
+          <td>
+            <span class="category-tag">
+              <i class="bi bi-tag-fill me-1"></i>
+              {{ lookup.getCategoryName(ticket.categoryId) }}
+            </span>
+          </td>
+          <td class="text-end pe-4">
+            <div class="d-flex justify-content-end gap-2">
+              <button class="btn-action view" [routerLink]="['/tickets', ticket.id]"><i class="bi bi-eye"></i></button>
+              <ng-container *ngIf="(role === 'ADMIN' || role === 'MANAGER') && ticket.status !== 'ASSIGNED'">
+                <button class="btn-action assign" (click)="manualAssign(ticket)"><i class="bi bi-person-plus"></i></button>
+                <button class="btn-action magic" (click)="autoAssign(ticket)"><i class="bi bi-magic"></i></button>
+              </ng-container>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="assigningTicketId">
+    <div class="custom-modal-card animate-in">
+      <div class="modal-accent"></div>
+      <div class="p-4">
+        <h5 class="fw-bold mb-3">Assign Specialist</h5>
+        <select #agentSelect class="form-control mb-4">
+          <option value="">Select an Agent...</option>
+          <option *ngFor="let agent of getAgentsForCurrentCategory()" [value]="agent.id">
+            {{ agent.username }} ({{ agent.email }})
+          </option>
+        </select>
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary w-100" (click)="confirmAssign(assigningTicketId, agentSelect.value)">Assign</button>
+          <button class="btn btn-light w-100" (click)="assigningTicketId = null">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

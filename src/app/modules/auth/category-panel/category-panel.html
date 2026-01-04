@@ -66,44 +66,55 @@
       <p class="text-muted small mb-0">Manage categories and link them to SLA policies</p>
     </div>
     <button class="btn btn-primary-custom" (click)="openCreateForm()">
-      <i class="bi bi-plus-lg me-2"></i>Add Category
+      <i class="bi bi-plus-lg me-2"></i>Add New Category
     </button>
   </div>
 
   <div class="category-grid">
     <div *ngFor="let category of categories" class="category-modern-card" [class.inactive]="!category.active">
-      <div class="card-status-strip" [class.bg-success]="category.active" [class.bg-secondary]="!category.active"></div>
+      <div class="card-status-strip" 
+       [ngClass]="{
+         'bg-danger': getSlaPriorityName(category.linkedSlaId) === 'CRITICAL',
+         'bg-primary':getSlaPriorityName(category.linkedSlaId) === 'MEDIUM',
+         'bg-warning': getSlaPriorityName(category.linkedSlaId) === 'HIGH',
+         'bg-success': getSlaPriorityName(category.linkedSlaId) === 'LOW',
+         'bg-secondary': !category.active || getSlaPriorityName(category.linkedSlaId) === 'No SLA'
+       }">
+  </div>
       <div class="p-3">
         <div class="d-flex justify-content-between align-items-start mb-2">
           <span class="badge-category">{{ category.name }}</span>
           <div class="action-btns">
-            <button class="btn-icon-sm" (click)="editCategory(category)"><i class="bi bi-pencil"></i></button>
-            <button class="btn-icon-sm text-danger" (click)="confirmDelete(category)"><i class="bi bi-trash"></i></button>
+            <button class="btn-icon-sm" (click)="editCategory(category)"><i class="bi bi-pencil-square"></i></button>
+            <button class="btn-icon-sm text-danger" (click)="confirmDelete(category)"><i
+                class="bi bi-trash"></i></button>
           </div>
         </div>
         <p class="category-desc text-muted small">{{ category.description || 'No description provided.' }}</p>
-         <div class="category-footer mt-3 pt-2 border-top d-flex justify-content-between align-items-center">
-  <div class="sla-info small fw-bold">
-    <i class="bi bi-clock-history me-1"></i>
-    <span [ngClass]="{
+        <div class="category-footer mt-3 pt-2 border-top d-flex justify-content-between align-items-center">
+          <div class="sla-info small fw-bold">
+            <i class="bi bi-clock-history me-1"></i>
+            <span [ngClass]="{
       'text-danger': getSlaPriorityName(category.linkedSlaId) === 'HIGH',
       'text-warning': getSlaPriorityName(category.linkedSlaId) === 'MEDIUM',
       'text-primary': getSlaPriorityName(category.linkedSlaId) === 'LOW',
       'text-muted': getSlaPriorityName(category.linkedSlaId) === 'No SLA'
     }">
-      SLA RULE : {{ getSlaPriorityName(category.linkedSlaId) }}
-    </span>
-  </div>
-  <span class="status-dot" [class.active]="category.active"></span>
-</div>
+              SLA RULE : {{ getSlaPriorityName(category.linkedSlaId) }}
+            </span>
+          </div>
+          <span class="status-dot" [class.active]="category.active"></span>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="custom-modal-overlay" *ngIf="createMode || editMode">
     <div class="custom-modal-card shadow-lg animate-slide-up">
-      <h4 class="fw-bold mb-4">{{ createMode ? 'New Category' : 'Edit Category' }}</h4>
-      
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="fw-bold mb-4">{{ createMode ? 'New Category' : 'Edit Category' }}</h4>
+        <button class="btn-close" (click)="cancel()"></button>
+      </div>
       <div class="mb-3">
         <label class="form-label-custom">Category Name</label>
         <input [(ngModel)]="formCategory.name" class="custom-input" placeholder="e.g. Technical">
@@ -111,7 +122,8 @@
 
       <div class="mb-3">
         <label class="form-label-custom">Description</label>
-        <textarea [(ngModel)]="formCategory.description" class="custom-input" rows="2" placeholder="Brief details..."></textarea>
+        <textarea [(ngModel)]="formCategory.description" class="custom-input" rows="2"
+          placeholder="Brief details..."></textarea>
       </div>
 
       <div class="row g-3 mb-4">

@@ -46,7 +46,7 @@ public class CategoryController {
 	public Flux<Category> getAllCategories() {
 		return categoryService.getAllCategories();
 	}
-
+	
 	@PutMapping("/{id}")
 	public Mono<ResponseEntity<ApiResponse>> updateCategory(@PathVariable String id, @RequestBody Category category) {
 		return categoryService.updateCategory(id, category).map(

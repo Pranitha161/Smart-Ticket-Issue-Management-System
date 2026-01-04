@@ -48,7 +48,8 @@ public class TicketServiceImplementation implements TicketService {
 			String last4 = hex.substring(hex.length() - 4).toUpperCase();
 			saved.setDisplayId("TCK-" + first2 + last4);
 			return saved;
-		}).flatMap(ticketRepo::save).flatMap(saved -> logActivity(saved, ACTION_TYPE.CREATED)).doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CREATED"));
+		}).flatMap(ticketRepo::save).flatMap(saved -> logActivity(saved, ACTION_TYPE.CREATED))
+				.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CREATED"));
 	}
 
 	@Override
@@ -88,26 +89,24 @@ public class TicketServiceImplementation implements TicketService {
 							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CLOSED"));
 				});
 	}
-	
-	@Override
-	public Mono<Ticket> assignTicket(String id) {
-	    return ticketRepo.findById(id)
-	            .switchIfEmpty(Mono.error(new RuntimeException("Ticket not found")))
-	            .flatMap(ticket -> {
-	                if (ticket.getStatus() == STATUS.CLOSED) {
-	                    return Mono.error(new RuntimeException("Cannot assign a closed ticket"));
-	                }
-	                if (ticket.getStatus() == STATUS.RESOLVED) {
-	                    return Mono.error(new RuntimeException("Cannot assign a resolved ticket"));
-	                }
-	                ticket.setStatus(STATUS.ASSIGNED);
-	                ticket.setUpdatedAt(LocalDateTime.now());
-	                return ticketRepo.save(ticket)
-	                        .flatMap(saved -> logActivity(saved, ACTION_TYPE.ASSIGNED))
-	                        .doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "ASSIGNED"));
-	            });
-	}
 
+	@Override
+	public Mono<Ticket> assignTicket(String id, String agentId) {
+		return ticketRepo.findById(id).switchIfEmpty(Mono.error(new RuntimeException("Ticket not found")))
+				.flatMap(ticket -> {
+					if (ticket.getStatus() == STATUS.CLOSED) {
+						return Mono.error(new RuntimeException("Cannot assign a closed ticket"));
+					}
+					if (ticket.getStatus() == STATUS.RESOLVED) {
+						return Mono.error(new RuntimeException("Cannot assign a resolved ticket"));
+					}
+					ticket.setStatus(STATUS.ASSIGNED);
+					ticket.setUpdatedAt(LocalDateTime.now());
+					ticket.setAssignedTo(agentId);
+					return ticketRepo.save(ticket).flatMap(saved -> logActivity(saved, ACTION_TYPE.ASSIGNED))
+							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "ASSIGNED"));
+				});
+	}
 
 	@Override
 	public Mono<Ticket> reopenTicket(String id) {
@@ -117,8 +116,7 @@ public class TicketServiceImplementation implements TicketService {
 			}
 			ticket.setStatus(STATUS.OPEN);
 			ticket.setUpdatedAt(LocalDateTime.now());
-			return ticketRepo.save(ticket)
-					.flatMap(saved -> logActivity(saved, ACTION_TYPE.REOPENED))
+			return ticketRepo.save(ticket).flatMap(saved -> logActivity(saved, ACTION_TYPE.REOPENED))
 					.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "REOPENED"));
 		});
 	}
@@ -168,79 +166,109 @@ public class TicketServiceImplementation implements TicketService {
 	public Mono<List<PrioritySummaryDto>> prioritySummary() {
 		return ticketRepo.getPrioritySummary().collectList();
 	}
-	
+
 	@Override
 	public Mono<List<CategorySummaryDto>> getCategorySummary() {
 		return ticketRepo.getCategorySummary().collectList();
 	}
-	
+
 	@Override
 	public Mono<UserTicketStatsDto> getUserStats(String userId) {
-	    Mono<Long> total = ticketRepo.findByCreatedBy(userId).count();
-	    Mono<Long> open = ticketRepo.getStatusSummaryByUserId(userId)
-	            .filter(s -> s.getStatus() == STATUS.OPEN)
-	            .map(StatusSummaryDto::getCount)
-	            .next()
-	            .defaultIfEmpty(0L);
-	    Mono<Long> resolved = ticketRepo.getStatusSummaryByUserId(userId)
-	            .filter(s -> s.getStatus() == STATUS.RESOLVED)
-	            .map(StatusSummaryDto::getCount)
-	            .next()
-	            .defaultIfEmpty(0L);
-	    Mono<Long> critical = ticketRepo.getPrioritySummaryByUserId(userId)
-	            .filter(p -> p.getPriority() == PRIORITY.CRITICAL)
-	            .map(PrioritySummaryDto::getCount)
-	            .next()
-	            .defaultIfEmpty(0L);
+		Mono<Long> total = ticketRepo.findByCreatedBy(userId).count();
+		Mono<Long> open = ticketRepo.getStatusSummaryByUserId(userId).filter(s -> s.getStatus() == STATUS.OPEN)
+				.map(StatusSummaryDto::getCount).next().defaultIfEmpty(0L);
+		Mono<Long> resolved = ticketRepo.getStatusSummaryByUserId(userId).filter(s -> s.getStatus() == STATUS.RESOLVED)
+				.map(StatusSummaryDto::getCount).next().defaultIfEmpty(0L);
+		Mono<Long> critical = ticketRepo.getPrioritySummaryByUserId(userId)
+				.filter(p -> p.getPriority() == PRIORITY.CRITICAL).map(PrioritySummaryDto::getCount).next()
+				.defaultIfEmpty(0L);
 
-	    return Mono.zip(total, open, resolved, critical)
-	            .map(tuple -> new UserTicketStatsDto(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()));
+		return Mono.zip(total, open, resolved, critical)
+				.map(tuple -> new UserTicketStatsDto(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()));
 	}
+
 	@Override
 	public Mono<UserTicketStatsDto> getGlobalStats() {
-	    
-	       
-	        Mono<Long> total = ticketRepo.count();
 
-	        Mono<Long> open = ticketRepo.getStatusSummary()
-	            .filter(s -> s.getStatus().equals(STATUS.OPEN))
-	            .map(StatusSummaryDto::getCount)
-	            .next()
-	            .defaultIfEmpty(0L);
+		Mono<Long> total = ticketRepo.count();
 
-	        Mono<Long> resolved = ticketRepo.getStatusSummary()
-	            .filter(s -> s.getStatus().equals(STATUS.RESOLVED))
-	            .map(StatusSummaryDto::getCount)
-	            .next()
-	            .defaultIfEmpty(0L);
+		Mono<Long> open = ticketRepo.getStatusSummary().filter(s -> s.getStatus().equals(STATUS.OPEN))
+				.map(StatusSummaryDto::getCount).next().defaultIfEmpty(0L);
 
-	        Mono<Long> critical = ticketRepo.getPrioritySummary()
-	            .filter(p -> p.getPriority().equals(PRIORITY.CRITICAL))
-	            .map(PrioritySummaryDto::getCount)
-	            .next()
-	            .defaultIfEmpty(0L);
+		Mono<Long> resolved = ticketRepo.getStatusSummary().filter(s -> s.getStatus().equals(STATUS.RESOLVED))
+				.map(StatusSummaryDto::getCount).next().defaultIfEmpty(0L);
 
-	        return Mono.zip(total, open, resolved, critical)
-	            .map(tuple -> new UserTicketStatsDto(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()));
-	  
+		Mono<Long> critical = ticketRepo.getPrioritySummary().filter(p -> p.getPriority().equals(PRIORITY.CRITICAL))
+				.map(PrioritySummaryDto::getCount).next().defaultIfEmpty(0L);
+
+		return Mono.zip(total, open, resolved, critical)
+				.map(tuple -> new UserTicketStatsDto(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()));
+
 	}
 
-	
 	@Override
-	public Mono<List<Ticket>> getRecentTickets() { 
-		return ticketRepo.findTop5ByOrderByCreatedAtDesc().collectList(); 
-	} 
-	
-	@Override
-	public Mono<List<Ticket>> getRecentTicketsByUser(String userId) { 
-		return ticketRepo.findTop5ByCreatedByOrderByCreatedAtDesc(userId).collectList(); 
+	public Mono<List<Ticket>> getRecentTickets() {
+		return ticketRepo.findTop5ByOrderByCreatedAtDesc().collectList();
 	}
-	
+
+	@Override
+	public Mono<List<Ticket>> getRecentTicketsByUser(String userId) {
+		return ticketRepo.findTop5ByCreatedByOrderByCreatedAtDesc(userId).collectList();
+	}
+
 	@Override
 	public Mono<List<Ticket>> getRecentTicketsByAgent(String agentId) {
-	    return ticketRepo.findTop5ByAssignedToOrderByCreatedAtDesc(agentId).collectList();
+		return ticketRepo.findTop5ByAssignedToOrderByCreatedAtDesc(agentId).collectList();
 	}
 
+	@Override
+	public Mono<List<Ticket>> getTicketsByAgent(String agentId) {
+		return ticketRepo.findByAssignedTo(agentId).collectList();
+	}
+
+	@Override
+	public Mono<UserTicketStatsDto> getAgentStats(String agentId) {
+		Mono<Long> total = ticketRepo.findByAssignedTo(agentId).count();
+		Mono<Long> open = ticketRepo.getStatusSummaryByAgentId(agentId).filter(s -> s.getStatus() == STATUS.OPEN)
+				.map(StatusSummaryDto::getCount).next().defaultIfEmpty(0L);
+		Mono<Long> resolved = ticketRepo.getStatusSummaryByAgentId(agentId)
+				.filter(s -> s.getStatus() == STATUS.RESOLVED).map(StatusSummaryDto::getCount).next()
+				.defaultIfEmpty(0L);
+		Mono<Long> critical = ticketRepo.getPrioritySummaryByAgentId(agentId)
+				.filter(p -> p.getPriority() == PRIORITY.CRITICAL).map(PrioritySummaryDto::getCount).next()
+				.defaultIfEmpty(0L);
+
+		return Mono.zip(total, open, resolved, critical)
+				.map(tuple -> new UserTicketStatsDto(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()));
+	}
+	
+	@Override
+	public Mono<Ticket> startWorkOnTicket(String id, String agentId) {
+	    return ticketRepo.findById(id)
+	        .switchIfEmpty(Mono.error(new RuntimeException("Ticket not found")))
+	        .flatMap(ticket -> {
+	            if (ticket.getStatus() == STATUS.CLOSED) {
+	                return Mono.error(new RuntimeException("Cannot start work on a closed ticket"));
+	            }
+	            if (ticket.getStatus() == STATUS.RESOLVED) {
+	                return Mono.error(new RuntimeException("Cannot start work on a resolved ticket"));
+	            }
+	            if (ticket.getStatus() == STATUS.OPEN) {
+	                return Mono.error(new RuntimeException("Ticket must be assigned before starting work"));
+	            }
+	            if (ticket.getStatus() == STATUS.IN_PROGRESS) {
+	                return Mono.error(new RuntimeException("Ticket is already in progress"));
+	            }
+
+	            ticket.setStatus(STATUS.IN_PROGRESS);
+	            ticket.setUpdatedAt(LocalDateTime.now());
+	            ticket.setAssignedTo(agentId);
+
+	            return ticketRepo.save(ticket)
+	                .flatMap(saved -> logActivity(saved, ACTION_TYPE.IN_PROGRESS))
+	                .doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "IN_PROGRESS"));
+	        });
+	}
 
 
 }

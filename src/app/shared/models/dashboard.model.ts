@@ -7,7 +7,7 @@ export interface PrioritySummaryDto {
     count: number; 
 } 
 export interface CategorySummaryDto { 
-    category: string; 
+    categoryId: string; 
     count: number; 
 } 
 export interface AgentSummaryDto { 

@@ -10,8 +10,8 @@
 
     <div class="profile-identity text-center">
       <div class="avatar-wrapper">
-        <img [src]="'https://ui-avatars.com/api/?name=' + user.username + '&background=6c5ce7&color=fff&size=128'" 
-             alt="User Avatar" class="profile-img">
+        <img [src]="'https://ui-avatars.com/api/?name=' + user.username + '&background=6c5ce7&color=fff&size=128'"
+          alt="User Avatar" class="profile-img">
         <div class="online-indicator"></div>
       </div>
       <h2 class="mt-3 mb-1">{{ user.username }}</h2>
@@ -42,7 +42,7 @@
         <h5><i class="bi bi-pencil-square me-2"></i>Update Information</h5>
         <button class="btn-close" (click)="activeTab = null"></button>
       </div>
-      
+
       <div class="form-group mb-3">
         <label>Username</label>
         <div class="input-group">
@@ -80,4 +80,3 @@
 
       <button class="btn btn-save w-100" (click)="changePassword()">Update Password</button>
     </div>
-   

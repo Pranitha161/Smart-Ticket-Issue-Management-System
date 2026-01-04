@@ -1,4 +1,4 @@
-<div class="admin-panel-wrapper p-4">
+<div class="admin-panel-wrapper p-4 bg-light">
   <div class="admin-header d-flex justify-content-between align-items-end mb-4">
     <div>
       <h1 class="fw-bold">Admin Panel</h1>
@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <div class="admin-tabs-container mb-4">
+  <div class="admin-tabs-container mb-4 ">
     <div class="nav-pills-custom">
       <button class="tab-btn" [class.active]="activeTab === 'users'" (click)="setActiveTab('users')">
         <i class="bi bi-people"></i> User Management
@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <div class="admin-content-card shadow-sm">
+  <div class="admin-content-card shadow-sm ">
     <app-user-management *ngIf="activeTab === 'users'"></app-user-management>
     <app-category-panel *ngIf="activeTab === 'categories'"></app-category-panel>
     <app-sla-rules-list *ngIf="activeTab === 'sla'"></app-sla-rules-list>

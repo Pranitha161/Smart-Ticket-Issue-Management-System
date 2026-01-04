@@ -33,17 +33,32 @@ export class LookupService {
       cats?.forEach(c => c.id && this.categories.set(c.id, c));
       users?.forEach(u => this.users.set(u.id, u));
       slas?.forEach(s => s.id && this.slas.set(s.id, s));
-
+      console.log(this.categories);
       console.log('Lookup data loaded:', this.users.size, 'users found');
     } catch (err) {
       console.error('Lookup init failed:', err);
     }
   }
 
+  // getCategoryName(id?: string): string {
+  //   console.log(this.categories);
+  //   return id ? (this.categories.get(id)?.name || id) : '';
+  // }
   getCategoryName(id?: string): string {
-    return id ? (this.categories.get(id)?.name || id) : '';
+  if (!id) return 'Uncategorized';
+  
+  // Clean the ID and check the map
+  const cleanId = id.toString().trim();
+  const category = this.categories.get(cleanId);
+  
+  if (category) {
+    return category.name;
   }
 
+  // Debug: If it still returns the ID, we can see what's failing in console
+  // console.warn(`Lookup failed for ID: ${cleanId}. Map size: ${this.categories.size}`);
+  return id; 
+}
   getUserName(id?: string): string {
     return id ? (this.users.get(id)?.username || id) : '';
   }
@@ -68,7 +83,7 @@ export class LookupService {
     return Array.from(this.slas.values());
   }
 
-  /** REFRESH METHODS **/
+
 
   async refreshCategories(): Promise<void> {
     const context = { context: new HttpContext().set(BYPASS_LOGIC, true) };

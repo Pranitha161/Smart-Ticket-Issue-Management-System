@@ -17,7 +17,7 @@ public interface TicketClient {
 	TicketDto getTicketById(@PathVariable String id);
 
 	@PutMapping("/tickets/{id}/assign")
-	void assignTicket(@PathVariable String id);
+	void assignTicket(@PathVariable String id,@RequestParam("agentId") String agentId);
 	
 	@PutMapping("/tickets/{id}/resolve")
 	void resolveTicket(@PathVariable String id);

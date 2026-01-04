@@ -1,6 +1,7 @@
 package com.smartticket.demo.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -9,9 +10,12 @@ import com.smartticket.demo.dto.CategorySummaryDto;
 import com.smartticket.demo.dto.EscalationSummaryDto;
 import com.smartticket.demo.dto.PrioritySummaryDto;
 import com.smartticket.demo.dto.StatusSummaryDto;
+import com.smartticket.demo.dto.UserStatsDto;
+import com.smartticket.demo.dto.UserTicketStatsDto;
 import com.smartticket.demo.service.implementation.DashBoardServiceImplementation;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/dashboard")
@@ -37,7 +41,27 @@ public class DashBoardController {
 	public Flux<CategorySummaryDto> getCategorySummary() {
 		return dashboardService.getCategorySummary();
 	}
-
+	
+	@GetMapping("/tickets/user/{userId}/stats")
+	public Mono<UserTicketStatsDto> getUserStats(@PathVariable String userId) {
+		return dashboardService.getUserStats(userId);
+	}
+	
+	@GetMapping("/tickets/agent/{agentId}/stats")
+	public Mono<UserTicketStatsDto> getAgentStats(@PathVariable String agentId) {
+		return dashboardService.getAgentStats(agentId);
+	}
+	
+	@GetMapping("/tickets/global-stats")
+	public Mono<UserTicketStatsDto> getGlobalStats() {
+		return dashboardService.getGlobalStats();
+	}
+	
+	@GetMapping("/users/stats")
+	public Mono<UserStatsDto> getStats() {
+		return dashboardService.getStats();
+	}
+	
 	@GetMapping("/assignments/agent-summary")
 	public Flux<AgentSummaryDto> getAssignmentsPerAgent() {
 		return dashboardService.getAssignmentsPerAgent();

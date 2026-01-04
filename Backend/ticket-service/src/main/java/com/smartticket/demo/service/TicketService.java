@@ -47,6 +47,12 @@ public interface TicketService {
 
 	Mono<UserTicketStatsDto> getGlobalStats();
 
-	Mono<Ticket> assignTicket(String id);
+	Mono<Ticket> assignTicket(String id, String agentId);
+
+	Mono<List<Ticket>> getTicketsByAgent(String agentId);
+
+	Mono<UserTicketStatsDto> getAgentStats(String agentId);
+
+	Mono<Ticket> startWorkOnTicket(String id, String agentId);
 
 }

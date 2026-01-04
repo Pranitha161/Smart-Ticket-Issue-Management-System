@@ -32,7 +32,7 @@ export class UserManagement implements OnInit {
   ngOnInit(): void {
     this.loadData();
   }
-
+  readonly ALLOWED_ROLES = ['USER', 'MANAGER', 'AGENT'];
   loadData(): void {
     this.users = this.lookup.getUserList();
     this.categories = this.lookup.getCategoryList();
@@ -40,6 +40,7 @@ export class UserManagement implements OnInit {
       this.userStats = stats;
       this.cd.detectChanges();
     });
+    console.log(this.users);
   }
 
   openCreateForm() {
@@ -58,7 +59,16 @@ export class UserManagement implements OnInit {
 
   onRoleChange(role: string) {
     this.formUser.roles = [role];
-    this.formUser.agentProfile = role === 'AGENT' ? { agentLevel: '', categoryId: '', skills: [], currentAssignments: 0 } : null;
+    if (role === 'AGENT') {
+      this.formUser.agentProfile = { 
+        agentLevel: 'LEVEL_1', // Default level
+        categoryId: '', 
+        skills: [], 
+        currentAssignments: 0 
+      };
+    } else {
+      this.formUser.agentProfile = null;
+    }
   }
 
   saveUser() {
@@ -66,7 +76,7 @@ export class UserManagement implements OnInit {
     if (this.formUser.roles[0] === 'AGENT') {
       payload.agentProfile.skills = this.skillsInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
     }
-
+    console.log(payload);
     const request = this.modalMode === 'create'
       ? this.authService.create(payload)
       : this.adminUserService.updateUser(this.formUser.id, payload);

@@ -1,14 +1,9 @@
-<div class="recent-tickets card border-0 shadow-sm p-3">
+<!-- <div class="recent-tickets card border-0 shadow-sm p-3">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h5 class="fw-bold mb-0">Recent Tickets</h5>
     <button class="btn btn-outline-secondary btn-sm px-3" [routerLink]="['/tickets']">View All</button>
   </div>
-  <!-- <span *ngIf="ticket.status === 'ESCALATED'" class="badge bg-danger ms-2">
-  SLA Breached
-</span>
-<span *ngIf="ticket.dueAt && isNearBreach(ticket.dueAt)" class="badge bg-warning ms-2">
-  SLA Due Soon
-</span> -->
+
 
   <div *ngIf="tickets.length > 0; else empty">
     <div class="ticket-item card mb-3 border-light shadow-none" *ngFor="let ticket of tickets">
@@ -40,5 +35,54 @@
 
   <ng-template #empty>
     <div class="text-center py-4 text-muted">No recent tickets found.</div>
+  </ng-template>
+</div> -->
+<div class="recent-tickets card border-0 shadow-sm">
+  <div class="card-header bg-transparent border-0 p-4 d-flex justify-content-between align-items-center">
+    <div>
+      <h5 class="fw-bold mb-0">Recent Tickets</h5>
+      <p class="text-muted small mb-0">Latest activity from your queue</p>
+    </div>
+    <button class="btn btn-light-primary btn-sm px-3 fw-600" [routerLink]="['/tickets']">
+      View All <i class="bi bi-arrow-right ms-1"></i>
+    </button>
+  </div>
+
+  <div class="card-body p-4 pt-0">
+    <div *ngIf="tickets.length > 0; else empty">
+      <div class="ticket-item mb-3" *ngFor="let ticket of tickets" [routerLink]="['/tickets', ticket.id]">
+        <div class="d-flex justify-content-between align-items-start">
+          <div class="flex-grow-1">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="ticket-id">#{{ ticket.displayId }}</span>
+              <span class="category-tag-mini">{{ lookup.getCategoryName(ticket.categoryId) }}</span>
+              
+              <span *ngIf="ticket.status === 'ESCALATED'" class="sla-badge pulse">
+                <i class="bi bi-exclamation-triangle-fill"></i> SLA
+              </span>
+            </div>
+            
+            <h6 class="ticket-title mb-2">{{ ticket.title }}</h6>
+            
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge-custom priority" [attr.data-priority]="ticket.priority">{{ ticket.priority }}</span>
+              <span class="badge-custom status" [attr.data-status]="ticket.status">{{ ticket.status }}</span>
+              <span class="text-muted tiny ms-auto">
+                <i class="bi bi-clock me-1"></i>{{ ticket.createdAt | date:'MMM d' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #empty>
+    <div class="text-center py-5">
+      <div class="empty-icon mb-3">
+        <i class="bi bi-inbox text-muted"></i>
+      </div>
+      <p class="text-muted">No recent tickets to show.</p>
+    </div>
   </ng-template>
 </div>

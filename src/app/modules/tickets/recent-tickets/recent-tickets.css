@@ -1,4 +1,4 @@
-.recent-tickets {
+/* .recent-tickets {
   background: #fff;
   border-radius: 16px;
 }
@@ -10,7 +10,10 @@
 }
 
 .ticket-item:hover {
-  background-color: #fafafa;
+    border-color: #5c67f2;
+  background-color: #f8faff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(92, 103, 242, 0.08);
 }
 
 .badge-custom {
@@ -36,4 +39,93 @@
     padding: 2px 8px;
     font-size: 0.7rem;
   }
+} */
+ 
+ .recent-tickets {
+  border-radius: 20px;
+  overflow: hidden;
 }
+
+.ticket-item {
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 16px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.ticket-item:hover {
+  border-color: #5c67f2;
+  background-color: #f8faff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(92, 103, 242, 0.08);
+}
+
+.ticket-id {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #5c67f2;
+  background: #eef2ff;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.ticket-title {
+  font-size: 0.95rem;
+  color: #1e293b;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+
+.category-tag-mini {
+  font-size: 0.7rem;
+  color: #64748b;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+
+.badge-custom {
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.priority[data-priority="CRITICAL"], .priority[data-priority="HIGH"] { background: #fee2e2; color: #ef4444; }
+.priority[data-priority="MEDIUM"] { background: #fef9c3; color: #854d0e; }
+.priority[data-priority="LOW"] { background: #f1f5f9; color: #475569; }
+
+.status[data-status="OPEN"] { background: #ffedd5; color: #f59e0b; }
+.status[data-status="ASSIGNED"] { background: #dbeafe; color: #1e40af; }
+.status[data-status="RESOLVED"] { background: #dcfce7; color: #15803d; }
+
+
+.sla-badge {
+  font-size: 0.65rem;
+  background: #ef4444;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 800;
+}
+
+.pulse {
+  animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+  0% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.4); }
+  100% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+}
+
+.tiny { font-size: 0.7rem; }
+.fw-600 { font-weight: 600; }
+.btn-light-primary { background: #f0f2ff; color: #5c67f2; border: none; }
+.btn-light-primary:hover { background: #5c67f2; color: #fff; } 

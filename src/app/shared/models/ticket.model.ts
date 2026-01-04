@@ -6,10 +6,11 @@ export interface Ticket {
   displayId: string;           
   title: string;           
   description?: string;    
-  status: string;          
+  status: string;   
+  categoryId: string;       
   priority: string;        
   createdBy: string;       
   assignedTo?: string;     
-  createdDate: string;    
+  createdAt: string;    
   updatedDate?: string;    
 }

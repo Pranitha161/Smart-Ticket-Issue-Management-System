@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpContext } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { Category, CategoryDto } from './category';
-import { AdminUser, User } from './admin-user';
+import { AdminUser } from './admin-user';
 import { SlaRule } from './sla-rule';
 import { SlaRuleModel } from '../../shared/models/sla-rule.model';
 import { BYPASS_LOGIC } from '../constants/tokens';
+import { User } from '../../shared/models/authuser.model';
 
 @Injectable({ providedIn: 'root' })
 export class LookupService {
@@ -33,32 +34,16 @@ export class LookupService {
       cats?.forEach(c => c.id && this.categories.set(c.id, c));
       users?.forEach(u => this.users.set(u.id, u));
       slas?.forEach(s => s.id && this.slas.set(s.id, s));
-      console.log(this.categories);
-      console.log('Lookup data loaded:', this.users.size, 'users found');
     } catch (err) {
       console.error('Lookup init failed:', err);
     }
   }
 
-  // getCategoryName(id?: string): string {
-  //   console.log(this.categories);
-  //   return id ? (this.categories.get(id)?.name || id) : '';
-  // }
   getCategoryName(id?: string): string {
-  if (!id) return 'Uncategorized';
-  
-  // Clean the ID and check the map
-  const cleanId = id.toString().trim();
-  const category = this.categories.get(cleanId);
-  
-  if (category) {
-    return category.name;
+   
+    return id ? (this.categories.get(id)?.name || id) : '';
   }
 
-  // Debug: If it still returns the ID, we can see what's failing in console
-  // console.warn(`Lookup failed for ID: ${cleanId}. Map size: ${this.categories.size}`);
-  return id; 
-}
   getUserName(id?: string): string {
     return id ? (this.users.get(id)?.username || id) : '';
   }

@@ -5,6 +5,7 @@
   border-right: 1px solid #eef0f2;
   transition: all 0.3s ease;
   z-index: 1000;
+  position: sticky;
 }
 
 .sidebar-header {
@@ -34,7 +35,6 @@
   background-color: #f8f9fa;
   color: #6c5ce7; 
 }
-
 
 .nav-link.active {
   background-color: rgba(108, 92, 231, 0.1); 

@@ -87,7 +87,7 @@ public class AssignmentServiceImplementation implements AssignmentService {
 	                                saved.getTicketId(), saved.getAgentId(), "ASSIGNED"
 	                            );
 	                            userClient.incrementAssignments(saved.getAgentId());
-	                            ticketClient.assignTicket(saved.getTicketId());
+	                            ticketClient.assignTicket(saved.getTicketId(),saved.getAgentId());
 	                        });
 	                });
 	        });
@@ -190,7 +190,7 @@ public class AssignmentServiceImplementation implements AssignmentService {
 					return assignmentRepo.save(assignment).doOnSuccess(saved -> { 
 						assignmentEscalationEventProducer.publishAssignmentEvent( saved.getTicketId(), saved.getAgentId(), "REASSIGNED" ); 
 						userClient.decrementAssignments(oldAgentId); userClient.incrementAssignments(saved.getAgentId()); 
-						ticketClient.assignTicket(saved.getTicketId()); });
+						ticketClient.assignTicket(saved.getTicketId(),saved.getAgentId()); });
 				});
 	}
 
@@ -235,7 +235,7 @@ public class AssignmentServiceImplementation implements AssignmentService {
 	                                saved.getTicketId(), saved.getAgentId(), "AUTO"
 	                            );
 	                            userClient.incrementAssignments(saved.getAgentId());
-	                            ticketClient.assignTicket(saved.getTicketId());
+	                            ticketClient.assignTicket(saved.getTicketId(),saved.getAgentId());
 	                        });
 	                });
 	        });

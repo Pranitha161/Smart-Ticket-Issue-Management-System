@@ -174,7 +174,7 @@ public class UserAuthServiceImplementation implements UserAuthService {
 					user.setResetToken(token);
 					user.setResetTokenExpiry(Instant.now().plus(Duration.ofMinutes(15)));
 					return userauthRepo.save(user)
-							.doOnSuccess(saved -> eventPublisher.publishPasswordReset(saved.getId(), email, token))
+							.doOnSuccess(saved -> eventPublisher.publishPasswordReset(saved.getId(), email, "http://localhost:4200/auth/reset-password?token=" + token))
 							.thenReturn(new ApiResponse(true, "Reset link sent to your email"));
 				});
 	}

@@ -23,11 +23,12 @@ export class SlaRulesList implements OnInit {
   slaRules: SlaRuleModel[] = [];
   form!: FormGroup;
   editingRule: SlaRuleModel | null = null;
-  ruleToDelete: SlaRuleModel | null = null; // Staging for custom confirmation
+  ruleToDelete: SlaRuleModel | null = null;
+  isNewRule = false;
 
   ngOnInit(): void {
-    this.loadRules();
     this.initForm();
+    this.loadRules();
   }
 
   initForm(): void {
@@ -48,9 +49,24 @@ export class SlaRulesList implements OnInit {
     });
   }
 
+  openCreateModal() {
+  this.isNewRule = true;
+  // Cast to any to bypass the strict literal check for the initial empty state
+  this.editingRule = { 
+    priority: '' as any, 
+    responseMinutes: 0, 
+    resolutionMinutes: 0 
+  } as SlaRuleModel;
+  
+  this.form.reset();
+  this.form.get('priority')?.enable();
+}
+
   editRule(rule: SlaRuleModel): void {
+    this.isNewRule = false;
     this.editingRule = rule;
     this.form.patchValue(rule);
+    
     // Disable priority field if it's a baseline system rule
     if (['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(rule.priority.toUpperCase())) {
       this.form.get('priority')?.disable();
@@ -58,19 +74,23 @@ export class SlaRulesList implements OnInit {
       this.form.get('priority')?.enable();
     }
   }
+  
 
   saveRule(): void {
     if (this.form.invalid) return;
 
-    const updated: SlaRuleModel = { ...this.editingRule, ...this.form.getRawValue() };
-    const request = updated.id 
-      ? this.slaRuleService.updateRule(updated.id, updated)
-      : this.slaRuleService.addRule(updated);
+    const formData = this.form.getRawValue();
+    const payload: SlaRuleModel = { ...this.editingRule, ...formData };
+
+    const request = (!this.isNewRule && payload.id)
+      ? this.slaRuleService.updateRule(payload.id, payload)
+      : this.slaRuleService.addRule(payload);
 
     request.subscribe({
       next: () => {
-        this.toast.show(`SLA Rule for ${updated.priority} updated successfully`, 'success');
-        this.lookup.refreshSlas(); // Sync categories dropdown
+        const msg = this.isNewRule ? 'created' : 'updated';
+        this.toast.show(`SLA Rule for ${payload.priority} ${msg} successfully`, 'success');
+        this.lookup.refreshSlas();
         this.loadRules();
         this.cancelEdit();
       },
@@ -78,7 +98,6 @@ export class SlaRulesList implements OnInit {
     });
   }
 
-  // staged deletion logic
   confirmDelete(rule: SlaRuleModel): void {
     if (['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(rule.priority.toUpperCase())) {
       this.toast.show('System baseline rules cannot be deleted', 'error');
@@ -103,6 +122,7 @@ export class SlaRulesList implements OnInit {
 
   cancelEdit(): void {
     this.editingRule = null;
+    this.isNewRule = false;
     this.form.reset();
   }
 }

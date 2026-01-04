@@ -11,7 +11,7 @@ import com.smartticket.demo.dto.EscalationSummaryDto;
 @FeignClient(name = "assignment-escalation-service")
 public interface AssignmentClient {
     @GetMapping("/assignments/agent-summary")
-    List<AgentSummaryDto> getAssignmentsPerAgent();
+    List<AgentSummaryDto> getAgentWorkloadSummary();
     
     @GetMapping("/assignments/escalations/summary")
 	List<EscalationSummaryDto> getEscalationSummary();

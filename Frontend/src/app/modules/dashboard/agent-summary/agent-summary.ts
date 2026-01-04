@@ -18,43 +18,30 @@ export class AgentSummary implements OnInit {
 
   agentMetrics: any[] = [];
 
-  // 
-  // src/app/modules/dashboard/agent-summary/agent-summary.component.ts
+  ngOnInit(): void {
+    this.dashboardService.getAssignmentsPerAgent().subscribe({
+      next: (res: AgentSummaryDto[]) => {
+        this.agentMetrics = res.map(item => {
+          const assigned = Number(item.assignedCount);
+          const resolved = Number(item.resolvedCount);
+          const overdue = Number(item.overdueCount);
+          const escLevel = Number(item.escalationLevel);
 
-ngOnInit(): void {
-  this.dashboardService.getAgentSummary().subscribe({
-    next: (res: AgentSummaryDto[]) => {
-      this.agentMetrics = res.map(item => {
-        // Force conversion in case API sends strings
-        const assigned = Number(item.assignedCount);
-        const resolved = Number(item.resolvedCount);
-        const overdue = Number(item.overdueCount);
-        const escLevel = Number(item.escalationLevel);
-
-        return {
-          ...item,
-          // Use Lookup Service for names
-          name: this.lookup.getUserName(item.agentId) || 'Unknown Agent',
-          email: this.lookup.getUserEmail(item.agentId) || 'N/A',
-          
-          
-          // KPIs for the Report
-          performanceScore: assigned > 0 ? Math.round((resolved / assigned) * 100) : 0,
-          
-          // Visual Flags for the "Status" column
-          isHighRisk: overdue > 5 || escLevel > 1,
-          statusLabel: overdue > 0 ? 'Action Required' : 'On Track'
-        };
-      });
-      
-      // Sort by performance score descending (Leaderboard style)
-      this.agentMetrics.sort((a, b) => b.performanceScore - a.performanceScore);
-      
-      this.cd.detectChanges();
-    },
-    error: (err) => console.error('Agent Metrics Error:', err)
-  });
-}
+          return {
+            ...item,
+            name: this.lookup.getUserName(item.agentId) || 'Unknown Agent',
+            email: this.lookup.getUserEmail(item.agentId) || 'N/A',
+            performanceScore: assigned > 0 ? Math.round((resolved / assigned) * 100) : 0,
+            isHighRisk: overdue > 5 || escLevel > 1,
+            statusLabel: overdue > 0 ? 'Action Required' : 'On Track'
+          };
+        });
+        this.agentMetrics.sort((a, b) => b.performanceScore - a.performanceScore);
+        this.cd.detectChanges();
+      },
+      error: (err) => console.error('Agent Metrics Error:', err)
+    });
+  }
 
   // Simple helper to format minutes into readable hours/mins
   formatTime(mins: number): string {

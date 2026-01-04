@@ -14,3 +14,9 @@ export interface Ticket {
   createdAt: string;    
   updatedDate?: string;    
 }
+export interface UserTicketStatsDto {
+  total: number;
+  open: number;
+  resolved: number;
+  critical: number;
+}

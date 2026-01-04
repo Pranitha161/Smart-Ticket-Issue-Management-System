@@ -12,6 +12,7 @@ import { StatusSummary } from '../status-summary/status-summary';
 import { PrioritySummary } from '../priority-summary/priority-summary';
 import { AssignmentEscalation } from '../../../core/services/assignment-escalation';
 import { EscalationSummaryDto } from '../../../shared/models/assignment-escalation.model';
+import { DashboardService } from '../../../core/services/dashboard';
 
 Chart.register(...registerables);
 
@@ -43,6 +44,7 @@ export class Dashboard implements OnInit {
 
   constructor(
     private ticketService: TicketService,
+    private dashboardService: DashboardService,
     private authService: AuthService,
     private assignmentService: AssignmentEscalation,
     private cd: ChangeDetectorRef
@@ -55,7 +57,7 @@ export class Dashboard implements OnInit {
 
     if (this.role === 'ADMIN' || this.role === 'MANAGER') {
 
-      this.ticketService.getGlobalStats().subscribe(data => {
+      this.dashboardService.getGlobalStats().subscribe(data => {
         this.stats = data;
         
         this.cd.detectChanges();
@@ -65,7 +67,7 @@ export class Dashboard implements OnInit {
     }
     else if (this.role === 'AGENT') {
 
-      this.ticketService.getAgentStats(userId).subscribe(data => {
+      this.dashboardService.getAgentStats(userId).subscribe(data => {
         this.stats = data;
         this.cd.detectChanges();
       });
@@ -74,7 +76,7 @@ export class Dashboard implements OnInit {
     }
     else {
 
-      this.ticketService.getUserStats(userId).subscribe(data => {
+      this.dashboardService.getUserStats(userId).subscribe(data => {
         this.stats = data;
         this.cd.detectChanges();
       });
@@ -82,7 +84,7 @@ export class Dashboard implements OnInit {
 
 
     if (this.role === 'ADMIN' || this.role === 'MANAGER') {
-      this.ticketService.getStatusSummary().subscribe(data => {
+      this.dashboardService.getTicketStatusSummary().subscribe(data => {
         this.statusChartData.labels = data.map(d => d.status);
         this.statusChartData.datasets = [
           {
@@ -94,7 +96,7 @@ export class Dashboard implements OnInit {
         this.statusChart?.update();
       });
 
-      this.ticketService.getPrioritySummary().subscribe(data => {
+      this.dashboardService.getTicketPrioritySummary().subscribe(data => {
         this.priorityChartData.labels = data.map(d => d.priority);
         this.priorityChartData.datasets = [
           {

@@ -1,11 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminUser, User, UserStatsDto } from '../../../core/services/admin-user';
+import { AdminUser } from '../../../core/services/admin-user';
 import { AuthService } from '../../../core/services/auth';
 import { CategoryDto } from '../../../core/services/category';
 import { LookupService } from '../../../core/services/lookup-service';
 import { Toast } from '../../../core/services/toast';
+import { User, UserStatsDto } from '../../../shared/models/authuser.model';
+import { DashboardService } from '../../../core/services/dashboard';
 
 @Component({
   selector: 'app-user-management',
@@ -17,6 +19,7 @@ import { Toast } from '../../../core/services/toast';
 export class UserManagement implements OnInit {
   private adminUserService = inject(AdminUser);
   private authService = inject(AuthService);
+  private dashboardService = inject(DashboardService);
   private lookup = inject(LookupService);
   private toast = inject(Toast);
   private cd = inject(ChangeDetectorRef);
@@ -36,7 +39,7 @@ export class UserManagement implements OnInit {
   loadData(): void {
     this.users = this.lookup.getUserList();
     this.categories = this.lookup.getCategoryList();
-    this.adminUserService.getUserStats().subscribe(stats => {
+    this.dashboardService.getStats().subscribe(stats => {
       this.userStats = stats;
       this.cd.detectChanges();
     });

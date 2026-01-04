@@ -34,18 +34,15 @@ public class SecurityConfig {
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(ex -> ex
                 
+                
                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .pathMatchers("/auth-user-service/auth/login",
-                              "/auth-user-service/auth/register",
-                              "/auth-user-service/auth/change-password",
-                              "/auth-user-service/auth/request-reset",
-                              "/auth-user-service/auth/reset-password",
-                              "/auth-user-service/auth/reset-password/**").permitAll()
+                .pathMatchers("/auth-user-service/auth/**").permitAll()
+                .pathMatchers("/actuator/**").permitAll()
                 .pathMatchers("/actuator/**").permitAll()
                 .pathMatchers("/tickets/**").hasRole("USER")
                 .pathMatchers("/tickets/assign/**", "/tickets/update/**").hasRole("AGENT")
                 .pathMatchers("/dashboard/**", "/reports/**").hasRole("MANAGER")
-                .pathMatchers("/admin/**", "/ticket-service/categories/**", "/users/**").hasRole("ADMIN")
+                .pathMatchers("/admin/**", "/categories/**", "/users/**").hasRole("ADMIN")
                 .anyExchange().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2

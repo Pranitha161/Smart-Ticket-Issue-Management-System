@@ -52,7 +52,7 @@ public class UserAuthController {
 		return userAuthService.getUserEmail(id).map(email -> ResponseEntity.ok(email));
 	}
 
-
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/auth/{id}")
 	public Mono<ResponseEntity<ApiResponse>> deleteUserById(@PathVariable String id) {
 		return userAuthService.deleteUserById(id).map(response -> ResponseEntity.ok(response));

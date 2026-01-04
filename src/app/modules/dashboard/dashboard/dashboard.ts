@@ -44,65 +44,66 @@ export class Dashboard implements OnInit {
   constructor(
     private ticketService: TicketService,
     private authService: AuthService,
-    private assignmentService:AssignmentEscalation,
+    private assignmentService: AssignmentEscalation,
     private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     const userId = this.authService.userId()!;
     this.role = this.authService.roles()[0];
-    
-
-      if (this.role === 'ADMIN' || this.role === 'MANAGER') {
-  // ✅ Admin/Manager stats
-  this.ticketService.getGlobalStats().subscribe(data => {
-    this.stats = data;
-    this.cd.detectChanges();
-  });
-
-  
-} 
-else if (this.role === 'AGENT') {
-  // ✅ Agent stats
-  this.ticketService.getAgentStats(userId).subscribe(data => {
-    this.stats = data;
-    this.cd.detectChanges();
-  });
-
- 
-} 
-else {
-  // ✅ Normal user stats
-  this.ticketService.getUserStats(userId).subscribe(data => {
-    this.stats = data;
-    this.cd.detectChanges();
-  });
-}
 
 
-      if (this.role === 'ADMIN' || this.role === 'MANAGER') {
-        this.ticketService.getStatusSummary().subscribe(data => {
-          this.statusChartData.labels = data.map(d => d.status);
-          this.statusChartData.datasets = [
-            {
-              label: 'Tickets',
-              data: data.map(d => d.count),
-              backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726']
-            }
-          ];
-          this.statusChart?.update();
-        });
+    if (this.role === 'ADMIN' || this.role === 'MANAGER') {
 
-        this.ticketService.getPrioritySummary().subscribe(data => {
-          this.priorityChartData.labels = data.map(d => d.priority);
-          this.priorityChartData.datasets = [
-            {
-              data: data.map(d => d.count),
-              backgroundColor: ['#EF5350', '#AB47BC', '#29B6F6', '#FFCA28']
-            }
-          ];
-          this.priorityChart?.update();
-        });
-      }
+      this.ticketService.getGlobalStats().subscribe(data => {
+        this.stats = data;
+        
+        this.cd.detectChanges();
+      });
+
+
+    }
+    else if (this.role === 'AGENT') {
+
+      this.ticketService.getAgentStats(userId).subscribe(data => {
+        this.stats = data;
+        this.cd.detectChanges();
+      });
+
+
+    }
+    else {
+
+      this.ticketService.getUserStats(userId).subscribe(data => {
+        this.stats = data;
+        this.cd.detectChanges();
+      });
+    }
+
+
+    if (this.role === 'ADMIN' || this.role === 'MANAGER') {
+      this.ticketService.getStatusSummary().subscribe(data => {
+        this.statusChartData.labels = data.map(d => d.status);
+        this.statusChartData.datasets = [
+          {
+            label: 'Tickets',
+            data: data.map(d => d.count),
+            backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726']
+          }
+        ];
+        this.statusChart?.update();
+      });
+
+      this.ticketService.getPrioritySummary().subscribe(data => {
+        this.priorityChartData.labels = data.map(d => d.priority);
+        this.priorityChartData.datasets = [
+          {
+            data: data.map(d => d.count),
+            backgroundColor: ['#EF5350', '#AB47BC', '#29B6F6', '#FFCA28']
+          }
+        ];
+        this.priorityChart?.update();
+      });
     }
   }
+}

@@ -1,36 +1,72 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { DashboardService } from '../../../core/services/dashboard';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-priority-summary',
-  imports: [BaseChartDirective],
+  standalone: true,
+  imports: [CommonModule, BaseChartDirective],
   templateUrl: './priority-summary.html',
   styleUrl: './priority-summary.css',
 })
-export class PrioritySummary implements OnInit{
-  priorityChartData: ChartData<'pie'> = { labels: [], datasets: [] };
-  priorityChartOptions: ChartOptions<'pie'> = {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: 2
-    };
+export class PrioritySummary implements OnInit {
+  private dashboardService = inject(DashboardService);
+  private cd = inject(ChangeDetectorRef);
+
   @ViewChild(BaseChartDirective) priorityChart?: BaseChartDirective;
-  constructor(
-    private dashboardService:DashboardService,
-    private cd:ChangeDetectorRef
-  ) {}
+
+  // Use Bar chart for better "Priority Level" comparison as seen in image_030724
+  priorityChartData: ChartData<'bar'> = { labels: [], datasets: [] };
+  
+  priorityChartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1e293b', // Match slate theme
+        padding: 12,
+        cornerRadius: 8
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color: '#f1f5f9', drawTicks: false },
+        border: { display: false },
+        ticks: { stepSize: 1, color: '#94a3b8' }
+      },
+      x: {
+        grid: { display: false },
+        border: { display: false },
+        ticks: { color: '#1e293b', font: { weight: 'bold' } }
+      }
+    }
+  };
+
   ngOnInit(): void {
-       this.dashboardService.getTicketPrioritySummary().subscribe(data => {
-        this.priorityChartData.labels = data.map(d => d.priority);
-        this.priorityChartData.datasets = [
-          {
-            data: data.map(d => d.count),
-            backgroundColor: ['#EF5350', '#AB47BC', '#29B6F6', '#FFCA28']
-          }
-        ];
-        this.priorityChart?.update(); 
-      });
+    this.dashboardService.getTicketPrioritySummary().subscribe(data => {
+      this.priorityChartData = {
+        labels: data.map(d => d.priority),
+        datasets: [{
+          data: data.map(d => d.count),
+          // Strategic coloring: Critical/High get warmer colors
+          backgroundColor: data.map(d => {
+            const p = d.priority.toLowerCase();
+            if (p === 'critical') return '#ef4444';
+            if (p === 'high') return '#f59e0b';
+            if (p === 'medium') return '#5c67f2'; // Theme Primary
+            return '#94a3b8'; // Low/Default
+          }),
+          borderRadius: 6,
+          barThickness: 40
+        }]
+      };
+      
+      this.cd.detectChanges();
+      this.priorityChart?.update();
+    });
   }
 }

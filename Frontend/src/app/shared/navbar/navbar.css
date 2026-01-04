@@ -1,0 +1,83 @@
+.navbar .container-fluid {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.navbar {
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.brand-logo {
+  background: #6c5ce7;
+  color: white;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 1.1rem;
+}
+
+.navbar-brand span {
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
+  color: #2d3436;
+}
+
+.user-avatar-btn {
+  width: 40px;
+  height: 40px;
+  background-color: #6c5ce7;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  border: 2px solid #fff;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.user-avatar-btn:hover,
+.user-avatar-btn:focus {
+  background-color: #5849c4;
+  color: white;
+  transform: scale(1.05);
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+
+.dropdown-menu {
+  border-radius: 12px;
+  min-width: 200px;
+}
+
+.dropdown-item {
+  border-radius: 6px;
+  margin: 0 8px;
+  width: calc(100% - 16px);
+  font-size: 0.9rem;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #6c5ce7;
+}
+
+.dropdown-item.text-danger:hover {
+  background-color: #fff5f5;
+  color: #e74c3c;
+}
+
+@media (max-width: 576px) {
+  .navbar-brand span {
+    font-size: 1rem;
+  }
+}

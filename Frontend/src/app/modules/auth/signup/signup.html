@@ -1,0 +1,59 @@
+<div class="page-wrapper d-flex align-items-center justify-content-center">
+    <div class="auth-card shadow-lg d-flex flex-column flex-md-row">
+
+        <div class="col-12 col-md-6 bg-white p-0 position-relative">
+            <img src="assets/images/signup.png" alt="Illustration" class="img-fluid h-100" />
+        </div>
+        <div
+            class="col-12 col-md-6 auth-form-bg d-flex align-items-center p-4 p-lg-5 position-relative overflow-hidden">
+
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+
+            <div class="w-100 position-relative" style="z-index: 2;">
+                <h2 class="fw-bold mb-4 text-white">Create Your Account</h2>
+
+                <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+                    <div class="mb-3">
+                        <label class="form-label text-white">Full Name</label>
+                        <input type="text" class="form-control custom-input" formControlName="username">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-white">Email</label>
+                        <input type="email" class="form-control custom-input" formControlName="email">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-white">Password</label>
+                        <input type="password" class="form-control custom-input" formControlName="password">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-white">Confirm Password</label>
+                        <input type="password" class="form-control custom-input">
+                    </div>
+
+                    <div class="mb-4 form-check d-flex align-items-center gap-2">
+                        <input type="checkbox" class="form-check-input mt-0" id="remember">
+                        <label class="form-check-label text-white" for="remember">Remember Me</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-light w-100 fw-bold py-2 rounded-3"
+                        [disabled]="signupForm.invalid">
+                        Create your Account
+                    </button>
+                </form>
+
+                <p class="mt-4 text-center text-white">
+                    Already have an account?
+                    <a [routerLink]="['/auth/login']" class="text-white fw-bold">Log In</a>
+                </p>
+
+
+                
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<!-- <div *ngIf="toast$ | async as msg" 
+     [@slideInOut] 
+     [class]="'toast-container ' + msg.type">
+  <div class="toast-icon">
+    <span *ngIf="msg.type === 'success'">✓</span>
+    <span *ngIf="msg.type === 'error'">✕</span>
+  </div>
+  <div class="toast-content">
+    <span class="toast-text">{{ msg.text }}</span>
+  </div>
+</div> -->
+
+<div class="toast-wrapper">
+  <ng-container *ngIf="toast$ | async as msg">
+    <div *ngIf="msg.text" 
+         [@slideInOut] 
+         [class]="'toast-container ' + msg.type">
+      
+      <div class="toast-icon">
+        <span>{{ msg.type === 'success' ? '✓' : '✕' }}</span>
+      </div>
+
+      <div class="toast-content">
+        <span class="toast-text">{{ msg.text }}</span>
+      </div>
+    </div>
+  </ng-container>
+</div>

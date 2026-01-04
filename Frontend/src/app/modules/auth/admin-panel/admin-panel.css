@@ -1,0 +1,47 @@
+.user-initials {
+  width: 38px;
+  height: 38px;
+  background: #6c5ce7;
+  color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.nav-pills-custom {
+  background: #f1f2f6;
+  padding: 6px;
+  border-radius: 12px;
+  display: inline-flex;
+}
+
+.tab-btn {
+  border: none;
+  background: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #636e72;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  background: white;
+  color: #6c5ce7;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.progress-mini {
+  height: 6px;
+  background: #eee;
+  border-radius: 10px;
+  width: 80px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: #6c5ce7;
+  height: 100%;
+}

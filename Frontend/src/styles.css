@@ -1,0 +1,8 @@
+:root {
+  --theme-primary: #5c67f2;    /* The Purple from "My Tickets" */
+  --theme-success: #10b981;    /* The Green from "Resolved" */
+  --theme-warning: #f59e0b;    /* The Yellow from "High" */
+  --theme-danger: #ef4444;     /* The Red from "Critical" */
+  --theme-bg-light: #f8fafc;   /* The Dashboard Background */
+  --theme-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}

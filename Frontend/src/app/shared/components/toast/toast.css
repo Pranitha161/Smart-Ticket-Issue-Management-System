@@ -1,0 +1,60 @@
+/* The wrapper ensures the toast doesn't affect page layout */
+.toast-wrapper {
+  position: fixed !important;
+  top: 25px !important;
+  left: calc(100vw - 320px) !important;
+  right: auto !important;
+  z-index: 9999!important;
+  pointer-events: none; /* Allows clicking elements 'under' the transparent area */
+}
+
+/* Your specific toast container styling */
+.toast-container {
+  opacity: 1!important;
+  pointer-events: auto; /* Re-enable clicking on the toast itself */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 300px;
+  max-width: 400px;
+  padding: 16px;
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  margin:0;
+}
+
+/* Success and Error variants */
+.success {
+  background: #2ecc71;
+  border-bottom: 4px solid #27ae60;
+}
+
+.error {
+  background: #e74c3c;
+  border-bottom: 4px solid #c0392b;
+}
+
+.toast-icon {
+  font-size: 1.4rem;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.2);
+  width: 35px;
+  height: 35px;
+  min-width: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.toast-content {
+  flex: 1;
+}
+
+.toast-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: block;
+}

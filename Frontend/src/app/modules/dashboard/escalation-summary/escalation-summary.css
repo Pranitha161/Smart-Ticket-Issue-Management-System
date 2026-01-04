@@ -1,0 +1,39 @@
+.accent-left-danger {
+  border-left: 6px solid #ef4444 !important;
+}
+.tiny-label { font-size: 0.65rem; font-weight: 800; color: #94a3b8; letter-spacing: 1.2px; text-transform: uppercase; }
+.fw-900 { font-weight: 900; }
+
+.theme-card {
+  border-radius: 16px;
+  background: #ffffff;
+  overflow: hidden;
+}
+.level-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 0.75rem;
+}
+
+.status-indicator-pill {
+  background: #fef2f2;
+  color: #ef4444;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 50px;
+  text-transform: uppercase;
+}
+
+.escalation-row {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+}
+
+.fw-900 { font-weight: 900; }

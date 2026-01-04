@@ -1,0 +1,46 @@
+<div class="card theme-card border-0 shadow-sm h-100">
+  <div class="card-header border-0 bg-white pt-4 px-4">
+    <h6 class="tiny-label mb-1">TICKET STATUS</h6>
+    <h5 class="fw-bold text-dark m-0">Status Distribution</h5>
+  </div>
+
+  <div class="card-body p-4">
+    <div class="row align-items-center">
+      <div class="col-md-7">
+        <div class="chart-container" style="position: relative; height: 220px;">
+          <canvas baseChart
+            [data]="statusChartData"
+            [options]="statusChartOptions"
+            [type]="'doughnut'">
+          </canvas>
+          <div class="chart-center-overlay">
+            <span class="text-muted tiny fw-bold">TOTAL</span>
+            <h3 class="fw-900 m-0 text-dark">{{ summaryStats.total }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5">
+        <div class="d-flex flex-column gap-3">
+          <div *ngFor="let label of statusChartData.labels; let i = index" class="legend-item">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="d-flex align-items-center gap-2 tiny-label text-muted">
+                <span class="dot" [style.backgroundColor]="statusColors[i]"></span>
+                {{ label }}
+              </span>
+              <span class="fw-bold small text-dark">
+                {{ statusChartData.datasets[0].data[i] }}
+              </span>
+            </div>
+            <div class="progress" style="height: 4px;">
+              <div class="progress-bar" 
+                   [style.width.%]="(statusChartData.datasets[0].data[i]! / summaryStats.total) * 100"
+                   [style.backgroundColor]="statusColors[i]">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

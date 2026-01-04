@@ -1,0 +1,25 @@
+
+
+<div class="card theme-card accent-left-purple border-0 shadow-sm h-100">
+
+  <div class="card theme-card border-0 shadow-sm h-100">
+  <div class="card-header border-0 bg-white pt-4 px-4">
+    <h6 class="tiny-label mb-1">TICKET PRIORITY</h6>
+     <div class="d-flex justify-content-between align-items-center mb-4">
+       <h5 class="fw-bold text-dark m-0">Priority Distribution</h5>
+      <i class="bi bi-funnel text-primary opacity-50 fs-4"></i>
+    
+   
+    </div>
+  </div>
+  <div class="card-body p-4">
+
+    <div class="chart-container" style="height: 250px;">
+      <canvas baseChart
+        [data]="priorityChartData"
+        [options]="priorityChartOptions"
+        [type]="'bar'">
+      </canvas>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+/* .theme-card {
+  border-radius: 16px;
+  background: #ffffff;
+}
+.tiny-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.fw-bold {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.bg-purple-soft {
+  background-color: #eef2ff;
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+} */
+
+.tiny-label { font-size: 0.65rem; font-weight: 800; color: #94a3b8; letter-spacing: 1.2px; text-transform: uppercase; }
+.fw-900 { font-weight: 900; }
+ .theme-card {
+  border-radius: 16px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+
+.accent-left-purple {
+  border-left: 6px solid #5c67f2 !important;
+}
+
+
+.sidebar-header-slate {
+ 
+  padding: 12px 20px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.tiny {
+  font-size: 0.75rem;
+}
+
+.fw-bold { font-weight: 700; }

@@ -1,0 +1,48 @@
+<div class="page-wrapper d-flex align-items-center justify-content-center">
+    <div class="auth-card shadow-lg d-flex flex-column flex-md-row">
+        <div
+            class="col-12 col-md-6 auth-form-bg d-flex align-items-center p-4 p-lg-5 position-relative overflow-hidden order-2 order-md-1">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+            <div class="w-100 position-relative" style="z-index: 2;">
+                <h2 class="fw-bold mb-4 text-white">Welcome Back</h2>
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                    <div class="mb-3">
+                        <label class="form-label text-white">Email</label>
+                        <input type="email" class="form-control custom-input" formControlName="email"
+                            placeholder="example@mail.com">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label text-white">Password</label>
+                        <input type="password" class="form-control custom-input" formControlName="password"
+                            placeholder="Min. 8 characters">
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check d-flex align-items-center gap-2">
+                            <input type="checkbox" class="form-check-input mt-0" id="remember">
+                            <label class="form-check-label text-white small" for="remember">Remember Me</label>
+                        </div>
+                        <a [routerLink]="['/auth/forgot-password']" class="text-white small text-decoration-none">Forgot
+                            Password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-light w-100 fw-bold py-2 rounded-3"
+                        [disabled]="loginForm.invalid">
+                        Sign In
+                    </button>
+                </form>
+                <p class="mt-4 text-center text-white small">
+                    Don't have an account? <a [routerLink]="['/auth/signup']" class="text-white fw-bold">Create
+                        Account</a>
+                </p>
+            </div>
+        </div>
+        <div
+            class="col-12 col-md-6 d-flex align-items-center justify-content-center position-relative order-1 order-md-2">
+            <div class="circle circle-img-1"></div>
+            <div class="circle circle-img-2"></div>
+            <div class="circle circle-img-3"></div>
+            <img src="assets/images/stats.jpg" alt="Illustration" class="img-fluid">
+        </div>
+    </div>
+</div>

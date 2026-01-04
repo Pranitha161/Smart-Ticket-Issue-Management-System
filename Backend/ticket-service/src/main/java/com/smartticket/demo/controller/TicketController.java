@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smartticket.demo.dto.CategorySummaryDto;
@@ -112,11 +113,21 @@ public class TicketController {
 		return ticketService.getUserStats(userId).map(ResponseEntity::ok)
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
-	
-	@GetMapping("/user/stats")
-	public Mono<ResponseEntity<UserTicketStatsDto>> getGlobalStats() {
-		return ticketService.getGlobalStats().map(ResponseEntity::ok)
+
+	@GetMapping("/agent/{agentId}/stats")
+	public Mono<ResponseEntity<UserTicketStatsDto>> getAgentStats(@PathVariable String agentId) {
+		return ticketService.getAgentStats(agentId).map(ResponseEntity::ok)
 				.defaultIfEmpty(ResponseEntity.notFound().build());
+	}
+
+	@GetMapping("/global-stats")
+	public Mono<ResponseEntity<UserTicketStatsDto>> getGlobalStats() {
+		return ticketService.getGlobalStats().map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
+	}
+
+	@PutMapping("/{id}/startwork/{agentId}")
+	public Mono<ResponseEntity<Ticket>> startWorkOnTicket(@PathVariable String id, @PathVariable String agentId) {
+		return ticketService.startWorkOnTicket(id, agentId).map(updatedTicket -> ResponseEntity.ok(updatedTicket));
 	}
 
 	@GetMapping("/recent")
@@ -125,17 +136,25 @@ public class TicketController {
 	}
 
 	@GetMapping("/recent/{userId}")
-	public Mono<List<Ticket>>  getRecentTicketsByUser(@PathVariable String userId) {
+	public Mono<List<Ticket>> getRecentTicketsByUser(@PathVariable String userId) {
 		return ticketService.getRecentTicketsByUser(userId);
 	}
-	
-	@PutMapping("/{id}/assign")
-	public Mono<ResponseEntity<ApiResponse>> assignTicket(@PathVariable String id) {
-	    return ticketService.assignTicket(id)
-	            .map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket assigned successfully")))
-	            .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND)
-	                    .body(new ApiResponse(false, "Ticket not found")));
+
+	@GetMapping("/recent/agent/{agentId}")
+	public Mono<List<Ticket>> getRecentTicketsByAgent(@PathVariable String agentId) {
+		return ticketService.getRecentTicketsByAgent(agentId);
 	}
 
+	@GetMapping("/agent/{agentId}")
+	public Mono<List<Ticket>> getTicketsByAgent(@PathVariable String agentId) {
+		return ticketService.getTicketsByAgent(agentId);
+	}
+
+	@PutMapping("/{id}/assign")
+	public Mono<ResponseEntity<ApiResponse>> assignTicket(@PathVariable String id, @RequestParam String agentId) {
+		return ticketService.assignTicket(id, agentId)
+				.map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket assigned successfully"))).defaultIfEmpty(
+						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found")));
+	}
 
 }

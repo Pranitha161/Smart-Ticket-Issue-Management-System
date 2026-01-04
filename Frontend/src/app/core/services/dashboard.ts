@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PrioritySummaryDto, StatusSummaryDto } from '../../shared/models/ticket.model';
+import { PrioritySummaryDto, StatusSummaryDto, UserTicketStatsDto } from '../../shared/models/ticket.model';
 import { AgentSummaryDto, CategorySummaryDto, EscalationSummaryDto } from '../../shared/models/dashboard.model';
 import { environment } from '../../../environments/environment';
+import { UserStatsDto } from '../../shared/models/authuser.model';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
@@ -24,7 +25,19 @@ export class DashboardService {
     return this.http.get<CategorySummaryDto[]>(`${this.baseUrl}/tickets/category-summary`);
   }
 
-  getAgentSummary(): Observable<AgentSummaryDto[]> {
+  getUserStats(userId: string): Observable<UserTicketStatsDto> {
+    return this.http.get<UserTicketStatsDto>(`${this.baseUrl}/tickets/user/${userId}/stats`);
+  }
+  getAgentStats(agentId: string): Observable<UserTicketStatsDto> {
+    return this.http.get<UserTicketStatsDto>(`${this.baseUrl}/tickets/agent/${agentId}/stats`);
+  }
+  getGlobalStats(): Observable<UserTicketStatsDto> { return this.http.get<UserTicketStatsDto>(`${this.baseUrl}/tickets/global-stats`); }
+
+  getStats(): Observable<UserStatsDto> {
+    return this.http.get<UserStatsDto>(`${this.baseUrl}/users/stats`);
+  }
+
+  getAssignmentsPerAgent(): Observable<AgentSummaryDto[]> {
     return this.http.get<AgentSummaryDto[]>(`${this.baseUrl}/assignments/agent-summary`);
   }
 

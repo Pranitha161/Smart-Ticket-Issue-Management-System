@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'tickets', pathMatch: 'full' },
+    { path: '', loadComponent:()=>import('./modules/home/home').then(m=>m.Home) ,pathMatch: 'full' },
     {
         path: 'auth',
         loadChildren: () => import('./modules/auth/auth-module').then(m => m.AuthModule),

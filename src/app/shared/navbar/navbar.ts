@@ -21,13 +21,11 @@ export class Navbar {
   currentUrl = '';
 
   constructor() {
-    // Keep tracking the URL for the "+ New Ticket" button visibility
     this.router.events.subscribe(() => {
       this.currentUrl = this.router.url;
     });
   }
 
-  // Helper for the Avatar circle
   get firstLetter(): string {
     const name = this.username();
     return name ? name.charAt(0).toUpperCase() : '';

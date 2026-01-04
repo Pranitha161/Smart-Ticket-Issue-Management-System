@@ -46,6 +46,7 @@
         <button class="btn btn-primary-custom" (click)="openCreateForm()">
             <i class="bi bi-person-plus me-2"></i>Add New User
         </button>
+       
     </div>
 
     <div class="table-responsive custom-table-wrapper p-3 m-3">
@@ -63,7 +64,7 @@
                 <tr *ngFor="let user of users" class="user-row">
                     <td>
                         <div class="d-flex align-items-center gap-3">
-                            <div class="user-avatar-circle">
+                            <div class="user-avatar-circle" [attr.data-initials]="user.username[0] | uppercase">
                                 {{ user.username[0] | uppercase }}
                             </div>
                             <div>
@@ -88,7 +89,7 @@
                     <td class="text-end">
                         <div class="action-buttons">
                             <button class="btn btn-icon" (click)="editUser(user)" title="Edit User">
-                                <i class="bi bi-pencil"></i>
+                                <i class="bi bi-pencil-square"></i>
                             </button>
                             <button class="btn btn-icon delete" (click)="deleteUser(user)" title="Delete User">
                                 <i class="bi bi-trash"></i>
@@ -120,6 +121,79 @@
                 <button class="btn btn-light-custom flex-grow-1 py-2 fw-bold" (click)="userToDelete = null">
                     Cancel
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-modal-overlay" *ngIf="modalMode">
+    <div class="custom-modal-card animate-slide-up">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold text-dark mb-0">
+                {{ modalMode === 'create' ? 'Add New User' : 'Edit User Profile' }}
+            </h4>
+            <button class="btn-close" (click)="cancel()"></button>
+        </div>
+
+        <div class="modal-body p-0">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label-custom">Username</label>
+                    <input type="text" [(ngModel)]="formUser.username" class="custom-input"
+                        [disabled]="modalMode === 'edit'">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-custom">Email Address</label>
+                    <input type="email" [(ngModel)]="formUser.email" class="custom-input">
+                </div>
+
+                <div class="col-md-12" *ngIf="modalMode === 'create'">
+                    <label class="form-label-custom">Password</label>
+                    <input type="password" [(ngModel)]="formUser.password" class="custom-input" placeholder="••••••••">
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label-custom">System Role</label>
+                    <select [ngModel]="formUser.roles[0]" (ngModelChange)="onRoleChange($event)" class="custom-select">
+                        <option *ngFor="let role of ALLOWED_ROLES" [value]="role">{{ role }}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-12" *ngIf="formUser.roles[0] === 'AGENT'">
+                    <div class="agent-fields-box p-3 rounded-4 mt-2">
+                        <h6 class="small fw-bold text-primary mb-3"><i class="bi bi-headset me-2"></i>Agent
+                            Configuration</h6>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-muted">Service Level</label>
+                                <select [(ngModel)]="formUser.agentProfile.agentLevel" class="custom-select">
+                                    <option value="LEVEL_1">Level 1 (Junior)</option>
+                                    <option value="LEVEL_2">Level 2 (Senior)</option>
+                                    <option value="LEVEL_3">Level 3 (Expert)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-muted">Primary Category</label>
+                                <select [(ngModel)]="formUser.agentProfile.categoryId" class="custom-select">
+                                    <option value="">Select Category...</option>
+                                    <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="small fw-bold text-muted">Specialized Skills (Comma separated)</label>
+                                <input type="text" [(ngModel)]="skillsInput" class="custom-input"
+                                    placeholder="Java, SQL, Networking...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3 mt-4">
+                <button class="btn btn-save flex-grow-1" (click)="saveUser()">
+                    {{ modalMode === 'create' ? 'Create User' : 'Save Changes' }}
+                </button>
+                <button class="btn btn-light-custom flex-grow-1" (click)="cancel()">Cancel</button>
             </div>
         </div>
     </div>

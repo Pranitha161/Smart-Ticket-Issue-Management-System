@@ -9,7 +9,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/tickets" routerLinkActive="active">
+        <a class="nav-link" routerLink="/tickets" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
           <i class="bi bi-ticket-perforated"></i>
 
           <span>
@@ -36,6 +36,13 @@
           routerLinkActive="active">
           <i class="bi bi-shield-lock"></i>
           <span>Admin Panel</span>
+        </a>
+      </li>
+       <li class="nav-item">
+        <a class="nav-link admin-link" routerLink="/tickets/create" *ngIf="userRole() === 'USER'"
+          routerLinkActive="active">
+          <i class="bi bi-plus-circle"></i>
+          <span>New Ticket</span>
         </a>
       </li>
 

@@ -24,23 +24,12 @@
     </a>
   </ng-container>
 
-  <a *ngIf="hasLoggedIn && !isOnCreateTicket() && hasUserRole()"
-     class="btn btn-primary d-flex align-items-center gap-2 px-3 fw-semibold rounded-pill shadow-sm"
-     [routerLink]="['/tickets/create']">
-    <i class="bi bi-plus-lg"></i>
-    <span class="d-none d-sm-inline">New Ticket</span>
-  </a>
-
+  
   ...
 </div>
       </ng-container>
 
-      <a *ngIf="!isOnCreateTicket() && hasUserRole()"
-        class="btn btn-primary d-flex align-items-center gap-2 px-3 fw-semibold rounded-pill shadow-sm"
-        [routerLink]="['/tickets/create']">
-        <i class="bi bi-plus-lg"></i>
-        <span class="d-none d-sm-inline">New Ticket</span>
-      </a>
+     
 
       <div class="d-flex align-items-center gap-2" *ngIf="hasLoggedIn">
         <div class="dropdown">

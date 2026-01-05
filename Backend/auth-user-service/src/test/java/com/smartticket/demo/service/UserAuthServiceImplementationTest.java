@@ -276,7 +276,7 @@ public class UserAuthServiceImplementationTest {
 
 	@Test
 	void updateUserById_success() {
-		User existing = User.builder().id("U1").username("old").email("old@x.com").roles(Set.of(ROLE.USER)).build();
+		User existing = User.builder().id("U1").username("old").email("old@x.com").enabled(true).roles(Set.of(ROLE.USER)).build();
 		AuthResponse update = new AuthResponse("U1", "USR-U1", "new@x.com", "newuser", true, Set.of(ROLE.USER), null);
 		when(userRepo.findById("U1")).thenReturn(Mono.just(existing));
 		when(userRepo.findByUsername("newuser")).thenReturn(Mono.empty());
@@ -295,8 +295,8 @@ public class UserAuthServiceImplementationTest {
 
 	@Test
 	void updateUserById_usernameConflict() {
-		User existing = User.builder().id("U1").username("old").build();
-		User conflict = User.builder().id("U2").username("newuser").build();
+		User existing = User.builder().id("U1").username("old").enabled(true).build();
+		User conflict = User.builder().id("U2").username("newuser").enabled(true).build();
 		AuthResponse update = new AuthResponse("U1", "USR-U1", "new@x.com", "newuser", true, Set.of(ROLE.USER), null);
 		when(userRepo.findById("U1")).thenReturn(Mono.just(existing));
 		when(userRepo.findByUsername("newuser")).thenReturn(Mono.just(conflict));

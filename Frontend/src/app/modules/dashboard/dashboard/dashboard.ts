@@ -13,6 +13,8 @@ import { PrioritySummary } from '../priority-summary/priority-summary';
 import { AssignmentEscalation } from '../../../core/services/assignment-escalation';
 import { EscalationSummaryDto } from '../../../shared/models/assignment-escalation.model';
 import { DashboardService } from '../../../core/services/dashboard';
+import { AgentStatsDto } from '../../../shared/models/dashboard.model';
+import { AdminUser } from '../../../core/services/admin-user';
 
 Chart.register(...registerables);
 
@@ -38,6 +40,7 @@ export class Dashboard implements OnInit {
 
   role: string = '';
   breachedCount = 0;
+  agentStats?: AgentStatsDto;
 
   @ViewChild(BaseChartDirective) statusChart?: BaseChartDirective;
   @ViewChild(BaseChartDirective) priorityChart?: BaseChartDirective;
@@ -46,6 +49,7 @@ export class Dashboard implements OnInit {
     private ticketService: TicketService,
     private dashboardService: DashboardService,
     private authService: AuthService,
+    private userService:AdminUser,
     private assignmentService: AssignmentEscalation,
     private cd: ChangeDetectorRef
   ) { }
@@ -67,9 +71,11 @@ export class Dashboard implements OnInit {
     }
     else if (this.role === 'AGENT') {
 
-      this.dashboardService.getAgentStats(userId).subscribe(data => {
-        this.stats = data;
+      this.dashboardService.getAgentSummaryStats(userId).subscribe(data => {
+        this.agentStats = data;
         this.cd.detectChanges();
+        console.log(this.agentStats);
+        console.log(this.stats);
       });
 
 

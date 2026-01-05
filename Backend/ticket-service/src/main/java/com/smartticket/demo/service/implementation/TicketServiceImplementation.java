@@ -15,6 +15,7 @@ import com.smartticket.demo.entity.TicketActivity;
 import com.smartticket.demo.enums.ACTION_TYPE;
 import com.smartticket.demo.enums.PRIORITY;
 import com.smartticket.demo.enums.STATUS;
+import com.smartticket.demo.feign.UserClient;
 import com.smartticket.demo.producer.TicketEventProducer;
 import com.smartticket.demo.repository.TicketActivityRepository;
 import com.smartticket.demo.repository.TicketRepository;
@@ -29,28 +30,44 @@ public class TicketServiceImplementation implements TicketService {
 	private final TicketRepository ticketRepo;
 	private final TicketActivityRepository ticketActivityRepo;
 	private final TicketEventProducer ticketEventProducer;
+	private final UserClient userClient;
 
 	TicketServiceImplementation(TicketRepository ticketRepo, TicketActivityRepository ticketActivityRepo,
-			TicketEventProducer ticketEventProducer) {
+			TicketEventProducer ticketEventProducer,UserClient userClient) {
 		this.ticketRepo = ticketRepo;
 		this.ticketActivityRepo = ticketActivityRepo;
 		this.ticketEventProducer = ticketEventProducer;
+		this.userClient=userClient;
+		
+
 	}
 
 	@Override
 	public Mono<Ticket> createTicket(Ticket ticket) {
-		ticket.setStatus(STATUS.OPEN);
-		ticket.setCreatedAt(LocalDateTime.now());
-		ticket.setUpdatedAt(LocalDateTime.now());
-		return ticketRepo.save(ticket).map(saved -> {
-			String hex = saved.getId();
-			String first2 = hex.substring(0, 2).toUpperCase();
-			String last4 = hex.substring(hex.length() - 4).toUpperCase();
-			saved.setDisplayId("TCK-" + first2 + last4);
-			return saved;
-		}).flatMap(ticketRepo::save).flatMap(saved -> logActivity(saved, ACTION_TYPE.CREATED))
-				.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CREATED"));
+	    return ticketRepo.existsByCreatedByAndTitle(ticket.getCreatedBy(), ticket.getTitle())
+	        .flatMap(exists -> {
+	            if (exists) {
+	                return Mono.error(new IllegalStateException("You already raised a ticket with this title"));
+	            }
+	            ticket.setStatus(STATUS.OPEN);
+	            ticket.setCreatedAt(LocalDateTime.now());
+	            ticket.setUpdatedAt(LocalDateTime.now());
+	            ticket.setVersion(0L);
+
+	            return ticketRepo.save(ticket)
+	                .map(saved -> {
+	                    String hex = saved.getId();
+	                    String first2 = hex.substring(0, 2).toUpperCase();
+	                    String last4 = hex.substring(hex.length() - 4).toUpperCase();
+	                    saved.setDisplayId("TCK-" + first2 + last4);
+	                    return saved;
+	                })
+	                .flatMap(ticketRepo::save)
+	                .flatMap(saved -> logActivity(saved, ACTION_TYPE.CREATED))
+	                .doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "CREATED"));
+	        });
 	}
+
 
 	@Override
 	public Mono<Ticket> getTicketById(String id) {
@@ -94,6 +111,7 @@ public class TicketServiceImplementation implements TicketService {
 	public Mono<Ticket> assignTicket(String id, String agentId) {
 		return ticketRepo.findById(id).switchIfEmpty(Mono.error(new RuntimeException("Ticket not found")))
 				.flatMap(ticket -> {
+
 					if (ticket.getStatus() == STATUS.CLOSED) {
 						return Mono.error(new RuntimeException("Cannot assign a closed ticket"));
 					}
@@ -103,6 +121,7 @@ public class TicketServiceImplementation implements TicketService {
 					ticket.setStatus(STATUS.ASSIGNED);
 					ticket.setUpdatedAt(LocalDateTime.now());
 					ticket.setAssignedTo(agentId);
+					ticket.setVersion(ticket.getVersion() + 1);
 					return ticketRepo.save(ticket).flatMap(saved -> logActivity(saved, ACTION_TYPE.ASSIGNED))
 							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "ASSIGNED"));
 				});
@@ -115,6 +134,7 @@ public class TicketServiceImplementation implements TicketService {
 				return Mono.error(new IllegalArgumentException("Only RESOLVED or CLOSED tickets can be reopened"));
 			}
 			ticket.setStatus(STATUS.OPEN);
+			ticket.setAssignedTo(null);
 			ticket.setUpdatedAt(LocalDateTime.now());
 			return ticketRepo.save(ticket).flatMap(saved -> logActivity(saved, ACTION_TYPE.REOPENED))
 					.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "REOPENED"));
@@ -140,14 +160,34 @@ public class TicketServiceImplementation implements TicketService {
 						return Mono.error(new RuntimeException("Ticket must be assigned before resolving"));
 					}
 					ticket.setStatus(STATUS.RESOLVED);
+					ticket.setVersion(0L);
+					userClient.incrementResolvedCount(ticket.getAssignedTo());
 					ticket.setUpdatedAt(LocalDateTime.now());
+					
 					return ticketRepo.save(ticket).flatMap(saved -> logActivity(saved, ACTION_TYPE.RESOLVED))
 							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "RESOLVED"));
 				});
 	}
 
 	private Mono<Ticket> logActivity(Ticket ticket, ACTION_TYPE action) {
-		TicketActivity activity = TicketActivity.builder().ticketId(ticket.getId()).actionType(action)
+		String actorId=null;
+		switch (action) {
+		case CREATED:
+			actorId = ticket.getCreatedBy();
+			break;
+		case ASSIGNED:
+			actorId = ticket.getAssignedTo();
+			break;
+		case RESOLVED:
+			actorId = ticket.getAssignedTo();
+			break;
+		case REOPENED:
+			actorId = ticket.getCreatedBy();
+			break;
+		default:
+			actorId = null;
+		}
+		TicketActivity activity = TicketActivity.builder().ticketId(ticket.getId()).actionType(action).actorId(actorId)
 				.timestamp(Instant.now()).details("Ticket " + action).build();
 		return ticketActivityRepo.save(activity).thenReturn(ticket);
 	}
@@ -241,34 +281,31 @@ public class TicketServiceImplementation implements TicketService {
 		return Mono.zip(total, open, resolved, critical)
 				.map(tuple -> new UserTicketStatsDto(tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4()));
 	}
-	
+
 	@Override
 	public Mono<Ticket> startWorkOnTicket(String id, String agentId) {
-	    return ticketRepo.findById(id)
-	        .switchIfEmpty(Mono.error(new RuntimeException("Ticket not found")))
-	        .flatMap(ticket -> {
-	            if (ticket.getStatus() == STATUS.CLOSED) {
-	                return Mono.error(new RuntimeException("Cannot start work on a closed ticket"));
-	            }
-	            if (ticket.getStatus() == STATUS.RESOLVED) {
-	                return Mono.error(new RuntimeException("Cannot start work on a resolved ticket"));
-	            }
-	            if (ticket.getStatus() == STATUS.OPEN) {
-	                return Mono.error(new RuntimeException("Ticket must be assigned before starting work"));
-	            }
-	            if (ticket.getStatus() == STATUS.IN_PROGRESS) {
-	                return Mono.error(new RuntimeException("Ticket is already in progress"));
-	            }
+		return ticketRepo.findById(id).switchIfEmpty(Mono.error(new RuntimeException("Ticket not found")))
+				.flatMap(ticket -> {
+					if (ticket.getStatus() == STATUS.CLOSED) {
+						return Mono.error(new RuntimeException("Cannot start work on a closed ticket"));
+					}
+					if (ticket.getStatus() == STATUS.RESOLVED) {
+						return Mono.error(new RuntimeException("Cannot start work on a resolved ticket"));
+					}
+					if (ticket.getStatus() == STATUS.OPEN) {
+						return Mono.error(new RuntimeException("Ticket must be assigned before starting work"));
+					}
+					if (ticket.getStatus() == STATUS.IN_PROGRESS) {
+						return Mono.error(new RuntimeException("Ticket is already in progress"));
+					}
 
-	            ticket.setStatus(STATUS.IN_PROGRESS);
-	            ticket.setUpdatedAt(LocalDateTime.now());
-	            ticket.setAssignedTo(agentId);
+					ticket.setStatus(STATUS.IN_PROGRESS);
+					ticket.setUpdatedAt(LocalDateTime.now());
+					ticket.setAssignedTo(agentId);
 
-	            return ticketRepo.save(ticket)
-	                .flatMap(saved -> logActivity(saved, ACTION_TYPE.IN_PROGRESS))
-	                .doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "IN_PROGRESS"));
-	        });
+					return ticketRepo.save(ticket).flatMap(saved -> logActivity(saved, ACTION_TYPE.IN_PROGRESS))
+							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "IN_PROGRESS"));
+				});
 	}
-
 
 }

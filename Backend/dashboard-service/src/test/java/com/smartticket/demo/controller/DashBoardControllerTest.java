@@ -90,9 +90,7 @@ public class DashBoardControllerTest {
 
 	@Test
 	void getAssignmentsPerAgent_success() {
-		AgentSummaryDto summary = new AgentSummaryDto();
-		summary.setAgentId("A1");
-		summary.setAssignedCount(20);
+		AgentSummaryDto summary = AgentSummaryDto.builder().agentId("A1").assignedCount(20).build();
 		when(dashboardService.getAssignmentsPerAgent()).thenReturn(Flux.just(summary));
 		StepVerifier.create(controller.getAssignmentsPerAgent()).expectNext(summary).verifyComplete();
 	}

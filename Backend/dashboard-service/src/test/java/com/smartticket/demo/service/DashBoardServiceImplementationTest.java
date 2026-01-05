@@ -170,5 +170,41 @@ public class DashBoardServiceImplementationTest {
 		when(userClient.getAgentStats("A1")).thenThrow(new RuntimeException("Agent not found"));
 		StepVerifier.create(service.getAgentStatsById("A1")).verifyError(RuntimeException.class);
 	}
+	
+	@Test
+	void statusSummaryFallback_returnsEmptyFlux() {
+	    StepVerifier.create(service.statusSummaryFallback(new RuntimeException("CB open")))
+	        .verifyComplete();
+	}
+
+	@Test
+	void getTicketStatusPrioritySummary_multiple() {
+	    PrioritySummaryDto p1 = new PrioritySummaryDto(PRIORITY.HIGH, 3L);
+	    PrioritySummaryDto p2 = new PrioritySummaryDto(PRIORITY.LOW, 1L);
+	    when(ticketClient.getTicketStatusPrioritySummary()).thenReturn(List.of(p1, p2));
+	    StepVerifier.create(service.getTicketStatusPrioritySummary()).expectNext(p1).expectNext(p2).verifyComplete();
+	}
+
+	@Test
+	void getCategorySummary_empty() {
+	    when(ticketClient.getCategorySummary()).thenReturn(List.of());
+	    StepVerifier.create(service.getCategorySummary()).verifyComplete();
+	}
+
+	@Test
+	void getGlobalStats_extremeValues() {
+	    UserTicketStatsDto stats = new UserTicketStatsDto(Long.MAX_VALUE, 0L, Long.MAX_VALUE, 0L);
+	    when(ticketClient.getGlobalStats()).thenReturn(stats);
+	    StepVerifier.create(service.getGlobalStats())
+	        .assertNext(result -> assertEquals(Long.MAX_VALUE, result.getTotal()))
+	        .verifyComplete();
+	}
+
+	@Test
+	void getAllAgentStats_emptyList() {
+	    when(userClient.getAllAgentStats()).thenReturn(List.of());
+	    StepVerifier.create(service.getAllAgentStats()).verifyComplete();
+	}
+
 
 }

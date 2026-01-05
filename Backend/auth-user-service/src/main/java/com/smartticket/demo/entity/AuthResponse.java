@@ -16,4 +16,5 @@ public class AuthResponse {
 	private String username;
 	private boolean enabled;
 	private Set<ROLE> roles;
+	private AgentProfile agentProfile;
 }

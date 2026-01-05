@@ -12,5 +12,6 @@ public class TicketDto {
 	private PRIORITY priority; 
 	private STATUS status; 
 	private String categoryId; 
+	private Long version;
 	
 }

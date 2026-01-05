@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.smartticket.demo.dto.AgentStatsDto;
+import com.smartticket.demo.dto.AgentSummaryDto;
 import com.smartticket.demo.dto.CategorySummaryDto;
 import com.smartticket.demo.dto.EscalationSummaryDto;
 import com.smartticket.demo.dto.PrioritySummaryDto;
@@ -121,6 +122,53 @@ public class DashBoardServiceImplementationTest {
 		AgentStatsDto stats = AgentStatsDto.builder().agentId("A1").currentAssignments(5).build();
 		when(userClient.getAllAgentStats()).thenReturn(List.of(stats));
 		StepVerifier.create(service.getAllAgentStats()).expectNext(stats).verifyComplete();
+	}
+
+	@Test
+	void getCategorySummary_emptyList() {
+		when(ticketClient.getCategorySummary()).thenReturn(List.of());
+		StepVerifier.create(service.getCategorySummary()).verifyComplete();
+	}
+
+	@Test
+	void getUserStats_error() {
+		when(ticketClient.getUserStats("U1")).thenThrow(new RuntimeException("Service unavailable"));
+		StepVerifier.create(service.getUserStats("U1")).verifyError(RuntimeException.class);
+	}
+
+	@Test
+	void statusSummaryFallback_returnsEmpty() {
+		StepVerifier.create(service.statusSummaryFallback(new RuntimeException("Circuit breaker open")))
+				.verifyComplete();
+	}
+
+	@Test
+	void getAllAgentStats_multipleAgents() {
+		AgentStatsDto a1 = AgentStatsDto.builder().agentId("A1").currentAssignments(5).build();
+		AgentStatsDto a2 = AgentStatsDto.builder().agentId("A2").currentAssignments(3).build();
+		when(userClient.getAllAgentStats()).thenReturn(List.of(a1, a2));
+		StepVerifier.create(service.getAllAgentStats()).expectNext(a1).expectNext(a2).verifyComplete();
+	}
+
+	@Test
+	void getGlobalStats_zeroTickets() {
+		UserTicketStatsDto stats = new UserTicketStatsDto(0L, 0L, 0L, 0L);
+		when(ticketClient.getGlobalStats()).thenReturn(stats);
+		StepVerifier.create(service.getGlobalStats()).assertNext(result -> assertEquals(0L, result.getTotal()))
+				.verifyComplete();
+	}
+
+	@Test
+	void getAssignmentsPerAgent_success() {
+		AgentSummaryDto summary = AgentSummaryDto.builder().agentId("A1").assignedCount(2L).build();
+		when(assignmentClient.getAgentWorkloadSummary()).thenReturn(List.of(summary));
+		StepVerifier.create(service.getAssignmentsPerAgent()).expectNext(summary).verifyComplete();
+	}
+
+	@Test
+	void getAgentStatsById_error() {
+		when(userClient.getAgentStats("A1")).thenThrow(new RuntimeException("Agent not found"));
+		StepVerifier.create(service.getAgentStatsById("A1")).verifyError(RuntimeException.class);
 	}
 
 }

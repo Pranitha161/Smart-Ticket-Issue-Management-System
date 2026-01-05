@@ -269,10 +269,9 @@
   0% { opacity: 0; transform: scale(0.9); }
   100% { opacity: 1; transform: scale(1); }
 } */
-
-/* Core Theme & Background */
+ 
 .ticket-detail-wrapper {
-  background: #f8faff; /* Matching your dashboard light-blue tint */
+  background: #f8faff; 
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   min-height: 100vh;
 }
@@ -284,7 +283,6 @@
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04);
 }
 
-/* Header */
 .ticket-id {
   font-weight: 800;
   color: #1e293b;
@@ -307,7 +305,7 @@
 
 .back-btn:hover { background: #6366f1; color: white; }
 
-/* Labels & Text */
+
 .section-label, .sidebar-label {
   font-size: 0.75rem;
   font-weight: 800;
@@ -326,7 +324,7 @@
   font-weight: 500;
 }
 
-/* Sidebar Specifics */
+
 .sidebar-title { font-weight: 800; color: #0f172a; }
 
 .status-pill {
@@ -350,9 +348,9 @@
 
 .category-text { font-weight: 700; color: #1e293b; }
 
-/* Buttons */
+
 .btn-resolve-theme {
-  background: #52b788; /* Matching the green in your image */
+  background: #52b788; 
   color: white;
   border: none;
   padding: 14px;
@@ -430,3 +428,75 @@
 .user-email { font-size: 0.75rem; color: #64748b; }
 
 .divider { border-color: #f1f5f9; opacity: 1; }
+
+.custom-modal-backdrop { 
+  position: fixed; 
+  inset: 0; 
+  background: rgba(15, 23, 42, 0.6); 
+  backdrop-filter: blur(2px);
+  z-index: 1000; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+.custom-modal-card { 
+  background: white; 
+  width: 400px; 
+  border-radius: 20px; 
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden; 
+  position: relative; 
+}
+
+.animate-in { 
+  animation: modalIn 0.25s ease-out; 
+}
+.custom-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; 
+  backdrop-filter: blur(4px);
+}
+
+.custom-modal-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+
+.modal-accent.accent-warning {
+  height: 6px;
+  background: #f59e0b;
+  width: 100%;
+}
+
+.timeline-container {
+  max-height: 150px;     
+  overflow-y: auto;        
+  padding-right: 0.5rem;   
+}
+
+.timeline-container::-webkit-scrollbar {
+  width: 6px;
+}
+.timeline-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+.timeline-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+@keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }

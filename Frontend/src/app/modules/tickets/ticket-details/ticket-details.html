@@ -226,7 +226,7 @@
 
 </div> -->
 
-<div class="ticket-detail-wrapper p-3 p-md-5">
+<!-- <div class="ticket-detail-wrapper p-3 p-md-5">
   <div class="d-flex align-items-center mb-5">
     <a routerLink="/tickets" class="back-btn shadow-sm">
       <i class="bi bi-arrow-left"></i>
@@ -240,6 +240,8 @@
   <div class="row g-4">
     <div class="col-lg-8">
       <div class="glass-card mb-4 p-4">
+        <h5 class="section-label mb-3">TITLE</h5>
+        <p class="content-text mb-4">{{ ticket?.title || 'No Title provided.' }}</p>
         <h5 class="section-label mb-3">DESCRIPTION</h5>
         <p class="content-text mb-4">{{ ticket?.description || 'No description provided.' }}</p>
 
@@ -252,21 +254,27 @@
 
       <div class="glass-card p-4">
         <h5 class="section-label mb-4">ACTIVITY TIMELINE</h5>
-        
+
         <div class="timeline-container">
           <div *ngFor="let act of activities" class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-content">
               <div class="d-flex justify-content-between align-items-start">
-                <span class="activity-type">{{ act?.actionType }}</span>
-                <span class="activity-time">{{ act?.timestamp | date:'M/d/yy, h:mm a' }}</span>
+                <span class="activity-type">
+                  {{ act?.actionType }}
+                  <span *ngIf="act?.actorName" class="text-muted small">
+                    by {{ act.actorName }}
+                  </span>
+                </span>
+
               </div>
+              <span class="activity-time">{{ act?.timestamp | date:'M/d/yy, h:mm a' }}</span>
               <p class="activity-detail text-muted mb-0">{{ act?.details }}</p>
             </div>
           </div>
         </div>
 
-        <div class="mt-5 pt-4 border-top">
+        <div class="mt-5 pt-4 border-top" *ngIf="ticket?.status !== 'RESOLVED'">
           <textarea [(ngModel)]="newComment" class="theme-input mb-3" rows="4"
             placeholder="Write an update or internal note..."></textarea>
           <div class="d-flex justify-content-end">
@@ -281,8 +289,15 @@
     <div class="col-lg-4">
       <div class="glass-card p-4 sticky-top" style="top: 20px;">
         <h4 class="sidebar-title mb-4">Ticket Details</h4>
+        <div *ngIf="canStartWork()" class="mb-4">
+          <button class="btn-start-theme w-100" (click)="startWork()">
+            <i class="bi bi-play-fill me-2"></i> Start Work
+          </button>
+        </div>
 
-        <div *ngIf="canResolve() && ticket?.status !== 'RESOLVED'" class="mb-4">
+
+
+        <div *ngIf="canResolve() && ticket?.status !== 'RESOLVED'&& ticket?.status=== 'IN_PROGRESS'" class="mb-4">
           <button class="btn-resolve-theme w-100" (click)="resolveTicket()">
             <i class="bi bi-check-circle-fill me-2"></i> Resolve Ticket
           </button>
@@ -290,7 +305,7 @@
 
         <div class="info-group mb-4">
           <label class="sidebar-label">STATUS</label>
-          <div class="status-pill assigned">{{ ticket?.status || 'ASSIGNED' }}</div>
+          <div class="status-pill assigned">{{ ticket?.status || 'OPEN' }}</div>
         </div>
 
         <div class="info-group mb-4">
@@ -301,7 +316,7 @@
         <div class="info-group mb-4">
           <label class="sidebar-label">CATEGORY</label>
           <div class="category-text">
-             <i class="bi bi-tag-fill me-2 text-muted"></i>{{ ticket?.categoryName || 'GENERAL' }}
+            <i class="bi bi-tag-fill me-2 text-muted"></i>{{ ticket?.categoryName || 'GENERAL' }}
           </div>
         </div>
 
@@ -322,7 +337,7 @@
           <label class="sidebar-label">ASSIGNEE</label>
           <div class="d-flex align-items-center mt-2">
             <div class="avatar-circle assignee me-3">
-               <i class="bi bi-person-badge"></i>
+              <i class="bi bi-person-badge"></i>
             </div>
             <div>
               <div class="user-name">{{ ticket?.assignedToName || 'Unassigned' }}</div>
@@ -340,6 +355,179 @@
             <div class="update-time">{{ ticket?.updatedAt | date:'MMM d, y, h:mm:ss a' }}</div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<div class="ticket-detail-wrapper p-3 p-md-5">
+  <div class="d-flex align-items-center mb-5">
+    <a routerLink="/tickets" class="back-btn shadow-sm">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <div class="ms-4">
+      <h1 class="ticket-id mb-0">{{ ticket?.displayId }}</h1>
+      <span class="created-at text-muted">Created {{ ticket?.createdAt | date:'MM/dd/yyyy, h:mm:ss a' }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="glass-card mb-4 p-4">
+        <h5 class="section-label mb-3">TITLE</h5>
+        <p class="content-text mb-4">{{ ticket?.title || 'No Title provided.' }}</p>
+        <h5 class="section-label mb-3">DESCRIPTION</h5>
+        <p class="content-text mb-4">{{ ticket?.description || 'No description provided.' }}</p>
+
+        <h5 class="section-label mb-3">TAGS</h5>
+        <div class="d-flex gap-2">
+          <span class="theme-tag">login</span>
+          <span class="theme-tag">authentication</span>
+        </div>
+      </div>
+
+      <div class="glass-card p-4">
+        <h5 class="section-label mb-4">ACTIVITY TIMELINE</h5>
+        <div class="timeline-container">
+          <div *ngFor="let act of activities" class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="d-flex justify-content-between align-items-start">
+                <span class="activity-type">
+                  {{ act?.actionType }}
+                  <span *ngIf="act?.actorName" class="text-muted small">by {{ act.actorName }}</span>
+                </span>
+              </div>
+              <span class="activity-time">{{ act?.timestamp | date:'M/d/yy, h:mm a' }}</span>
+              <p class="activity-detail text-muted mb-0">{{ act?.details }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-4 border-top" *ngIf="ticket?.status !== 'RESOLVED'">
+          <textarea [(ngModel)]="newComment" class="theme-input mb-3" rows="2"
+            placeholder="Write an update or internal note..."></textarea>
+          <div class="d-flex justify-content-end">
+            <button class="btn-post-update" (click)="addComment()">
+              <i class="bi bi-send-fill me-2"></i> Post Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="glass-card p-4 " style="top: 20px;">
+        <h4 class="sidebar-title mb-4">Ticket Details</h4>
+        
+        <div *ngIf="canStartWork()" class="mb-4">
+          <button class="btn-start-theme w-100" (click)="openConfirm('START')">
+            <i class="bi bi-play-fill me-2"></i> Start Work
+          </button>
+        </div>
+
+        <div *ngIf="canResolve() && ticket?.status === 'IN_PROGRESS'" class="mb-4">
+          <button class="btn-resolve-theme w-100" (click)="openConfirm('RESOLVE')">
+            <i class="bi bi-check-circle-fill me-2"></i> Resolve Ticket
+          </button>
+        </div>
+
+        <div *ngIf="role === 'USER' && ticket?.status === 'RESOLVED'" class="mb-4">
+          <button class="btn-warning w-100  fw-bold py-2 border-0 rounded-3 shadow-sm" (click)="openConfirm('REOPEN')">
+            <i class="bi bi-arrow-counterclockwise me-2"></i> Reopen Ticket
+          </button>
+        </div>
+
+        <div class="info-group mb-4">
+          <label class="sidebar-label">STATUS</label>
+          <div class="status-pill" [attr.data-status]="ticket?.status">{{ ticket?.status || 'OPEN' }}</div>
+        </div>
+
+        <div class="info-group mb-4">
+          <label class="sidebar-label">PRIORITY</label>
+          <div class="priority-pill" [attr.data-priority]="ticket?.priority">{{ ticket?.priority || 'MEDIUM' }}</div>
+        </div>
+
+        <div class="info-group mb-4">
+          <label class="sidebar-label">CATEGORY</label>
+          <div class="category-text">
+            <i class="bi bi-tag-fill me-2 text-muted"></i>{{ ticket?.categoryName || 'GENERAL' }}
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="user-block mb-4">
+          <label class="sidebar-label">REPORTER</label>
+          <div class="d-flex align-items-center mt-2">
+            <div class="avatar-circle me-3">{{ ticket?.createdByName?.charAt(0) || 'U' }}</div>
+            <div>
+              <div class="user-name">{{ ticket?.createdByName }}</div>
+              <div class="user-email">{{ ticket?.createdByEmail }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-block mb-4">
+          <label class="sidebar-label">ASSIGNEE</label>
+          <div class="d-flex align-items-center mt-2">
+            <div class="avatar-circle assignee me-3">
+              <i class="bi bi-person-badge"></i>
+            </div>
+            <div>
+              <div class="user-name">{{ ticket?.assignedToName || 'Unassigned' }}</div>
+              <div class="user-email text-muted small">{{ ticket?.assignedToEmail || 'Awaiting Agent' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="d-flex align-items-center last-update pt-2">
+          <i class="bi bi-clock-history me-3 fs-5"></i>
+          <div>
+            <label class="sidebar-label mb-0">LAST UPDATED</label>
+            <div class="update-time">{{ ticket?.updatedAt | date:'MMM d, y, h:mm:ss a' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal-backdrop" *ngIf="pendingAction">
+  <div class="custom-modal-card animate-in text-center">
+    <div class="modal-accent" [ngClass]="{
+      'bg-primary': pendingAction === 'START',
+      'bg-success': pendingAction === 'RESOLVE',
+      'bg-warning': pendingAction === 'REOPEN'
+    }" style="height: 5px;"></div>
+    
+    <div class="p-4">
+      <div class="mb-3">
+        <i class="bi display-5" [ngClass]="{
+          'bi-play-circle text-primary': pendingAction === 'START',
+          'bi-check-circle text-success': pendingAction === 'RESOLVE',
+          'bi-exclamation-circle text-warning': pendingAction === 'REOPEN'
+        }"></i>
+      </div>
+      
+      <h5 class="fw-bold mb-3">Confirm Action</h5>
+      <p class="text-muted">
+        Are you sure you want to <strong>{{ pendingAction | lowercase }}</strong> 
+        ticket <br> #{{ ticket?.displayId }}?
+      </p>
+
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn w-100 text-white fw-bold" 
+          [ngClass]="{
+            'btn-primary': pendingAction === 'START',
+            'btn-success': pendingAction === 'RESOLVE',
+            'btn-warning': pendingAction === 'REOPEN'
+          }" (click)="processAction()">
+          Confirm
+        </button>
+        <button class="btn btn-light w-100" (click)="pendingAction = null">Cancel</button>
       </div>
     </div>
   </div>

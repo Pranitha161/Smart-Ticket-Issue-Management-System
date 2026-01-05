@@ -248,7 +248,9 @@
   </nav>
 </div> -->
 
-<div class="ticket-container p-4">
+
+
+<!-- <div class="ticket-container p-4">
   <div class="header-section d-flex justify-content-between align-items-center mb-4">
     <div>
       <h2 class="fw-bold text-dark mb-0">Ticket Queue</h2>
@@ -262,7 +264,8 @@
   <div class="filter-bar mb-4">
     <div class="search-box">
       <i class="bi bi-search"></i>
-      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" placeholder="Search title, ID, or category...">
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()"
+        placeholder="Search title, ID, or category...">
     </div>
     <div class="select-group">
       <select class="form-select-sm" [(ngModel)]="selectedPriority" (change)="applyFilters()">
@@ -320,10 +323,13 @@
           <td class="text-end pe-4">
             <div class="d-flex justify-content-end gap-2">
               <button class="btn-action view" [routerLink]="['/tickets', ticket.id]"><i class="bi bi-eye"></i></button>
-              <ng-container *ngIf="(role === 'ADMIN' || role === 'MANAGER') && ticket.status !== 'ASSIGNED'">
-                <button class="btn-action assign" (click)="manualAssign(ticket)"><i class="bi bi-person-plus"></i></button>
+              <ng-container *ngIf="(role === 'ADMIN' || role === 'MANAGER') && ticket.status == 'OPEN'">
+                <button class="btn-action assign" (click)="manualAssign(ticket)"><i
+                    class="bi bi-person-plus"></i></button>
                 <button class="btn-action magic" (click)="autoAssign(ticket)"><i class="bi bi-magic"></i></button>
               </ng-container>
+              <ng-container *ngIf="role === 'USER' && ticket.status === 'RESOLVED'"> <button class="btn-action reopen"
+                  (click)="reopenTicket(ticket)"> <i class="bi bi-arrow-counterclockwise"></i> </button> </ng-container>
             </div>
           </td>
         </tr>
@@ -343,8 +349,311 @@
           </option>
         </select>
         <div class="d-flex gap-2">
+          <button class="btn btn-primary w-100"
+            (click)="confirmAssign(assigningTicketId, agentSelect.value)">Assign</button>
+          <button class="btn btn-light w-100" (click)="assigningTicketId = null">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="custom-modal-backdrop" *ngIf="reopeningTicket">
+  <div class="custom-modal-card animate-in text-center">
+    <div class="modal-accent bg-warning" style="height: 5px;"></div>
+    <div class="p-4">
+      <div class="mb-3">
+        <i class="bi bi-exclamation-circle text-warning display-5"></i>
+      </div>
+      <h5 class="fw-bold mb-3">Confirm Reopen</h5>
+      <p class="text-muted">
+        Are you sure you want to reopen ticket
+        <span class="text-dark fw-bold">#{{reopeningTicket.displayId}}</span>?
+      </p>
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-warning w-100 text-white fw-bold" (click)="confirmReopen()">Reopen</button>
+        <button class="btn btn-light w-100" (click)="reopeningTicket = null">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+<!-- <div class="ticket-container p-4">
+  <div class="header-section d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-0">Ticket Queue</h2>
+      <p class="text-muted small">Overview of all support requests</p>
+    </div>
+    <button class="btn-refresh" (click)="loadTickets()" title="Refresh Data">
+      <i class="bi bi-arrow-clockwise"></i>
+    </button>
+  </div>
+
+  <div class="filter-bar mb-4">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" placeholder="Search title, ID, or category...">
+    </div>
+    <div class="select-group">
+      <select class="form-select-sm" [(ngModel)]="selectedPriority" (change)="applyFilters()">
+        <option value="">All Priorities</option>
+        <option value="CRITICAL">Critical</option>
+        <option value="HIGH">High</option>
+        <option value="MEDIUM">Medium</option>
+        <option value="LOW">Low</option>
+      </select>
+      <select class="form-select-sm" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="OPEN">Open</option>
+        <option value="ASSIGNED">Assigned</option>
+        <option value="RESOLVED">Resolved</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-responsive shadow-sm rounded-4 bg-white">
+    <table class="table align-middle mb-0">
+      <thead class="bg-light">
+        <tr>
+          <th class="ps-4">Ticket</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Category</th>
+          <th class="text-end pe-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ticket of pagedTickets" class="ticket-row">
+          
+          <td class="ps-4">
+            <div class="d-flex align-items-center">
+              <span class="id-badge me-3">#{{ticket.displayId}}</span>
+              <div>
+                <div class="fw-bold text-dark">{{ticket.title}}</div>
+                <div class="text-muted tiny">By: {{lookup.getUserName(ticket.createdBy)}}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="priority-pill" [attr.data-priority]="ticket.priority">{{ticket.priority}}</span>
+          </td>
+          <td>
+            <span class="status-indicator" [attr.data-status]="ticket.status">
+              <span class="dot"></span> {{ticket.status | lowercase}}
+            </span>
+          </td>
+          <td>
+            <span class="category-tag">
+              <i class="bi bi-tag-fill me-1"></i>
+              {{ lookup.getCategoryName(ticket.categoryId) }}
+            </span>
+          </td>
+          <td class="text-end pe-4">
+            <div class="d-flex justify-content-end gap-2">
+              <button class="btn-action view" [routerLink]="['/tickets', ticket.id]"><i class="bi bi-eye"></i></button>
+              
+              <ng-container *ngIf="(role === 'ADMIN' || role === 'MANAGER') && ticket.status == 'OPEN'">
+                <button class="btn-action assign" (click)="manualAssign(ticket)"><i class="bi bi-person-plus"></i></button>
+                <button class="btn-action magic" (click)="autoAssign(ticket)"><i class="bi bi-magic"></i></button>
+              </ng-container>
+
+              <ng-container *ngIf="role === 'USER' && ticket.status === 'RESOLVED'"> 
+                <button class="btn-action reopen" (click)="openReopenConfirm(ticket)"> 
+                  <i class="bi bi-arrow-counterclockwise"></i> 
+                </button> 
+              </ng-container>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="pagedTickets.length === 0"> <td colspan="5" class="text-center text-muted py-4"> No tickets found for the selected filters </td> </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="assigningTicketId">
+    <div class="custom-modal-card animate-in">
+      <div class="modal-accent"></div>
+      <div class="p-4">
+        <h5 class="fw-bold mb-3">Assign Specialist</h5>
+        <select #agentSelect class="form-control mb-4">
+          <option value="">Select an Agent...</option>
+          <option *ngFor="let agent of getAgentsForCurrentCategory()" [value]="agent.id">
+            {{ agent.username }} ({{ agent.email }})
+          </option>
+        </select>
+        <div class="d-flex gap-2">
           <button class="btn btn-primary w-100" (click)="confirmAssign(assigningTicketId, agentSelect.value)">Assign</button>
           <button class="btn btn-light w-100" (click)="assigningTicketId = null">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="reopeningTicket">
+    <div class="custom-modal-card animate-in text-center">
+      <div class="modal-accent bg-warning" style="height: 5px;"></div>
+      <div class="p-4">
+        <div class="mb-3">
+          <i class="bi bi-exclamation-circle text-warning display-5"></i>
+        </div>
+        <h5 class="fw-bold mb-3">Confirm Reopen</h5>
+        <p class="text-muted">
+          Are you sure you want to reopen ticket 
+          <span class="text-dark fw-bold">#{{reopeningTicket.displayId}}</span>?
+        </p>
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-warning w-100 text-white fw-bold" (click)="confirmReopen()">Reopen</button>
+          <button class="btn btn-light w-100" (click)="reopeningTicket = null">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="ticket-container p-4">
+  <div class="header-section d-flex justify-content-between align-items-center mb-4">
+    <!-- <div>
+      <h2 class="fw-bold text-dark mb-0">Ticket Queue</h2>
+      <p class="text-muted small">Overview of all support requests</p>
+    </div> -->
+    <div class="d-flex align-items-center ">
+      <button class="btn-back me-3" routerLink="/dashboard">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <div>
+        <h2 class="fw-bold text-dark mb-0">Ticket Queue</h2>
+        <p class="text-muted small mb-0">Overview of all support requests</p>
+      </div>
+    </div>
+    <button class="btn-refresh" (click)="loadTickets()" data-tooltip="Refresh Data">
+      <i class="bi bi-arrow-clockwise"></i>
+    </button>
+  </div>
+
+  <div class="filter-bar mb-4">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()"
+        placeholder="Search title, ID, or user...">
+    </div>
+    <div class="select-group">
+      <select class="form-select-sm" [(ngModel)]="selectedPriority" (change)="applyFilters()">
+        <option value="">All Priorities</option>
+        <option value="CRITICAL">Critical</option>
+        <option value="HIGH">High</option>
+        <option value="MEDIUM">Medium</option>
+        <option value="LOW">Low</option>
+      </select>
+      <select class="form-select-sm" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="OPEN">Open</option>
+        <option value="ASSIGNED">Assigned</option>
+        <option value="RESOLVED">Resolved</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-responsive shadow-sm rounded-4 bg-white">
+    <table class="table align-middle mb-0">
+      <thead>
+        <tr>
+          <th class="ps-4">Ticket Info</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Category</th>
+          <th class="text-end pe-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let ticket of pagedTickets" class="ticket-row clickable-row" [routerLink]="['/tickets', ticket.id]">
+          <td class="ps-4">
+            <div class="d-flex align-items-center">
+              <span class="id-badge me-3">#{{ticket.displayId}}</span>
+              <div>
+                <div class="ticket-title fw-bold text-dark">{{ticket.title|uppercase}}</div>
+                <div class="text-muted tiny">
+                  By {{lookup.getUserName(ticket.createdBy)}}
+                  <span class="mx-1">•</span>
+                  <span>{{ticket.createdAt | date:'MMM d, h:mm a'}}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td><span class="priority-pill" [attr.data-priority]="ticket.priority">{{ticket.priority}}</span></td>
+          <td>
+            <span class="status-indicator" [attr.data-status]="ticket.status">
+              <span class="dot"></span> {{ticket.status | lowercase}}
+            </span>
+          </td>
+          <td><span class="category-tag">{{ lookup.getCategoryName(ticket.categoryId) }}</span></td>
+          <td class="text-end pe-4">
+            <div class="d-flex justify-content-end gap-2">
+              <ng-container *ngIf="(role === 'ADMIN' || role === 'MANAGER') && ticket.status == 'OPEN'">
+                <button class="btn-action" (click)="$event.stopPropagation(); manualAssign(ticket)"
+                  data-tooltip="Manual Assign">
+                  <i class="bi bi-person-plus"></i>
+                </button>
+                <button class="btn-action magic" (click)="$event.stopPropagation(); autoAssign(ticket)"
+                  data-tooltip="Smart Auto-Assign">
+                  <i class="bi bi-magic"></i>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="role === 'USER' && ticket.status === 'RESOLVED'">
+                <button class="btn-action reopen" (click)="$event.stopPropagation(); openReopenConfirm(ticket)"
+                  title="Reopen" data-tooltip="Reopen Ticket">
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+              </ng-container>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="pagedTickets.length === 0">
+          <td colspan="5">
+            <div class="text-center py-5">
+              <div class="empty-icon mb-3"> <i class="bi bi-inbox text-muted"></i> </div>
+              <p class="text-muted">No recent tickets to show.</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="assigningTicketId">
+    <div class="custom-modal-card animate-in">
+      <div class="modal-accent bg-indigo"></div>
+      <div class="p-4">
+        <h5 class="fw-bold mb-1">Assign Specialist</h5>
+        <p class="text-muted small mb-4">Select an agent to handle this request.</p>
+
+        <select #agentSelect class="theme-input mb-4">
+          <option value="">Select an Agent...</option>
+          <option *ngFor="let agent of getAgentsForCurrentCategory()" [value]="agent.id">
+            {{ agent.username }} ({{ agent.email }})
+          </option>
+        </select>
+
+        <div class="d-flex gap-2">
+          <button class="btn-indigo w-100" (click)="confirmAssign(assigningTicketId, agentSelect.value)">Confirm
+            Assignment</button>
+          <button class="btn-light w-100" (click)="assigningTicketId = null">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="reopeningTicket">
+    <div class="custom-modal-card animate-in text-center">
+      <div class="modal-accent bg-warning"></div>
+      <div class="p-4">
+        <div class="icon-circle bg-warning-light mx-auto mb-3">
+          <i class="bi bi-exclamation-triangle text-warning fs-4"></i>
+        </div>
+        <h5 class="fw-bold mb-2">Reopen Ticket?</h5>
+        <p class="text-muted small">Are you sure you want to reopen ticket <span
+            class="fw-bold text-dark">#{{reopeningTicket.displayId}}</span>?</p>
+
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn-warning w-100" (click)="confirmReopen()">Reopen Ticket</button>
+          <button class="btn-light w-100" (click)="reopeningTicket = null">Go Back</button>
         </div>
       </div>
     </div>

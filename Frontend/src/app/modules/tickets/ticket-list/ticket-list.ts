@@ -1,156 +1,11 @@
-// import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { RouterLink } from '@angular/router';
-// import { FormsModule } from '@angular/forms';
-// import { AuthService } from '../../../core/services/auth';
-// import { AssignmentEscalation } from '../../../core/services/assignment-escalation';
-// import { AdminUser } from '../../../core/services/admin-user';
-// import { LookupService } from '../../../core/services/lookup-service'; 
-// import { ticketListService } from '../../../core/services/ticket-list'; 
-
-// @Component({
-//   selector: 'app-ticket-list',
-//   standalone: true,
-//   imports: [CommonModule, RouterLink, FormsModule],
-//   templateUrl: './ticket-list.html',
-//   styleUrls: ['./ticket-list.css']
-// })
-// export class TicketList implements OnInit {
-//   tickets: any[] = [];           
-//   filteredTickets: any[] = [];   
-//   pagedTickets: any[] = [];      
-//   searchTerm = '';
-//   selectedPriority = '';
-//   selectedStatus = '';
-//   currentPage = 0;
-//   pageSize = 5;
-//   totalPages = 0;
-//   role: string = ''; 
-//   assigningTicketId: string | null = null;
-//   agentsByCategory: { [categoryId: string]: any[] } = {};
-
-//   constructor(
-//     private ticketListService: ticketListService,   
-//     private assignmentService: AssignmentEscalation, 
-//     private authService: AuthService,
-//     private userAdminService: AdminUser,
-//     private lookup: LookupService,
-//     private cd: ChangeDetectorRef
-//   ) {}
-
-//   ngOnInit(): void {
-//   this.role = this.authService.roles()[0];
-//   const userId = this.authService.userId()!;
-
-//   if (this.role === 'USER') {
-//     this.ticketListService.getTicketsByUserId(userId).subscribe({
-//       next: (res) => this.initTickets(res),
-//       error: () => console.error('Failed to load tickets for user')
-//     });
-//   } else if (this.role === 'AGENT') {
-//     this.ticketListService.getTicketsByAgentId(userId).subscribe({
-//       next: (res) => this.initTickets(res),
-//       error: () => console.error('Failed to load tickets for agent')
-//     });
-//   } else {
-//     this.ticketListService.getTickets().subscribe({
-//       next: (res) => {this.initTickets(res);console.log(res);},
-//       error: () => console.error('Failed to load tickets')
-//     });
-//   }
-// }
-// private initTickets(res: any[]): void {
-//   this.tickets = res;
-//   this.filteredTickets = res;
-//   this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
-//   this.setPage(0);
-//   this.cd.detectChanges();
-// }
-
-
-//   private safeIncludes(field: string | null | undefined, term: string): boolean {
-//     return field ? field.toLowerCase().includes(term) : false;
-//   }
-
-//   applyFilters(): void {
-//     const term = this.searchTerm.toLowerCase().trim();
-
-//     this.filteredTickets = this.tickets.filter(ticket => {
-//       const matchesSearch =
-//         !term || 
-//         this.safeIncludes(ticket.title, term) ||
-//         this.safeIncludes(ticket.displayId, term) ||
-//         this.safeIncludes(ticket.categoryName, term); 
-
-//       const matchesPriority =
-//         !this.selectedPriority || ticket.priority === this.selectedPriority;
-//       const matchesStatus =
-//         !this.selectedStatus || ticket.status === this.selectedStatus;
-
-//       return matchesSearch && matchesPriority && matchesStatus;
-//     });
-
-//     this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
-//     this.setPage(0);
-//   }
-
-//   loadAgentsForCategory(categoryId: string): void {
-//     this.userAdminService.getAgentsByCategory(categoryId).subscribe({
-//       next: (agents) => {
-//         this.agentsByCategory[categoryId] = agents;
-//         this.cd.detectChanges();
-//       },
-//       error: () => console.error(`Failed to load agents for category ${categoryId}`)
-//     });
-//   }
-
-//   setPage(page: number): void {
-//     if (page >= 0 && page < this.totalPages) {
-//       this.currentPage = page;
-//       const start = page * this.pageSize;
-//       const end = start + this.pageSize;
-//       this.pagedTickets = this.filteredTickets.slice(start, end);
-//     } else {
-//       this.pagedTickets = [];
-//     }
-//   }
-
-//   manualAssign(ticket: any) {
-//     this.assigningTicketId = ticket.id;
-//     this.loadAgentsForCategory(ticket.categoryId);
-//   }
-
-//   confirmAssign(ticketId: string, agentId: string) {
-//     if (agentId) {
-//       this.assignmentService.manualAssign(ticketId, agentId, 'MEDIUM') 
-//         .subscribe(res => {
-//           alert(res.message);
-//           console.log(res);
-//         });
-//       this.assigningTicketId = null; 
-//     }
-//   }
-
-//   autoAssign(ticket: any) {
-//     this.assignmentService.autoAssign(ticket.id)
-//       .subscribe(res => {
-//         alert(`Ticket ${res.ticketId} auto-assigned to agent ${res.agentId}`);
-//       });
-//   }
-// }
-
-
-
-// gemini
-
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth';
 import { AssignmentEscalation } from '../../../core/services/assignment-escalation';
-import { LookupService } from '../../../core/services/lookup-service'; 
-import { ticketListService } from '../../../core/services/ticket-list'; 
+import { LookupService } from '../../../core/services/lookup-service';
+import { ticketListService } from '../../../core/services/ticket-list';
 import { Toast } from '../../../core/services/toast';
 
 @Component({
@@ -168,68 +23,177 @@ export class TicketList implements OnInit {
   public lookup = inject(LookupService);
   public toast = inject(Toast);
 
-  tickets: any[] = [];           
-  filteredTickets: any[] = [];   
-  pagedTickets: any[] = [];      
-  
+  tickets: any[] = [];
+  filteredTickets: any[] = [];
+  pagedTickets: any[] = [];
+
   searchTerm = '';
   selectedPriority = '';
   selectedStatus = '';
   currentPage = 0;
   pageSize = 6;
   totalPages = 0;
-  role: string = ''; 
+  role: string = '';
   assigningTicketId: string | null = null;
-
+reopeningTicket: any = null;
   ngOnInit(): void {
     const roles = this.authService.roles();
     this.role = roles && roles.length > 0 ? roles[0] : '';
     this.loadTickets();
   }
 
-  loadTickets(): void {
-    const userId = this.authService.userId()!;
-    const request$ = this.role === 'USER' 
-      ? this.ticketListService.getTicketsByUserId(userId) 
-      : this.role === 'AGENT' 
-        ? this.ticketListService.getTicketsByAgentId(userId) 
-        : this.ticketListService.getTickets();
+  // loadTickets(): void {
+  //   const userId = this.authService.userId()!;
+  //   const request$ = this.role === 'USER'
+  //     ? this.ticketListService.getTicketsByUserId(userId)
+  //     : this.role === 'AGENT'
+  //       ? this.ticketListService.getTicketsByAgentId(userId)
+  //       : this.ticketListService.getTickets();
 
-    request$.subscribe({
-      next: (res) => {
-        this.tickets = res;
-        this.applyFilters();
-        this.cd.detectChanges();
-      },
-      error: () => this.toast.show('Failed to load tickets', 'error')
-    });
+  //   request$.subscribe({
+  //     next: (res) => {
+  //       this.tickets = res;
+  //       this.filteredTickets = [...this.tickets];
+  //       this.applyFilters();
+  //       this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
+  //     this.setPage(0); 
+
+  //     this.toast.show('Data Refreshed', 'success');
+  //     this.cd.detectChanges();
+  //     },
+  //     error: () => this.toast.show('Failed to load tickets', 'error')
+  //   });
+  // }
+  loadTickets(): void {
+  // 1. Clear UI inputs immediately
+  this.searchTerm = '';
+  this.selectedPriority = '';
+  this.selectedStatus = '';
+
+  const userId = this.authService.userId()!;
+  const request$ = this.role === 'USER'
+    ? this.ticketListService.getTicketsByUserId(userId)
+    : this.role === 'AGENT'
+      ? this.ticketListService.getTicketsByAgentId(userId)
+      : this.ticketListService.getTickets();
+
+  request$.subscribe({
+    next: (res) => {
+
+
+      // 2. Update Master List
+      this.tickets = res;
+
+      // 3. Manually sync Filtered List to match Master List (Resetting the filter)
+      this.filteredTickets = [...this.tickets];
+
+      // 4. Reset Pagination count
+      this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
+
+      // 5. CRITICAL: Force the Paged List to fill up with the first page of data
+      if (this.filteredTickets.length > 0) {
+        this.setPage(0); 
+      } else {
+        this.pagedTickets = [];
+      }
+
+      // this.toast.show('Data Refreshed', 'success');
+      this.cd.detectChanges();
+    },
+    error: () => this.toast.show('Failed to load tickets', 'error')
+  });
+}
+  openReopenConfirm(ticket: any) {
+    this.reopeningTicket = ticket;
   }
 
- applyFilters(): void {
+  confirmReopen() {
+    if (!this.reopeningTicket) return;
+
+    this.ticketListService.reopenTicket(this.reopeningTicket.id).subscribe({
+      next: () => {
+        this.toast.show('Ticket reopened successfully', 'success');
+        this.reopeningTicket = null;
+        this.loadTickets();
+      },
+      error: (err) => {
+        let displayMessage = 'Failed to reopen ticket';
+        if (err.error?.message) {
+          const match = err.error.message.match(/"message":"([^"]+)"/);
+          displayMessage = (match && match[1]) ? match[1] : err.error.message;
+        }
+        this.toast.show(displayMessage, 'error');
+        this.reopeningTicket = null;
+        console.error(err);
+      }
+    });
+  }
+  // applyFilters(): void {
+  //   const term = this.searchTerm.toLowerCase().trim();
+  //   console.log(term+" "+this.selectedPriority+" "+this.selectedStatus);
+  //   this.filteredTickets = this.tickets.filter(ticket => {
+  //     const categoryName = (this.lookup.getCategoryName(ticket.categoryId) || '').toLowerCase();
+  //     const creatorName = (this.lookup.getUserName(ticket.createdBy) || '').toLowerCase();
+  //     const title = (ticket.title || '').toLowerCase();
+  //     const displayId = (ticket.displayId || '').toLowerCase();
+  //     const matchesSearch = !term ||
+  //       title.includes(term) ||
+  //       displayId.includes(term) ||
+  //       categoryName.includes(term) ||
+  //       creatorName.includes(term);
+  //     const matchesPriority = !this.selectedPriority || ticket.priority?.toUpperCase() === this.selectedPriority.toUpperCase();
+  //     const matchesStatus = !this.selectedStatus || ticket.status?.toUpperCase() === this.selectedStatus.toUpperCase();
+  //     console.log(matchesSearch && matchesPriority && matchesStatus);
+  //     return matchesSearch && matchesPriority && matchesStatus;
+      
+  //   });
+  //   this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
+  //   this.setPage(0);
+  // }
+applyFilters(): void {
   const term = this.searchTerm.toLowerCase().trim();
-  
+
+  // 1. Create the filtered list
   this.filteredTickets = this.tickets.filter(ticket => {
     const categoryName = (this.lookup.getCategoryName(ticket.categoryId) || '').toLowerCase();
     const creatorName = (this.lookup.getUserName(ticket.createdBy) || '').toLowerCase();
     const title = (ticket.title || '').toLowerCase();
     const displayId = (ticket.displayId || '').toLowerCase();
-    const matchesSearch = !term || 
+
+    const matchesSearch = !term ||
       title.includes(term) ||
       displayId.includes(term) ||
       categoryName.includes(term) ||
       creatorName.includes(term);
-    const matchesPriority = !this.selectedPriority || ticket.priority === this.selectedPriority;
-    const matchesStatus = !this.selectedStatus || ticket.status === this.selectedStatus;
 
-    // Ticket must pass the search OR AND both dropdowns
-    return matchesSearch && matchesPriority && matchesStatus;
+    // Ensure we compare Uppercase to Uppercase and handle nulls
+    const ticketPriority = (ticket.priority || '').toUpperCase();
+    const selectedPri = this.selectedPriority.toUpperCase();
+    const matchesPriority = !this.selectedPriority || ticketPriority === selectedPri;
+
+    const ticketStatus = (ticket.status || '').toUpperCase();
+    const selectedStat = this.selectedStatus.toUpperCase();
+    const matchesStatus = !this.selectedStatus || ticketStatus === selectedStat;
+
+    const result = matchesSearch && matchesPriority && matchesStatus;
+    
+    
+    return result;
   });
 
-  // 5. Update pagination based on the new filtered list
+  // 2. IMPORTANT: Reset pagination logic
   this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
-  this.setPage(0);
-}
+  
+ if (this.filteredTickets.length === 0) {
+    this.pagedTickets = []; 
+    this.currentPage = 0;
+  } else {
+    this.setPage(0); // This calls the slice logic
+  }
 
+  // 4. Manual trigger if needed (since you are using ChangeDetectorRef)
+  this.cd.detectChanges();
+}
   setPage(page: number): void {
     if (page >= 0 && page < this.totalPages) {
       this.currentPage = page;
@@ -244,22 +208,34 @@ export class TicketList implements OnInit {
 
   getAgentsForCurrentCategory(): any[] {
     const ticket = this.tickets.find(t => t.id === this.assigningTicketId);
+
     if (!ticket) return [];
 
     return this.lookup.getUserList().filter((u: any) => {
       const isAgent = u.roles && u.roles.includes('AGENT');
-      return isAgent && u.categoryId === ticket.categoryId;
+
+      return isAgent && u.agentProfile.categoryId === ticket.categoryId;
+
     });
   }
+
   confirmAssign(ticketId: string, agentId: string) {
+    console.log('yes');
+    const ticket = this.tickets.find(t => t.id === ticketId);
     if (!agentId) return this.toast.show('Select an agent first', 'error');
-    this.assignmentService.manualAssign(ticketId, agentId, 'MEDIUM').subscribe({
+    this.assignmentService.manualAssign(ticketId, agentId, ticket.priority, ticket.version).subscribe({
       next: () => {
         this.toast.show('Ticket Assigned Successfully', 'success');
         this.assigningTicketId = null;
         this.loadTickets();
       },
-      error: () => this.toast.show('Assignment failed', 'error')
+      error: (err) => {
+        let displayMessage = 'Assignment failed'; if (err.error?.message) {
+          const match = err.error.message.match(/"message":"([^"]+)"/);
+          if (match && match[1]) { displayMessage = match[1]; }
+          else { displayMessage = err.error.message; }
+        } this.toast.show(displayMessage, 'error');
+      }
     });
   }
 
@@ -272,5 +248,30 @@ export class TicketList implements OnInit {
       error: () => this.toast.show('No available agents found', 'error')
     });
   }
+
+  reopenTicket(ticket: any) {
+   
+  this.ticketListService.reopenTicket(ticket.id).subscribe({
   
+    next: () => {
+      this.toast.show('Ticket reopened successfully', 'success');
+      this.loadTickets();
+    },
+    error: (err) => {
+      let displayMessage = 'Failed to reopen ticket';
+      if (err.error?.message) {
+        const match = err.error.message.match(/"message":"([^"]+)"/);
+        if (match && match[1]) {
+          displayMessage = match[1];
+        } else {
+          displayMessage = err.error.message;
+        }
+      }
+      this.toast.show(displayMessage, 'error');
+      console.log(err);
+    }
+  });
+}
+
+
 }

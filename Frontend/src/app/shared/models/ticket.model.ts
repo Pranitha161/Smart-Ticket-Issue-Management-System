@@ -12,7 +12,8 @@ export interface Ticket {
   createdBy: string;       
   assignedTo?: string;     
   createdAt: string;    
-  updatedDate?: string;    
+  updatedDate?: string; 
+  version: number;   
 }
 export interface UserTicketStatsDto {
   total: number;

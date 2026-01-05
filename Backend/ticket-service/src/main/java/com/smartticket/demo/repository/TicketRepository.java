@@ -14,6 +14,8 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface TicketRepository extends ReactiveMongoRepository<Ticket, String> {
+	
+	Mono<Boolean> existsByCreatedByAndTitle(String createdBy, String title);
 
 	Flux<Ticket> findByCreatedBy(String userId);
 

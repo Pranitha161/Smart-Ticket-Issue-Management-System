@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PrioritySummaryDto, StatusSummaryDto, UserTicketStatsDto } from '../../shared/models/ticket.model';
-import { AgentSummaryDto, CategorySummaryDto, EscalationSummaryDto } from '../../shared/models/dashboard.model';
+import { AgentStatsDto, AgentSummaryDto, CategorySummaryDto, EscalationSummaryDto } from '../../shared/models/dashboard.model';
 import { environment } from '../../../environments/environment';
 import { UserStatsDto } from '../../shared/models/authuser.model';
 
@@ -28,9 +28,11 @@ export class DashboardService {
   getUserStats(userId: string): Observable<UserTicketStatsDto> {
     return this.http.get<UserTicketStatsDto>(`${this.baseUrl}/tickets/user/${userId}/stats`);
   }
+
   getAgentStats(agentId: string): Observable<UserTicketStatsDto> {
     return this.http.get<UserTicketStatsDto>(`${this.baseUrl}/tickets/agent/${agentId}/stats`);
   }
+  
   getGlobalStats(): Observable<UserTicketStatsDto> { return this.http.get<UserTicketStatsDto>(`${this.baseUrl}/tickets/global-stats`); }
 
   getStats(): Observable<UserStatsDto> {
@@ -44,5 +46,14 @@ export class DashboardService {
   getEscalationSummary(): Observable<EscalationSummaryDto[]> {
     return this.http.get<EscalationSummaryDto[]>(`${this.baseUrl}/assignments/escalation-summary`);
   }
+
+  getAgentSummaryStats(agentId: string): Observable<AgentStatsDto> {
+    return this.http.get<AgentStatsDto>(`${this.baseUrl}/${agentId}/stats`);
+  }
+
+  getAllAgentStats(): Observable<AgentStatsDto[]> {
+    return this.http.get<AgentStatsDto[]>(`${this.baseUrl}/stats`);
+  }
+
 }
 

@@ -43,12 +43,12 @@ public class SlaRuleServiceImplementation implements SlaRuleService {
 
 	@Override
 	public Mono<ResponseEntity<ApiResponse>> deleteRuleById(String id) {
-		return slaRuleRepo.findById(id)
-				.flatMap(existing -> slaRuleRepo.delete(existing)
-						.then(Mono.just(ResponseEntity.status(HttpStatus.OK)
-								.body(new ApiResponse(true, "SLA rule deleted successfully"))))
-						.switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND)
-								.body(new ApiResponse(false, "SLA rule not found")))));
+	    return slaRuleRepo.findById(id)
+	        .flatMap(existing -> slaRuleRepo.delete(existing)
+	            .then(Mono.just(ResponseEntity.status(HttpStatus.OK)
+	                .body(new ApiResponse(true, "SLA rule deleted successfully")))))
+	        .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND)
+	            .body(new ApiResponse(false, "SLA rule not found"))));
 	}
 
 	@Override

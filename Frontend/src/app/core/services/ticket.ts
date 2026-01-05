@@ -26,6 +26,9 @@ export class TicketService {
     return this.http.get<any>(`${this.baseUrl}/${id}`);
   }
 
+  startWorkOnTicket(id: string, agentId: string): Observable<Ticket> { 
+    return this.http.put<Ticket>(`${this.baseUrl}/${id}/startwork/${agentId}`, {}); }
+
   updateTicket(id: string, ticket: any): Observable<any> {
     return this.http.put(`${this.baseUrl}/${id}`, ticket);
   }

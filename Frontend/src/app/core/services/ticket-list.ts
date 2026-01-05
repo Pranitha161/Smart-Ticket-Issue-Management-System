@@ -17,14 +17,12 @@ export class ticketListService {
     private lookup: LookupService
   ) {}
 
-  // ✅ Get all tickets enriched with lookup names
   getTickets(): Observable<Ticket[]> {
     return this.ticketService.getTickets().pipe(
       map(tickets => tickets.map(t => this.enrichTicket(t)))
     );
   }
 
-  // ✅ Get tickets by user
   getTicketsByUserId(userId: string): Observable<Ticket[]> {
     return this.ticketService.getTicketsByUserId(userId).pipe(
       map(tickets => tickets.map(t => this.enrichTicket(t)))
@@ -36,24 +34,24 @@ export class ticketListService {
     );
   }
 
-  // ✅ Get ticket by ID
   getTicketById(id: string): Observable<Ticket> {
     return this.ticketService.getTicketById(id).pipe(
       map(ticket => this.enrichTicket(ticket))
     );
   }
 
-  // ✅ Manual assignment
-  manualAssign(ticketId: string, agentId: string, priority: string): Observable<ApiResponse> {
-    return this.assignmentService.manualAssign(ticketId, agentId, priority);
+  reopenTicket(id: string): Observable<any> {
+    return this.ticketService.reopenTicket(id);
   }
 
-  // ✅ Auto assignment
+  manualAssign(ticketId: string, agentId: string, priority: string,expectedVersion: number): Observable<ApiResponse> {
+    return this.assignmentService.manualAssign(ticketId, agentId, priority,expectedVersion);
+  }
+
   autoAssign(ticketId: string): Observable<Assignment> {
     return this.assignmentService.autoAssign(ticketId);
   }
 
-  // ✅ Helper: enrich ticket with lookup names
   private enrichTicket(ticket: any): any {
     return {
       ...ticket,

@@ -1,7 +1,6 @@
 .page-wrapper {
     min-height: calc(100vh - 56px);
     width: 100vw;
-    background-color: #f0f2f9;
     padding: 20px;
 }
 

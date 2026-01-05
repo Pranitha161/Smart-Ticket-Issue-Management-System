@@ -2,6 +2,7 @@ package com.smartticket.demo.service.implementation;
 
 import org.springframework.stereotype.Service;
 
+import com.smartticket.demo.dto.AgentStatsDto;
 import com.smartticket.demo.dto.AgentSummaryDto;
 import com.smartticket.demo.dto.CategorySummaryDto;
 import com.smartticket.demo.dto.EscalationSummaryDto;
@@ -78,7 +79,12 @@ public class DashBoardServiceImplementation implements DashBoardService {
 		return Mono.fromCallable(() -> userClient.getUserStats()).subscribeOn(Schedulers.boundedElastic());
 
 	}
+	
+	@Override
+	public Mono<AgentStatsDto> getAgentStatsById(String agentId) {
+		return Mono.fromCallable(() -> userClient.getAgentStats(agentId)).subscribeOn(Schedulers.boundedElastic());
 
+	}
 	@Override
 	public Flux<AgentSummaryDto> getAssignmentsPerAgent() {
 		return Flux.defer(() -> Flux.fromIterable(assignmentClient.getAgentWorkloadSummary()))
@@ -88,6 +94,12 @@ public class DashBoardServiceImplementation implements DashBoardService {
 	@Override
 	public Flux<EscalationSummaryDto> getEscalationSummary() {
 		return Flux.defer(() -> Flux.fromIterable(assignmentClient.getEscalationSummary()))
+				.subscribeOn(Schedulers.boundedElastic());
+	}
+
+	@Override
+	public Flux<AgentStatsDto> getAllAgentStats() {
+		return Flux.defer(() -> Flux.fromIterable(userClient.getAllAgentStats()))
 				.subscribeOn(Schedulers.boundedElastic());
 	}
 

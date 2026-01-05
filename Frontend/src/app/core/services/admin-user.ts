@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CreateUserRequest, User, UserStatsDto } from '../../shared/models/authuser.model';
+import { AgentStatsDto } from '../../shared/models/dashboard.model';
 
 @Injectable({
   providedIn: 'root'
@@ -68,6 +69,12 @@ export class AdminUser {
       { params: { token, newPassword } }
     );
   }
-
+  getAgentSummaryStats(agentId: string): Observable<AgentStatsDto> {
+      return this.http.get<AgentStatsDto>(`${this.baseUrl}/${agentId}/stats`);
+    }
+  
+    getAllAgentStats(): Observable<AgentStatsDto[]> {
+      return this.http.get<AgentStatsDto[]>(`${this.baseUrl}/stats`);
+    }
 
 }

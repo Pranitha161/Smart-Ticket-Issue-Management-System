@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smartticket.demo.dto.AgentDto;
+import com.smartticket.demo.dto.AgentStatsDto;
 import com.smartticket.demo.dto.UserStatsDto;
 import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.AuthResponse;
@@ -90,7 +91,7 @@ public class UserAuthController {
 	public Mono<ResponseEntity<AuthResponse>> getUserByEmail(@PathVariable String email) {
 		return userAuthService.getUserByEmail(email).map(ResponseEntity::ok);
 	}
-
+	
 	@PutMapping("/users/{id}")
 	public Mono<ResponseEntity<ApiResponse>> updateUserById(@PathVariable String id, @RequestBody AuthResponse user) {
 		return userAuthService.updateUserById(id, user).map(ResponseEntity::ok);
@@ -112,6 +113,12 @@ public class UserAuthController {
 	public Mono<ResponseEntity<ApiResponse>> decrementAssignments(@PathVariable String agentId) {
 		return userAuthService.decrementAssignments(agentId)
 				.map(agent -> ResponseEntity.ok(new ApiResponse(true, "Agent assignment count decremented")));
+	}
+	
+	@PutMapping("/agents/{agentId}/resolved")
+	public Mono<ResponseEntity<ApiResponse>> incrementResolvedCount(@PathVariable String agentId) {
+		return userAuthService.incrementResolvedCount(agentId)
+				.map(agent -> ResponseEntity.ok(new ApiResponse(true, "Agent resolved count incremented")));
 	}
 
 	@GetMapping("/auth/users/stats")
@@ -140,4 +147,15 @@ public class UserAuthController {
 			return dto;
 		});
 	}
+	
+	@GetMapping("/{agentId}/stats") 
+	public Mono<AgentStatsDto> getAgentStats(@PathVariable String agentId) { 
+		return userAuthService.getAgentStats(agentId); } 
+	
+	@GetMapping("/stats")
+	public Mono<List<AgentStatsDto>> getAllAgentStats() { 
+		return userAuthService.getAllAgentStats(); 
+		}
+	
+
 }

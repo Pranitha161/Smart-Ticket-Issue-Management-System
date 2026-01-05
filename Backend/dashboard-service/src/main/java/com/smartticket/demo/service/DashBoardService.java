@@ -1,5 +1,6 @@
 package com.smartticket.demo.service;
 
+import com.smartticket.demo.dto.AgentStatsDto;
 import com.smartticket.demo.dto.AgentSummaryDto;
 import com.smartticket.demo.dto.CategorySummaryDto;
 import com.smartticket.demo.dto.EscalationSummaryDto;
@@ -30,5 +31,9 @@ public interface DashBoardService {
 	Mono<UserTicketStatsDto> getAgentStats(String agentId);
 
 	Mono<UserStatsDto> getStats();
+
+	Mono<AgentStatsDto> getAgentStatsById(String agentId);
+
+	Flux<AgentStatsDto> getAllAgentStats();
 
 }

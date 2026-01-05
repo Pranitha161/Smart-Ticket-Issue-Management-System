@@ -39,6 +39,8 @@ export class UserManagement implements OnInit {
   loadData(): void {
     this.users = this.lookup.getUserList();
     this.categories = this.lookup.getCategoryList();
+    console.log(this.categories);
+    this.cd.detectChanges();
     this.dashboardService.getStats().subscribe(stats => {
       this.userStats = stats;
       this.cd.detectChanges();
@@ -64,7 +66,7 @@ export class UserManagement implements OnInit {
     this.formUser.roles = [role];
     if (role === 'AGENT') {
       this.formUser.agentProfile = { 
-        agentLevel: 'LEVEL_1', // Default level
+        agentLevel: 'L1', // Default level
         categoryId: '', 
         skills: [], 
         currentAssignments: 0 

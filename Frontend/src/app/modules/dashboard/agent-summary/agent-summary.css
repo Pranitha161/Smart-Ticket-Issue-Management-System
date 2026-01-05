@@ -114,3 +114,7 @@
 .progress-bar {
   border-radius: 10px;
 }
+.table-responsive {
+  max-height: 30vh;   /* adjust as needed */
+  overflow-y: auto;
+}

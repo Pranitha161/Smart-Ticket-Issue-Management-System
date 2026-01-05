@@ -14,9 +14,9 @@ export class AssignmentEscalation {
 
   constructor(private http: HttpClient) {}
 
-  manualAssign(ticketId: string, agentId: string, priority: string): Observable<ApiResponse> {
+  manualAssign(ticketId: string, agentId: string, priority: string, expectedVersion: number): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(
-      `${this.baseUrl}/manual?ticketId=${ticketId}&agentId=${agentId}&priority=${priority}`, {}
+      `${this.baseUrl}/manual?ticketId=${ticketId}&agentId=${agentId}&priority=${priority}&expectedVersion=${expectedVersion}`, {}
     );
   }
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.smartticket.demo.entity.AuthResponse;
 import com.smartticket.demo.entity.LoginRequest;
+import com.smartticket.demo.dto.AgentStatsDto;
 import com.smartticket.demo.dto.UserStatsDto;
 import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.User;
@@ -42,5 +43,13 @@ public interface UserAuthService {
 	Mono<User> incrementAssignments(String agentId);
 
 	Mono<User> decrementAssignments(String agentId);
+
+	Mono<User> incrementResolvedCount(String agentId);
+
+	Mono<AgentStatsDto> getAgentStats(String agentId);
+
+	Mono<List<AgentStatsDto>> getAllAgentStats();
+
+	Mono<ApiResponse> enableUserById(String id);
 
 }

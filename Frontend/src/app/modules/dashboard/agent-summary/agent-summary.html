@@ -7,8 +7,8 @@
         <thead class="bg-light">
           <tr>
             <th class="tiny-label ps-4">AGENT</th>
-            <th class="tiny-label text-center">ASSIGNED</th>
-            <th class="tiny-label text-center">RESOLVED</th>
+            <th class="tiny-label text-center">TICKETS</th>
+            <th class="tiny-label text-center">EFFICIENCY</th>
             <th class="tiny-label text-center">AVG. TIME</th>
             <th class="tiny-label text-end pe-4">STATUS</th>
           </tr>
@@ -47,6 +47,8 @@
     </div>
   </div>
 </div> -->
+
+
 <div class="card theme-card accent-left-purple border-0 shadow-sm h-100">
   <div class="sidebar-header-slate d-flex justify-content-between">
     <span>AGENT PERFORMANCE LEADERBOARD</span>
@@ -61,12 +63,12 @@
             <th class="tiny-label ps-4">AGENT</th>
             <th class="tiny-label text-center">TICKETS</th>
             <th class="tiny-label text-center">EFFICIENCY</th>
-            <th class="tiny-label text-center">AVG. TIME</th>
+            <th class="tiny-label text-center">RESOLUTION RATE</th>
             <th class="tiny-label text-end pe-4">STATUS</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let agent of agentMetrics">
+          <tr *ngFor="let agent of agentStats">
             <td class="ps-4">
               <div class="d-flex align-items-center">
                 <div class="avatar-circle me-3">{{ agent.name.charAt(0) }}</div>
@@ -76,8 +78,8 @@
                 </div>
               </div>
             </td>
-            <!-- <td class="text-center">
-              <span class="fw-bold text-dark">{{ agent.assignedCount }}</span>
+            <td class="text-center">
+              <span class="fw-bold text-dark">{{ agent.currentAssignments }}</span>
               <div class="tiny-text text-muted">{{ agent.resolvedCount }} Resolved</div>
             </td>
             <td class="text-center">
@@ -90,15 +92,19 @@
                     [style.width.%]="agent.performanceScore"></div>
                 </div>
               </div>
-            </td> -->
+            </td>
             <td class="text-center">
     <div class="d-flex flex-column">
-        <span class="fw-bold text-dark fs-6">{{ agent.assignedCount }}</span>
-        <span class="tiny-text text-muted">{{ agent.resolvedCount }} Resolved</span>
+        <!-- <span class="fw-bold text-dark fs-6">{{ agent.assignedCount }}</span>
+        <span class="tiny-text text-muted">{{ agent.resolvedCount }} Resolved</span> -->
+        <div class="stat-value text-info">
+  {{ agent.resolutionRate | percent:'1.0-2' }}
+</div>
+
     </div>
 </td>
 
-<td class="text-center">
+<!-- <td class="text-center">
     <div class="d-flex flex-column align-items-center" style="min-width: 100px;">
         <span class="fw-bold mb-1" [class.text-success]="agent.performanceScore > 70">
             {{ agent.performanceScore }}%
@@ -110,10 +116,10 @@
             </div>
         </div>
     </div>
-</td>
-            <td class="text-center text-muted small">
-              {{ formatTime(agent.averageResolutionTimeMinutes) }}
-            </td>
+</td> -->
+            <!-- <td class="text-center text-muted small">
+              {{ agent.averageResolutionTimeMinutes }}
+            </td> -->
             <td class="text-end pe-4">
               <span class="badge rounded-pill"
                 [ngClass]="agent.isHighRisk ? 'bg-soft-danger text-danger' : 'bg-soft-success text-success'">

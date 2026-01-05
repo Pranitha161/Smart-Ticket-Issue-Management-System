@@ -10,12 +10,14 @@ import com.smartticket.demo.enums.STATUS;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Document(collection = "tickets")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Data
 public class Ticket {
 	@Id 
@@ -32,4 +34,5 @@ public class Ticket {
 	private String assignedTo;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	private Long version;
 }

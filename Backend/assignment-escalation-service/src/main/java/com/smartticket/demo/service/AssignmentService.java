@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 public interface AssignmentService {
 	
-	Mono<Assignment> manualAssign(String ticketId, String agentId,PRIORITY priority);
+//	Mono<Assignment> manualAssign(String ticketId, String agentId,PRIORITY priority);
 	
 	Mono<Assignment> autoAssign(String ticketId);
 
@@ -24,4 +24,6 @@ public interface AssignmentService {
 	Mono<List<EscalationSummaryDto>> getEscalationSummary();
 
 	Mono<Assignment> reassign(String ticketId, String newAgentId);
+
+	Mono<Assignment> manualAssign(String ticketId, String agentId, PRIORITY priority, Long expectedVersion);
 }

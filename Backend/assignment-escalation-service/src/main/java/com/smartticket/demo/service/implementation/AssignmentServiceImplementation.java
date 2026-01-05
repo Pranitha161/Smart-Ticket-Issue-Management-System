@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import com.smartticket.demo.dto.AgentSummaryDto;
@@ -49,7 +50,7 @@ public class AssignmentServiceImplementation implements AssignmentService {
 	}
 
 	@Override
-	public Mono<Assignment> manualAssign(String ticketId, String agentId, PRIORITY priority) {
+	public Mono<Assignment> manualAssign(String ticketId, String agentId, PRIORITY priority,Long expectedVersion) {
 	    return Mono.fromCallable(() -> ticketClient.getTicketById(ticketId))
 	        .subscribeOn(Schedulers.boundedElastic())
 	        .flatMap(ticket -> {
@@ -62,6 +63,7 @@ public class AssignmentServiceImplementation implements AssignmentService {
 	            if (ticket.getStatus() == STATUS.ASSIGNED) {
 	                return Mono.error(new RuntimeException("Ticket is already assigned to an agent"));
 	            }
+	            if (!ticket.getVersion().equals(expectedVersion)) { return Mono.error(new OptimisticLockingFailureException("Concurrent assignment detected")); }
 	           
 //	            if (userClient.getAgentById(agentId) == null) {
 //	                return Mono.error(new RuntimeException("Agent not found: " + agentId));

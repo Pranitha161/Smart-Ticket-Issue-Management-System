@@ -3,10 +3,12 @@ package com.smartticket.demo.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Document(collection = "categories")
 @Data
+@Builder
 public class Category {
     @Id
     private String id;

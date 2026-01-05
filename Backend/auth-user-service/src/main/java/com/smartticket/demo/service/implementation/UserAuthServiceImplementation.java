@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.smartticket.demo.dto.AgentStatsDto;
 import com.smartticket.demo.dto.UserStatsDto;
 import com.smartticket.demo.entity.ApiResponse;
 import com.smartticket.demo.entity.AuthResponse;
@@ -48,7 +49,7 @@ public class UserAuthServiceImplementation implements UserAuthService {
 
 	private AuthResponse toResponse(User user) {
 		return new AuthResponse(user.getId(), user.getDisplayId(), user.getEmail(), user.getUsername(),
-				user.isEnabled(), user.getRoles());
+				user.isEnabled(), user.getRoles(), user.getAgentProfile());
 	}
 
 	@Override
@@ -77,7 +78,6 @@ public class UserAuthServiceImplementation implements UserAuthService {
 						.flatMap(existing -> Mono.error(new RuntimeException("Username already exists"))))
 				.switchIfEmpty(Mono.defer(() -> {
 					if (user.getRoles().contains(ROLE.AGENT)) {
-						System.out.println(user.getRoles()+" "+user.getAgentProfile());
 						if (user.getAgentProfile() == null || user.getAgentProfile().getAgentLevel() == null) {
 							return Mono.error(new RuntimeException("Agent must have AgentLevel (L1/L2/L3)"));
 						}
@@ -129,6 +129,15 @@ public class UserAuthServiceImplementation implements UserAuthService {
 	}
 
 	@Override
+	public Mono<User> incrementResolvedCount(String agentId) {
+		return userauthRepo.findById(agentId).switchIfEmpty(Mono.error(new RuntimeException("Agent not found")))
+				.flatMap(agent -> {
+					agent.getAgentProfile().setResolvedCount(agent.getAgentProfile().getResolvedCount() + 1);
+					return userauthRepo.save(agent);
+				});
+	}
+
+	@Override
 	public Mono<List<AuthResponse>> getUsers() {
 		return userauthRepo.findAll().map(this::toResponse).collectList();
 	}
@@ -154,16 +163,21 @@ public class UserAuthServiceImplementation implements UserAuthService {
 	@Override
 	public Mono<ApiResponse> updateUserById(String id, AuthResponse user) {
 		return userauthRepo.findById(id).switchIfEmpty(Mono.error(new RuntimeException("User not found")))
-				.flatMap(existing -> userauthRepo.findByUsername(user.getUsername())
-						.filter(other -> !other.getId().equals(id))
-						.flatMap(conflict -> Mono.<ApiResponse>error(new RuntimeException("Username already exists")))
-						.switchIfEmpty(Mono.defer(() -> {
-							existing.setRoles(user.getRoles());
-							existing.setEmail(user.getEmail());
-							existing.setUsername(user.getUsername());
-							return userauthRepo.save(existing)
-									.map(saved -> new ApiResponse(true, "User updated successfully"));
-						})));
+				.flatMap(existing -> {
+					if (!existing.isEnabled()) {
+						return Mono.error(new RuntimeException("User is not active"));
+					}
+					return userauthRepo.findByUsername(user.getUsername()).filter(other -> !other.getId().equals(id))
+							.flatMap(conflict -> Mono
+									.<ApiResponse>error(new RuntimeException("Username already exists")))
+							.switchIfEmpty(Mono.defer(() -> {
+								existing.setRoles(user.getRoles());
+								existing.setEmail(user.getEmail());
+								existing.setUsername(user.getUsername());
+								return userauthRepo.save(existing)
+										.map(saved -> new ApiResponse(true, "User updated successfully"));
+							}));
+				});
 	}
 
 	@Override
@@ -174,7 +188,8 @@ public class UserAuthServiceImplementation implements UserAuthService {
 					user.setResetToken(token);
 					user.setResetTokenExpiry(Instant.now().plus(Duration.ofMinutes(15)));
 					return userauthRepo.save(user)
-							.doOnSuccess(saved -> eventPublisher.publishPasswordReset(saved.getId(), email, "http://localhost:4200/auth/reset-password?token=" + token))
+							.doOnSuccess(saved -> eventPublisher.publishPasswordReset(saved.getId(), email,
+									"http://localhost:4200/auth/reset-password?token=" + token))
 							.thenReturn(new ApiResponse(true, "Reset link sent to your email"));
 				});
 	}
@@ -255,6 +270,51 @@ public class UserAuthServiceImplementation implements UserAuthService {
 	@Override
 	public Flux<User> getAgentsByCategory(String category) {
 		return userauthRepo.findByRolesContainingAndAgentProfileCategoryId("AGENT", category);
+	}
+
+	@Override
+	public Mono<AgentStatsDto> getAgentStats(String agentId) {
+		return userauthRepo.findById(agentId).flatMap(profile -> {
+
+			if (profile.getRoles() == null || !profile.getRoles().contains(ROLE.AGENT)) {
+				return Mono.error(new IllegalAccessException("User is not an agent"));
+			}
+
+			int currentAssignments = profile.getAgentProfile().getCurrentAssignments();
+			int resolvedCount = profile.getAgentProfile().getResolvedCount();
+			double resolutionRate = (resolvedCount + currentAssignments) == 0 ? 0.0
+					: (double) resolvedCount / (resolvedCount + currentAssignments);
+
+			return Mono.just(new AgentStatsDto(agentId, profile.getAgentProfile().getAgentLevel(), currentAssignments,
+					resolvedCount, resolutionRate));
+		});
+	}
+
+	@Override
+	public Mono<List<AgentStatsDto>> getAllAgentStats() {
+		return userauthRepo.findAll()
+				.filter(profile -> profile.getRoles() != null && profile.getRoles().contains(ROLE.AGENT))
+				.map(profile -> {
+					int currentAssignments = profile.getAgentProfile().getCurrentAssignments();
+					int resolvedCount = profile.getAgentProfile().getResolvedCount();
+					double resolutionRate = (resolvedCount + currentAssignments) == 0 ? 0.0
+							: (double) resolvedCount / (resolvedCount + currentAssignments);
+
+					return new AgentStatsDto(profile.getId(), profile.getAgentProfile().getAgentLevel(),
+							currentAssignments, resolvedCount, resolutionRate);
+				}).collectList();
+	}
+	
+	@Override
+	public Mono<ApiResponse> enableUserById(String id) {
+		return userauthRepo.findById(id).switchIfEmpty(Mono.error(new RuntimeException("User not found")))
+				.flatMap(user -> {
+					if (user.isEnabled()) {
+						return Mono.error(new RuntimeException("User is already active"));
+					}
+					user.setEnabled(true);
+					return userauthRepo.save(user).map(saved -> new ApiResponse(true, "User enabled successfully"));
+				});
 	}
 
 }

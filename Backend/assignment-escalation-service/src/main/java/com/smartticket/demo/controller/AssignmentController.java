@@ -2,6 +2,8 @@ package com.smartticket.demo.controller;
 
 import java.util.List;
 
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,41 +34,25 @@ public class AssignmentController {
 
 	@PostMapping("/manual")
 	public Mono<ResponseEntity<ApiResponse>> manualAssign(@RequestParam String ticketId, @RequestParam String agentId,
-			@RequestParam PRIORITY priority) {
-		return assignmentService.manualAssign(ticketId, agentId, priority)
+			@RequestParam PRIORITY priority, @RequestParam Long expectedVersion) {
+		return assignmentService.manualAssign(ticketId, agentId, priority,expectedVersion)
 				.map(assignment -> ResponseEntity
 						.ok(new ApiResponse(true, "Ticket " + ticketId + " assigned to agent " + agentId)))
-				.onErrorResume(e -> {
-					String message = e.getMessage();
-					return Mono.just(ResponseEntity.badRequest()
-							.body(new ApiResponse(false, "Manual assignment failed: " + message)));
-				});
+				.onErrorResume(OptimisticLockingFailureException.class, ex -> Mono.just(ResponseEntity.status(HttpStatus.CONFLICT) .body(new ApiResponse(false, "Ticket already updated by another manager/admin"))));
 	}
 
 	@PutMapping("/{ticketId}/complete")
 	public Mono<ResponseEntity<ApiResponse>> completeAssignment(@PathVariable String ticketId) {
 		return assignmentService.completeAssignment(ticketId)
 				.map(assignment -> ResponseEntity
-						.ok(new ApiResponse(true, "Assignment " + assignment.getId() + " marked as completed")))
-				.onErrorResume(e -> {
-					String message = e.getMessage();
-					if (message.contains("not found")) {
-						return Mono.just(ResponseEntity.status(404).body(new ApiResponse(false, message)));
-					} else if (message.contains("already completed")) {
-						return Mono.just(ResponseEntity.status(400).body(new ApiResponse(false, message)));
-					} else if (message.contains("escalated")) {
-						return Mono.just(ResponseEntity.status(400).body(new ApiResponse(false, message)));
-					} else {
-						return Mono.just(ResponseEntity.status(500)
-								.body(new ApiResponse(false, "Unexpected error: " + message)));
-					}
-				});
+						.ok(new ApiResponse(true, "Assignment " + assignment.getId() + " marked as completed")));
+				
 	}
 
 	@PutMapping("/{ticketId}/check-escalation")
 	public Mono<ResponseEntity<Assignment>> checkEscalation(@PathVariable String ticketId) {
-		return assignmentService.checkAndEscalate(ticketId).map(ResponseEntity::ok)
-				.onErrorResume(e -> Mono.just(ResponseEntity.notFound().build()));
+		return assignmentService.checkAndEscalate(ticketId).map(ResponseEntity::ok);
+				
 	}
 
 	@PostMapping("/{ticketId}/auto")

@@ -47,7 +47,7 @@ public class UserAuthController {
 	public Mono<ResponseEntity<ApiResponse>> login(@RequestBody LoginRequest request) {
 		return userAuthService.login(request).map(response -> ResponseEntity.ok(response));
 	}
-	
+
 	@GetMapping("/auth/{id}")
 	public Mono<ResponseEntity<String>> getEmail(@PathVariable String id) {
 		return userAuthService.getUserEmail(id).map(email -> ResponseEntity.ok(email));
@@ -91,7 +91,7 @@ public class UserAuthController {
 	public Mono<ResponseEntity<AuthResponse>> getUserByEmail(@PathVariable String email) {
 		return userAuthService.getUserByEmail(email).map(ResponseEntity::ok);
 	}
-	
+
 	@PutMapping("/users/{id}")
 	public Mono<ResponseEntity<ApiResponse>> updateUserById(@PathVariable String id, @RequestBody AuthResponse user) {
 		return userAuthService.updateUserById(id, user).map(ResponseEntity::ok);
@@ -114,7 +114,7 @@ public class UserAuthController {
 		return userAuthService.decrementAssignments(agentId)
 				.map(agent -> ResponseEntity.ok(new ApiResponse(true, "Agent assignment count decremented")));
 	}
-	
+
 	@PutMapping("/agents/{agentId}/resolved")
 	public Mono<ResponseEntity<ApiResponse>> incrementResolvedCount(@PathVariable String agentId) {
 		return userAuthService.incrementResolvedCount(agentId)
@@ -147,15 +147,21 @@ public class UserAuthController {
 			return dto;
 		});
 	}
-	
-	@GetMapping("/{agentId}/stats") 
-	public Mono<AgentStatsDto> getAgentStats(@PathVariable String agentId) { 
-		return userAuthService.getAgentStats(agentId); } 
-	
+
+	@PutMapping("/{id}/enable")
+	public Mono<ResponseEntity<ApiResponse>> enableUser(@PathVariable String id) {
+		return userAuthService.enableUserById(id).map(response -> ResponseEntity.ok(response)).onErrorResume(ex -> Mono
+				.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, ex.getMessage()))));
+	}
+
+	@GetMapping("/{agentId}/stats")
+	public Mono<AgentStatsDto> getAgentStats(@PathVariable String agentId) {
+		return userAuthService.getAgentStats(agentId);
+	}
+
 	@GetMapping("/stats")
-	public Mono<List<AgentStatsDto>> getAllAgentStats() { 
-		return userAuthService.getAllAgentStats(); 
-		}
-	
+	public Mono<List<AgentStatsDto>> getAllAgentStats() {
+		return userAuthService.getAllAgentStats();
+	}
 
 }

@@ -85,6 +85,7 @@ public class NotificationConsumer {
 				notification.setSubject("Ticket #" + payload.getTicketId() + " SLA Breach");
 				notification.setBody(
 						"Ticket #" + payload.getTicketId() + " has breached SLA and requires immediate attention.");
+				break;
 
 			default:
 				notification.setSubject("Notification");

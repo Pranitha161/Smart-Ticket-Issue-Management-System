@@ -27,8 +27,8 @@ public class NotificationController {
     }
 
     @GetMapping("/history/{userEmail}")
-    public Flux<Notification> getHistory(@PathVariable String email) {
-        return notificationService.notificationsByEmail(email);
+    public Flux<Notification> getHistory(@PathVariable String userEmail) {
+        return notificationService.notificationsByEmail(userEmail);
     }
 }
 

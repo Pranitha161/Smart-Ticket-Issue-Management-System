@@ -283,4 +283,51 @@ public class TicketControllerTest {
 		}).verifyComplete();
 	}
 
+	@Test
+	void escalateTicket_success() {
+		Ticket escalated = Ticket.builder().id("T1").status(STATUS.ESCALATED).build();
+		when(ticketService.escalateTicket("T1")).thenReturn(Mono.just(escalated));
+
+		StepVerifier.create(controller.escalateTicket("T1")).assertNext(response -> {
+			assertEquals(200, response.getStatusCodeValue());
+			assertTrue(response.getBody().isSuccess());
+			assertEquals("Ticket escalated successfully", response.getBody().getMessage());
+		}).verifyComplete();
+	}
+
+	@Test
+	void escalateTicket_notFound() {
+		when(ticketService.escalateTicket("T1")).thenReturn(Mono.empty());
+
+		StepVerifier.create(controller.escalateTicket("T1")).assertNext(response -> {
+			assertEquals(404, response.getStatusCodeValue());
+			assertFalse(response.getBody().isSuccess());
+			assertEquals("Ticket not found", response.getBody().getMessage());
+		}).verifyComplete();
+	}
+
+	@Test
+	void getUserStats_notFound() {
+		when(ticketService.getUserStats("U1")).thenReturn(Mono.empty());
+
+		StepVerifier.create(controller.getUserStats("U1"))
+				.assertNext(response -> assertEquals(404, response.getStatusCodeValue())).verifyComplete();
+	}
+
+	@Test
+	void getAgentStats_notFound() {
+		when(ticketService.getAgentStats("A1")).thenReturn(Mono.empty());
+
+		StepVerifier.create(controller.getAgentStats("A1"))
+				.assertNext(response -> assertEquals(404, response.getStatusCodeValue())).verifyComplete();
+	}
+
+	@Test
+	void getGlobalStats_notFound() {
+		when(ticketService.getGlobalStats()).thenReturn(Mono.empty());
+
+		StepVerifier.create(controller.getGlobalStats())
+				.assertNext(response -> assertEquals(404, response.getStatusCodeValue())).verifyComplete();
+	}
+
 }

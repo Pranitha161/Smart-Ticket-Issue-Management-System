@@ -1,0 +1,177 @@
+/* 
+.container {
+  max-width: 1000px;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table tbody tr {
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9ff !important;
+  transform: scale(1.005);
+}
+
+
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+} */
+ /* Typography and General Colors */
+:root {
+  --primary-blue: #0d6efd;
+  --bg-subtle: #f8f9fa;
+  --border-light: #edf2f7;
+}
+
+/* Header Tracking */
+.tracking-wider {
+  letter-spacing: 0.05rem;
+}
+
+/* Card Styling */
+.card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+}
+
+/* Custom Table Row Hover */
+.history-row {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-left: 4px solid transparent;
+}
+
+.history-row:hover {
+  background-color: #f8faff !important;
+  border-left: 4px solid var(--primary-blue);
+}
+
+/* Recipient Avatar Circle */
+.recipient-avatar {
+  width: 32px;
+  height: 32px;
+  background-color: #eef2ff;
+  color: #4f46e5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: 1px solid #e0e7ff;
+}
+
+/* Status Badge - Subtle Style */
+.status-badge {
+  background-color: #ecfdf5;
+  color: #10b981;
+  padding: 0.4rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #d1fae5;
+}
+
+/* Modal and Form Inputs */
+.form-control {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.08);
+  border-color: var(--primary-blue);
+}
+
+.input-group-text {
+  border: 1px solid #e2e8f0;
+  color: #94a3b8;
+}
+
+/* Primary Button Lift */
+.btn-primary {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+}
+
+/* Custom Scrollbar for Table */
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+/* The container that defines the height of your scrollable area */
+.table-scroll-container {
+  max-height: 500px; /* Adjust this height as needed */
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Make the header stick to the top of the scroll container */
+thead.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #f8f9fa; /* Matches the table-light color */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow when scrolling */
+}
+
+/* Customize the scrollbar for a "SaaS" look */
+.table-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Ensure the table responsive doesn't conflict with our scroll */
+.table-responsive {
+  overflow: visible !important;
+}
+.btn-back {
+  width: 40px;
+  height: 40px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px; /* Matching your card corner radius */
+  color: #5c67f2;      /* Your primary theme purple */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-back:hover {
+  background: #5c67f2;
+  color: #ffffff;
+  border-color: #5c67f2;
+  transform: translateX(-3px); /* Subtle "back" movement hint */
+}

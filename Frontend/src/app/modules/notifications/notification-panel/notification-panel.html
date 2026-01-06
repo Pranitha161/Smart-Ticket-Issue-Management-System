@@ -1,0 +1,204 @@
+<!-- <div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-bell"></i> Notification Center</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sendModal">
+      <i class="bi bi-plus-lg"></i> Compose New
+    </button>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>Recipient</th>
+            <th>Subject</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let note of history()">
+            <td>{{ note.createdAt | date:'short' }}</td>
+            <td>{{ note.recipient }}</td>
+            <td><strong>{{ note.subject }}</strong></td>
+            <td><span class="badge bg-info">Delivered</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="sendModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Notification</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Recipient</label>
+          <input type="email" class="form-control" [(ngModel)]="formNote.recipient" placeholder="email@example.com">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Subject</label>
+          <input type="text" class="form-control" [(ngModel)]="formNote.subject">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Message Body</label>
+          <textarea class="form-control" rows="4" [(ngModel)]="formNote.body"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="!formNote.recipient">Send</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<div class="container py-5">
+    <!-- <div class="row mb-4 align-items-center">
+         <div class="d-flex align-items-center ">
+      <button class="btn-back me-3" routerLink="/dashboard">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <div>
+        <h2 class="fw-bold text-dark mb-0">Notification Center</h2>
+        <p class="text-muted small mb-0">Manage and track your outgoing communications with ease.</p>
+      </div>
+    </div>
+        <div class="col-md-8">
+            <h2 class="fw-bold text-dark mb-1">
+                <i class="bi bi-bell-fill text-primary me-2"></i>Notification Center
+            </h2>
+            <p class="text-muted mb-0">Manage and track your outgoing communications with ease.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <button class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2"
+                data-bs-toggle="modal" data-bs-target="#sendModal">
+                <i class="bi bi-pencil-square"></i>
+                <span>Compose New</span>
+            </button>
+        </div>
+        
+    </div> -->
+<div class="row mb-4 align-items-center">
+  <div class="col-md-8">
+    <div class="d-flex align-items-center">
+      <button class="btn btn-back border-0 me-3" routerLink="/dashboard">
+        <i class="bi bi-arrow-left fs-4"></i>
+      </button>
+      <div>
+        <h2 class="fw-bold text-dark mb-0">Notification Center</h2>
+        <p class="text-muted small mb-0">Manage and track your outgoing communications with ease.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 text-md-end mt-3 mt-md-0">
+    <button class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2"
+            data-bs-toggle="modal" data-bs-target="#sendModal">
+      <i class="bi bi-pencil-square"></i>
+      <span>Compose New</span>
+    </button>
+  </div>
+</div>
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-white border-bottom py-3 px-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold text-uppercase text-muted small tracking-wider">Sent History</h6>
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3">{{ history().length }}
+                        Messages</span>
+                </div>
+            </div>
+
+            <div class="table-scroll-container">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="sticky-top bg-light">
+                            <tr>
+                                <th class="ps-4 py-3 text-muted fw-semibold small">DATE & TIME</th>
+                               
+                                <th class="py-3 text-muted fw-semibold small">SUBJECT & CONTENT</th>
+                                <th class="py-3 text-muted fw-semibold small text-center">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="history().length === 0">
+                                <td colspan="4" class="text-center py-5">
+                                    <i class="bi bi-envelope-paper fs-1 text-muted opacity-25"></i>
+                                    <p class="mt-3 text-muted">No history found.</p>
+                                </td>
+                            </tr>
+
+                            <tr *ngFor="let note of history()" class="history-row">
+                                <td class="ps-4">
+                                    <div class="fw-bold">{{ note.createdAt | date:'MMM d, y' }}</div>
+                                    <div class="small text-muted">{{ note.createdAt | date:'shortTime' }}</div>
+                                </td>
+                                
+                                <td>
+                                    <div class="fw-bold text-truncate" style="max-width: 250px;">{{ note.subject }}
+                                    </div>
+                                    <div class="small text-muted text-truncate" style="max-width: 350px;">{{ note.body
+                                        }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="status-badge">Delivered</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sendModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold">New Notification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="mb-3">
+                    <label class="form-label small text-uppercase fw-bold text-muted">From</label>
+                    <input type="text" class="form-control bg-light border-0 px-3 py-2" [value]="formNote.sender"
+                        readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small text-uppercase fw-bold text-muted">To (Recipient)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control border-start-0 px-2" [(ngModel)]="formNote.recipient"
+                            placeholder="recipient@email.com">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small text-uppercase fw-bold text-muted">Subject</label>
+                    <input type="text" class="form-control px-3 py-2" [(ngModel)]="formNote.subject"
+                        placeholder="Update on Issue #...">
+                </div>
+                <div class="mb-0">
+                    <label class="form-label small text-uppercase fw-bold text-muted">Message</label>
+                    <textarea class="form-control px-3 py-2" rows="4" [(ngModel)]="formNote.body"
+                        placeholder="Write your message..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 p-4 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-semibold"
+                    data-bs-dismiss="modal">Discard</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm"
+                    (click)="onSubmit()" [disabled]="!formNote.recipient || !formNote.subject" data-bs-dismiss="modal">
+                    Send Notification <i class="bi bi-send-fill ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

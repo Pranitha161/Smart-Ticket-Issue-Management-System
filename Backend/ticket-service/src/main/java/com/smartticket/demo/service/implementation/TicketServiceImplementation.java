@@ -161,6 +161,7 @@ public class TicketServiceImplementation implements TicketService {
 					}
 					ticket.setStatus(STATUS.RESOLVED);
 					ticket.setVersion(0L);
+					ticket.setAssignedTo(null);
 					userClient.incrementResolvedCount(ticket.getAssignedTo());
 					ticket.setUpdatedAt(LocalDateTime.now());
 					
@@ -308,4 +309,28 @@ public class TicketServiceImplementation implements TicketService {
 				});
 	}
 
+	@Override
+	public Mono<Ticket> escalateTicket(String id) {
+		return ticketRepo.findById(id).switchIfEmpty(Mono.error(new RuntimeException("Ticket not found")))
+				.flatMap(ticket -> {
+					if (ticket.getStatus() == STATUS.CLOSED) {
+						return Mono.error(new RuntimeException("Ticket already closed"));
+					}
+					if (ticket.getStatus() == STATUS.RESOLVED) {
+						return Mono.error(new RuntimeException("Ticket already resolved"));
+					}
+					if (ticket.getStatus() == STATUS.OPEN) {
+						return Mono.error(new RuntimeException("Ticket must be assigned before escalating"));
+					}
+					ticket.setStatus(STATUS.ESCALATED);
+					ticket.setVersion(0L);
+					userClient.decrementAssignments(ticket.getAssignedTo());
+					userClient.incrementEscalatedCount(ticket.getAssignedTo());
+					ticket.setAssignedTo(null);
+					ticket.setUpdatedAt(LocalDateTime.now());
+					
+					return ticketRepo.save(ticket).flatMap(saved -> logActivity(saved, ACTION_TYPE.ESCALATED))
+							.doOnSuccess(saved -> ticketEventProducer.publishTicketEvent(saved, "ESCALATED"));
+				});
+	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +36,8 @@ public class TicketController {
 
 	@Autowired
 	private TicketServiceImplementation ticketService;
-
+	
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/create")
 	public Mono<ResponseEntity<ApiResponse>> createTicket(@Valid @RequestBody Ticket ticket) {
 		return ticketService.createTicket(ticket).map(saved -> ResponseEntity.status(HttpStatus.CREATED)
@@ -47,7 +49,7 @@ public class TicketController {
 		return ticketService.getTicketsByUserId(userId);
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping("/internal/{id}")
 	public Mono<ResponseEntity<Ticket>> getTicketById(@PathVariable String id) {
 		return ticketService.getTicketById(id).map(ResponseEntity::ok)
 				.defaultIfEmpty(ResponseEntity.notFound().build());
@@ -73,10 +75,17 @@ public class TicketController {
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found")));
 	}
 
-	@PutMapping("/{id}/resolve")
+	@PutMapping("/internal/{id}/resolve")
 	public Mono<ResponseEntity<ApiResponse>> resolveTicket(@PathVariable String id) {
 		return ticketService.resolveTicket(id)
 				.map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket resolved successfully"))).defaultIfEmpty(
+						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found")));
+	}
+	
+	@PutMapping("/internal/{id}/escalate")
+	public Mono<ResponseEntity<ApiResponse>> escalateTicket(@PathVariable String id) {
+		return ticketService.escalateTicket(id)
+				.map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket escalated successfully"))).defaultIfEmpty(
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Ticket not found")));
 	}
 
@@ -93,34 +102,34 @@ public class TicketController {
 				.then(Mono.just(ResponseEntity.ok(new ApiResponse(true, "Ticket deleted successfully"))));
 	}
 
-	@GetMapping("/status-summary")
+	@GetMapping("/dashboard/status-summary")
 	public Mono<List<StatusSummaryDto>> getTicketStatusSummary() {
 		return ticketService.statusSummary();
 	}
 
-	@GetMapping("/status-priority-summary")
+	@GetMapping("/dashboard/status-priority-summary")
 	public Mono<List<PrioritySummaryDto>> getTicketStatusPrioritySummary() {
 		return ticketService.prioritySummary();
 	}
 
-	@GetMapping("/category-summary")
+	@GetMapping("/dashboard/category-summary")
 	public Mono<List<CategorySummaryDto>> getCategorySummary() {
 		return ticketService.getCategorySummary();
 	}
 
-	@GetMapping("/user/{userId}/stats")
+	@GetMapping("/dashboard/user/{userId}/stats")
 	public Mono<ResponseEntity<UserTicketStatsDto>> getUserStats(@PathVariable String userId) {
 		return ticketService.getUserStats(userId).map(ResponseEntity::ok)
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 
-	@GetMapping("/agent/{agentId}/stats")
+	@GetMapping("/dashboard/agent/{agentId}/stats")
 	public Mono<ResponseEntity<UserTicketStatsDto>> getAgentStats(@PathVariable String agentId) {
 		return ticketService.getAgentStats(agentId).map(ResponseEntity::ok)
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 
-	@GetMapping("/global-stats")
+	@GetMapping("/dashboard/global-stats")
 	public Mono<ResponseEntity<UserTicketStatsDto>> getGlobalStats() {
 		return ticketService.getGlobalStats().map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
 	}
@@ -150,7 +159,7 @@ public class TicketController {
 		return ticketService.getTicketsByAgent(agentId);
 	}
 
-	@PutMapping("/{id}/assign")
+	@PutMapping("/internal/{id}/assign")
 	public Mono<ResponseEntity<ApiResponse>> assignTicket(@PathVariable String id, @RequestParam String agentId) {
 		return ticketService.assignTicket(id, agentId)
 				.map(saved -> ResponseEntity.ok(new ApiResponse(true, "Ticket assigned successfully"))).defaultIfEmpty(

@@ -13,13 +13,13 @@ import com.smartticket.demo.dto.AgentDto;
 @FeignClient(name = "auth-user-service")
 public interface UserClient {
 
-    @GetMapping("/agents")
+    @GetMapping("/internal/agents")
     List<AgentDto> getAgentsByCategory(@RequestParam("category") String category);
     
-    @PutMapping("/agents/{agentId}/increment-assignments") 
+    @PutMapping("/internal/agents/{agentId}/increment-assignments") 
     void incrementAssignments(@PathVariable("agentId") String agentId);
     
-    @PutMapping("/agents/{agentId}/decrement-assignments") 
+    @PutMapping("/internal/agents/{agentId}/decrement-assignments") 
     void decrementAssignments(@PathVariable("agentId") String agentId);
     
 }

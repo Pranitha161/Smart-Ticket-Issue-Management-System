@@ -34,7 +34,7 @@ public class SecurityConfig {
 			Converter<Jwt, ? extends Mono<? extends AbstractAuthenticationToken>> jwtAuthConverter) {
 		return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
 				.authorizeExchange(ex -> ex.pathMatchers("/auth/login", "/auth/register", "/auth/request-reset",
-						"/auth/reset-password/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll().anyExchange()
+						"/auth/reset-password/**", "/v3/api-docs/**", "/swagger-ui/**","/actuator/**").permitAll().anyExchange()
 						.authenticated())
 				.httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
 				.formLogin(ServerHttpSecurity.FormLoginSpec::disable)

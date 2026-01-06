@@ -38,7 +38,8 @@ public class SecurityConfig {
                    "/auth/**",
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
-                    "/dashboard/**"
+                    "/dashboard/**",
+                    "/internal/**"
                 ).permitAll()
                 .anyExchange()
                 .authenticated()

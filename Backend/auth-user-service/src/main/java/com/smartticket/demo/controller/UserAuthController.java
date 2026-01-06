@@ -103,13 +103,13 @@ public class UserAuthController {
 		return userAuthService.register(agent).map(ResponseEntity::ok);
 	}
 
-	@PutMapping("/agents/{agentId}/increment-assignments")
+	@PutMapping("/internal/agents/{agentId}/increment-assignments")
 	public Mono<ResponseEntity<ApiResponse>> incrementAssignments(@PathVariable String agentId) {
 		return userAuthService.incrementAssignments(agentId)
 				.map(agent -> ResponseEntity.ok(new ApiResponse(true, "Agent assignment count incremented")));
 	}
 
-	@PutMapping("/agents/{agentId}/decrement-assignments")
+	@PutMapping("/internal/agents/{agentId}/decrement-assignments")
 	public Mono<ResponseEntity<ApiResponse>> decrementAssignments(@PathVariable String agentId) {
 		return userAuthService.decrementAssignments(agentId)
 				.map(agent -> ResponseEntity.ok(new ApiResponse(true, "Agent assignment count decremented")));
@@ -142,7 +142,7 @@ public class UserAuthController {
 		return Mono.just(ResponseEntity.ok("Ticket endpoint authorities: [" + roles + "]"));
 	}
 
-	@GetMapping("/agents")
+	@GetMapping("/internal/agents")
 	public Flux<AgentDto> getAgentsByCategory(@RequestParam String category) {
 		return userAuthService.getAgentsByCategory(category).map(user -> {
 			AgentDto dto = new AgentDto();

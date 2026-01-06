@@ -1,23 +1,124 @@
 version: '3.8'
+
 services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
-    container_name: zookeeper-ticketing
-    ports:
-      - "2181:2181"
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: kafka-ticketing
-    ports:
-      - "9092:9092"
+    container_name: kafka
+    depends_on:
+      - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+
+  eureka:
+    build: ./smartticket-service-registry
+    container_name: smartticket-service-registry
+    ports:
+      - "8761:8761"
+
+  config-server:
+    build: ./smartticket-config-server
+    container_name: smartticket-config-server
+    ports:
+      - "8888:8888"
     depends_on:
-      - zookeeper
+      - eureka
+
+  api-gateway:
+    build: ./smartticket-api-gateway
+    container_name: smartticket-api-gateway
+    ports:
+      - "8765:8765"
+    depends_on:
+      - eureka
+      - config-server
+
+
+  auth-service:
+    build: ./auth-user-service
+    container_name: auth-user-service
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - kafka
+      - eureka
+      - config-server
+
+  dashboard-service:
+    build: ./dashboard-service
+    container_name: dashboard-service
+    ports:
+      - "8082:8082"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - kafka
+      - eureka
+      - config-server
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "8083:8083"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - kafka
+      - eureka
+      - config-server
+
+  assignment-escalation-service:
+    build: ./assignment-escalation-service
+    container_name: assignment-escalation-service
+    ports:
+      - "8084:8084"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - kafka
+      - eureka
+      - config-server
+
+  ticket-service:
+    build: ./ticket-service
+    container_name: ticket-service
+    ports:
+      - "8085:8085"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - kafka
+      - eureka
+      - config-server
+
+volumes:
+  mongo_data:
+

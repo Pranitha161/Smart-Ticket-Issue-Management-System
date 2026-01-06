@@ -23,7 +23,7 @@ export class TicketService {
   }
 
   getTicketById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/${id}`);
+    return this.http.get<any>(`${this.baseUrl}/internal/${id}`);
   }
 
   startWorkOnTicket(id: string, agentId: string): Observable<Ticket> { 

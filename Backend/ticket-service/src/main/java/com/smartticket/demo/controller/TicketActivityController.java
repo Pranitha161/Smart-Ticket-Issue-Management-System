@@ -26,7 +26,7 @@ public class TicketActivityController {
 		return service.getTimeline(ticketId);
 	}
 
-	@PostMapping("/comment")
+	@PostMapping("/internal/comment")
 	public Mono<TicketActivity> logActivity(@PathVariable String ticketId, @RequestParam String actorId,
 			@RequestParam String comment) {
 		return service.log(ticketId, actorId, ACTION_TYPE.COMMENT, comment, null);

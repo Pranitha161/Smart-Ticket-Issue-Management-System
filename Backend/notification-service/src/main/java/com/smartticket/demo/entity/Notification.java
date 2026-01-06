@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class Notification {
     @Id
     private String id;
+    private String sender;
     private String recipient;
     private String subject;
     private String body;  

@@ -1,6 +1,5 @@
 package com.smartticket.demo.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -14,15 +13,20 @@ import reactor.core.publisher.Mono;
 @Service
 public class NotificationService {
 
-	@Autowired
 	private JavaMailSender mailSender;
 
-	@Autowired
 	private NotificationRepository notificationRepo;
+
+	NotificationService(JavaMailSender mailSender, NotificationRepository notificationRepo) {
+		this.mailSender = mailSender;
+		this.notificationRepo = notificationRepo;
+
+	}
 
 	public Mono<Notification> sendEmail(Notification notification) {
 
 		SimpleMailMessage message = new SimpleMailMessage();
+		message.setReplyTo(notification.getSender());
 		message.setTo(notification.getRecipient());
 		message.setSubject(notification.getSubject());
 		message.setText(notification.getBody());

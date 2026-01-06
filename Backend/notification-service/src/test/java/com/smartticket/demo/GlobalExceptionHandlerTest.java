@@ -11,7 +11,7 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
 
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 	private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
 
 	@Test

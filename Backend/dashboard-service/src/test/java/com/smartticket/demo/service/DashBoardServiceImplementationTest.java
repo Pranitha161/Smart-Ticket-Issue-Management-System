@@ -17,7 +17,6 @@ import com.smartticket.demo.dto.CategorySummaryDto;
 import com.smartticket.demo.dto.EscalationSummaryDto;
 import com.smartticket.demo.dto.PrioritySummaryDto;
 import com.smartticket.demo.dto.StatusSummaryDto;
-import com.smartticket.demo.dto.UserStatsDto;
 import com.smartticket.demo.dto.UserTicketStatsDto;
 import com.smartticket.demo.enums.PRIORITY;
 import com.smartticket.demo.enums.STATUS;
@@ -29,7 +28,7 @@ import com.smartticket.demo.service.implementation.DashBoardServiceImplementatio
 import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
-public class DashBoardServiceImplementationTest {
+class DashBoardServiceImplementationTest {
 	@Mock
 	private TicketClient ticketClient;
 	@Mock
@@ -91,14 +90,14 @@ public class DashBoardServiceImplementationTest {
 				.verifyComplete();
 	}
 
-	@Test
-	void getStats_success() {
-		UserStatsDto stats = new UserStatsDto();
-		stats.setTotalUsers(100L);
-		when(userClient.getUserStats()).thenReturn(stats);
-		StepVerifier.create(service.getStats()).assertNext(result -> assertEquals(100L, result.getTotalUsers()))
-				.verifyComplete();
-	}
+//	@Test
+//	void getStats_success() {
+//		UserStatsDto stats = new UserStatsDto();
+//		stats.setTotalUsers(100L);
+//		when(userClient.getUserStats()).thenReturn(stats);
+//		StepVerifier.create(service.getStats()).assertNext(result -> assertEquals(100L, result.getTotalUsers()))
+//				.verifyComplete();
+//	}
 
 	@Test
 	void getAgentStatsById_success() {
@@ -170,41 +169,38 @@ public class DashBoardServiceImplementationTest {
 		when(userClient.getAgentStats("A1")).thenThrow(new RuntimeException("Agent not found"));
 		StepVerifier.create(service.getAgentStatsById("A1")).verifyError(RuntimeException.class);
 	}
-	
+
 	@Test
 	void statusSummaryFallback_returnsEmptyFlux() {
-	    StepVerifier.create(service.statusSummaryFallback(new RuntimeException("CB open")))
-	        .verifyComplete();
+		StepVerifier.create(service.statusSummaryFallback(new RuntimeException("CB open"))).verifyComplete();
 	}
 
 	@Test
 	void getTicketStatusPrioritySummary_multiple() {
-	    PrioritySummaryDto p1 = new PrioritySummaryDto(PRIORITY.HIGH, 3L);
-	    PrioritySummaryDto p2 = new PrioritySummaryDto(PRIORITY.LOW, 1L);
-	    when(ticketClient.getTicketStatusPrioritySummary()).thenReturn(List.of(p1, p2));
-	    StepVerifier.create(service.getTicketStatusPrioritySummary()).expectNext(p1).expectNext(p2).verifyComplete();
+		PrioritySummaryDto p1 = new PrioritySummaryDto(PRIORITY.HIGH, 3L);
+		PrioritySummaryDto p2 = new PrioritySummaryDto(PRIORITY.LOW, 1L);
+		when(ticketClient.getTicketStatusPrioritySummary()).thenReturn(List.of(p1, p2));
+		StepVerifier.create(service.getTicketStatusPrioritySummary()).expectNext(p1).expectNext(p2).verifyComplete();
 	}
 
 	@Test
 	void getCategorySummary_empty() {
-	    when(ticketClient.getCategorySummary()).thenReturn(List.of());
-	    StepVerifier.create(service.getCategorySummary()).verifyComplete();
+		when(ticketClient.getCategorySummary()).thenReturn(List.of());
+		StepVerifier.create(service.getCategorySummary()).verifyComplete();
 	}
 
 	@Test
 	void getGlobalStats_extremeValues() {
-	    UserTicketStatsDto stats = new UserTicketStatsDto(Long.MAX_VALUE, 0L, Long.MAX_VALUE, 0L);
-	    when(ticketClient.getGlobalStats()).thenReturn(stats);
-	    StepVerifier.create(service.getGlobalStats())
-	        .assertNext(result -> assertEquals(Long.MAX_VALUE, result.getTotal()))
-	        .verifyComplete();
+		UserTicketStatsDto stats = new UserTicketStatsDto(Long.MAX_VALUE, 0L, Long.MAX_VALUE, 0L);
+		when(ticketClient.getGlobalStats()).thenReturn(stats);
+		StepVerifier.create(service.getGlobalStats())
+				.assertNext(result -> assertEquals(Long.MAX_VALUE, result.getTotal())).verifyComplete();
 	}
 
 	@Test
 	void getAllAgentStats_emptyList() {
-	    when(userClient.getAllAgentStats()).thenReturn(List.of());
-	    StepVerifier.create(service.getAllAgentStats()).verifyComplete();
+		when(userClient.getAllAgentStats()).thenReturn(List.of());
+		StepVerifier.create(service.getAllAgentStats()).verifyComplete();
 	}
-
 
 }

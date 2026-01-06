@@ -50,7 +50,7 @@ public class UserAuthController {
 
 	@GetMapping("/auth/{id}")
 	public Mono<ResponseEntity<String>> getEmail(@PathVariable String id) {
-		return userAuthService.getUserEmail(id).map(email -> ResponseEntity.ok(email));
+		return userAuthService.getUserEmail(id).map(ResponseEntity::ok);
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")

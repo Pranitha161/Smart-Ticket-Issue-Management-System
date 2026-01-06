@@ -384,13 +384,6 @@ class AssignmentServiceImplementationTest {
 		StepVerifier.create(service.getEscalationSummary()).expectNextMatches(List::isEmpty).verifyComplete();
 	}
 
-//	@Test
-//	void manualAssign_ticketNotFound() {
-//	    when(ticketClient.getTicketById("T1")).thenReturn(null);
-//	    StepVerifier.create(service.manualAssign("T1", "A1", PRIORITY.HIGH, 1L))
-//	        .expectErrorMatches(e -> e.getMessage().contains("Ticket not found"))
-//	        .verify();
-//	}
 	@Test
 	void completeAssignment_saveError() {
 		assignment.setStatus(ASSIGNMENT_STATUS.ASSIGNED);

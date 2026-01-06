@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import com.smartticket.demo.enums.ROLE;
 
-public class UserTest {
+class UserTest {
 
 	private Validator validator;
 

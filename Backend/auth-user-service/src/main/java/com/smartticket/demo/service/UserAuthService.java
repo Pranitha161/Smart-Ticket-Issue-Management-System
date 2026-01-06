@@ -52,4 +52,6 @@ public interface UserAuthService {
 
 	Mono<ApiResponse> enableUserById(String id);
 
+	Mono<User> incrementEscalatedCount(String agentId);
+
 }

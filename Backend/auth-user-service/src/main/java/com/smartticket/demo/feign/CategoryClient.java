@@ -9,6 +9,6 @@ import com.smartticket.demo.entity.Category;
 @FeignClient(name = "ticket-service")
 public interface CategoryClient {
 
-	@GetMapping("/categories/{id}")
+	@GetMapping("/categories/internal/{id}")
 	Category getCategoryById(@PathVariable("id") String id);
 }

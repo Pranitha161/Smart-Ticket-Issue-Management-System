@@ -15,5 +15,6 @@ public class AgentProfile {
 	private Set<String> skills;
 	private int currentAssignments;
 	private int resolvedCount;
+	private int escalatedCount;
 
 }

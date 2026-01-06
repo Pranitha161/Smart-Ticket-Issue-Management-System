@@ -35,15 +35,13 @@ public class SecurityConfig {
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(ex -> ex
                 .pathMatchers(
-                    "/auth/login",
-                    "/auth/register",
-                    "/auth/request-reset",
-                    "/auth/reset-password/**",
+                   "/auth/**",
                     "/v3/api-docs/**",
-                    "/swagger-ui/**"
+                    "/swagger-ui/**",
+                    "/dashboard/**"
                 ).permitAll()
-                .anyExchange().permitAll()
-//                authenticated()
+                .anyExchange()
+                .authenticated()
             )
             .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
             .formLogin(ServerHttpSecurity.FormLoginSpec::disable)

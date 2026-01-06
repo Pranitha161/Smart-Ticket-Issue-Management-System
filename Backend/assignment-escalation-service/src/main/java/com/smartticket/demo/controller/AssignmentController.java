@@ -61,12 +61,12 @@ public class AssignmentController {
 		;
 	}
 
-	@GetMapping("/agent-summary")
+	@GetMapping("/dashboard/agent-summary")
 	public Mono<ResponseEntity<List<AgentSummaryDto>>> getAgentWorkloadSummary() {
 		return assignmentService.assignmentsPerAgent().map(ResponseEntity::ok);
 	}
 
-	@GetMapping("/escalations/summary")
+	@GetMapping("/dashboard/escalations/summary")
 	public Mono<ResponseEntity<List<EscalationSummaryDto>>> getEscalationSummary() {
 		return assignmentService.getEscalationSummary().map(ResponseEntity::ok);
 	}

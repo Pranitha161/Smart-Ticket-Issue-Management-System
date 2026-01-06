@@ -120,8 +120,14 @@ public class UserAuthController {
 		return userAuthService.incrementResolvedCount(agentId)
 				.map(agent -> ResponseEntity.ok(new ApiResponse(true, "Agent resolved count incremented")));
 	}
+	
+	@PutMapping("/agents/{agentId}/unresolved")
+	public Mono<ResponseEntity<ApiResponse>> incrementEscalatedCount(@PathVariable String agentId) {
+		return userAuthService.incrementEscalatedCount(agentId)
+				.map(agent -> ResponseEntity.ok(new ApiResponse(true, "Agent escalted count increment")));
+	}
 
-	@GetMapping("/auth/users/stats")
+	@GetMapping("/dashboard/auth/users/stats")
 	public Mono<ResponseEntity<UserStatsDto>> getUserStats() {
 		return userAuthService.getUserStats().map(ResponseEntity::ok);
 	}
@@ -154,12 +160,12 @@ public class UserAuthController {
 				.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, ex.getMessage()))));
 	}
 
-	@GetMapping("/{agentId}/stats")
+	@GetMapping("/dashboard/{agentId}/stats")
 	public Mono<AgentStatsDto> getAgentStats(@PathVariable String agentId) {
 		return userAuthService.getAgentStats(agentId);
 	}
 
-	@GetMapping("/stats")
+	@GetMapping("/dashboard/stats")
 	public Mono<List<AgentStatsDto>> getAllAgentStats() {
 		return userAuthService.getAllAgentStats();
 	}

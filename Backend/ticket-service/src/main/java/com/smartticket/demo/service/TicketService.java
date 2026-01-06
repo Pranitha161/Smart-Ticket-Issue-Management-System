@@ -55,6 +55,8 @@ public interface TicketService {
 
 	Mono<Ticket> startWorkOnTicket(String id, String agentId);
 
+	Mono<Ticket> escalateTicket(String id);
+
 	
 
 }

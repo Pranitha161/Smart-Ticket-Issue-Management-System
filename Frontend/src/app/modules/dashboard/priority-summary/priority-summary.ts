@@ -17,16 +17,15 @@ export class PrioritySummary implements OnInit {
 
   @ViewChild(BaseChartDirective) priorityChart?: BaseChartDirective;
 
-  // Use Bar chart for better "Priority Level" comparison as seen in image_030724
   priorityChartData: ChartData<'bar'> = { labels: [], datasets: [] };
-  
+
   priorityChartOptions: ChartOptions<'bar'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#1e293b', // Match slate theme
+        backgroundColor: '#1e293b',
         padding: 12,
         cornerRadius: 8
       }
@@ -52,19 +51,18 @@ export class PrioritySummary implements OnInit {
         labels: data.map(d => d.priority),
         datasets: [{
           data: data.map(d => d.count),
-          // Strategic coloring: Critical/High get warmer colors
           backgroundColor: data.map(d => {
             const p = d.priority.toLowerCase();
             if (p === 'critical') return '#ef4444';
             if (p === 'high') return '#f59e0b';
-            if (p === 'medium') return '#5c67f2'; // Theme Primary
-            return '#94a3b8'; // Low/Default
+            if (p === 'medium') return '#5c67f2';
+            return '#94a3b8';
           }),
           borderRadius: 6,
           barThickness: 40
         }]
       };
-      
+
       this.cd.detectChanges();
       this.priorityChart?.update();
     });

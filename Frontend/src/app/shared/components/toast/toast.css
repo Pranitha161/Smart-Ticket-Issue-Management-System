@@ -1,17 +1,16 @@
-/* The wrapper ensures the toast doesn't affect page layout */
+
 .toast-wrapper {
   position: fixed !important;
   top: 25px !important;
   left: calc(100vw - 320px) !important;
   right: auto !important;
   z-index: 9999!important;
-  pointer-events: none; /* Allows clicking elements 'under' the transparent area */
+  pointer-events: none; 
 }
 
-/* Your specific toast container styling */
 .toast-container {
   opacity: 1!important;
-  pointer-events: auto; /* Re-enable clicking on the toast itself */
+  pointer-events: auto; 
   display: flex;
   align-items: center;
   gap: 12px;
@@ -25,7 +24,6 @@
   margin:0;
 }
 
-/* Success and Error variants */
 .success {
   background: #2ecc71;
   border-bottom: 4px solid #27ae60;

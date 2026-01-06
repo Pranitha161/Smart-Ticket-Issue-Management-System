@@ -1,48 +1,18 @@
-/* 
-.container {
-  max-width: 1000px;
-}
-
-.card {
-  border: none;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.table tbody tr {
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-.table tbody tr:hover {
-  background-color: #f8f9ff !important;
-  transform: scale(1.005);
-}
-
-
-.badge {
-  font-weight: 500;
-  letter-spacing: 0.5px;
-} */
- /* Typography and General Colors */
 :root {
   --primary-blue: #0d6efd;
   --bg-subtle: #f8f9fa;
   --border-light: #edf2f7;
 }
 
-/* Header Tracking */
 .tracking-wider {
   letter-spacing: 0.05rem;
 }
 
-/* Card Styling */
 .card {
   background-color: #ffffff;
   border-radius: 1rem;
 }
 
-/* Custom Table Row Hover */
 .history-row {
   transition: all 0.2s ease;
   cursor: pointer;
@@ -54,7 +24,6 @@
   border-left: 4px solid var(--primary-blue);
 }
 
-/* Recipient Avatar Circle */
 .recipient-avatar {
   width: 32px;
   height: 32px;
@@ -69,7 +38,6 @@
   border: 1px solid #e0e7ff;
 }
 
-/* Status Badge - Subtle Style */
 .status-badge {
   background-color: #ecfdf5;
   color: #10b981;
@@ -82,7 +50,6 @@
   border: 1px solid #d1fae5;
 }
 
-/* Modal and Form Inputs */
 .form-control {
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
@@ -99,7 +66,6 @@
   color: #94a3b8;
 }
 
-/* Primary Button Lift */
 .btn-primary {
   transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -109,31 +75,29 @@
   box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
 }
 
-/* Custom Scrollbar for Table */
 .table-responsive::-webkit-scrollbar {
   height: 6px;
 }
+
 .table-responsive::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
 }
-/* The container that defines the height of your scrollable area */
+
 .table-scroll-container {
-  max-height: 500px; /* Adjust this height as needed */
+  max-height: 500px;
   overflow-y: auto;
   position: relative;
 }
 
-/* Make the header stick to the top of the scroll container */
 thead.sticky-top {
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: #f8f9fa; /* Matches the table-light color */
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow when scrolling */
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Customize the scrollbar for a "SaaS" look */
 .table-scroll-container::-webkit-scrollbar {
   width: 6px;
 }
@@ -151,17 +115,17 @@ thead.sticky-top {
   background: #94a3b8;
 }
 
-/* Ensure the table responsive doesn't conflict with our scroll */
 .table-responsive {
   overflow: visible !important;
 }
+
 .btn-back {
   width: 40px;
   height: 40px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 10px; /* Matching your card corner radius */
-  color: #5c67f2;      /* Your primary theme purple */
+  border-radius: 10px;
+  color: #5c67f2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -173,5 +137,5 @@ thead.sticky-top {
   background: #5c67f2;
   color: #ffffff;
   border-color: #5c67f2;
-  transform: translateX(-3px); /* Subtle "back" movement hint */
+  transform: translateX(-3px);
 }

@@ -1,89 +1,11 @@
-<!-- <div class="dashboard-wrapper p-4 bg-light min-vh-100">
-  
-  <div class="row g-3 mb-2" *ngIf="stats">
-    <div class="col-12 col-sm-6 col-lg-3">
-      <div class="stat-card shadow-sm border-secondary-thick h-100">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h6 class="stat-label mb-3">Total Tickets</h6>
-            <div class="stat-value text-secondary">{{ stats.total }}</div>
-            <small class="text-muted">Lifetime volume</small>
-          </div>
-          <div class="stat-icon-bg bg-secondary-light">
-            <i class="bi bi-ticket-perforated"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-sm-6 col-lg-3">
-      <div class="stat-card shadow-sm border-primary-thick h-100">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h6 class="stat-label mb-3">Open Tickets</h6>
-            <div class="stat-value text-primary">{{ stats.open }}</div>
-            <small class="text-muted">Requires action</small>
-          </div>
-          <div class="stat-icon-bg bg-primary-light">
-            <i class="bi bi-envelope-open"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-sm-6 col-lg-3">
-      <div class="stat-card shadow-sm border-success-thick h-100">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h6 class="stat-label mb-3">Resolved</h6>
-            <div class="stat-value text-success">{{ stats.resolved }}</div>
-            <small class="text-muted">Closed successfully</small>
-          </div>
-          <div class="stat-icon-bg bg-success-light">
-            <i class="bi bi-check2-circle"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-sm-6 col-lg-3">
-      <div class="stat-card shadow-sm border-danger-thick h-100">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h6 class="stat-label mb-3">Critical</h6>
-            <div class="stat-value text-danger">{{ stats.critical }}</div>
-            <small class="text-muted">SLA at risk</small>
-          </div>
-          <div class="stat-icon-bg bg-danger-light">
-            <i class="bi bi-fire"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
- <div class="row g-4 mb-4" *ngIf="role === 'ADMIN' || role === 'MANAGER'">
-   <div class="row g-4">
-    <div class="col-12 col-lg-6">
-       <app-status-summary></app-status-summary>
-    </div>
-    <div class="col-12 col-lg-6">
-       <app-priority-summary></app-priority-summary>
-    </div>
-    <div class="col-12">
-        <app-recent-tickets></app-recent-tickets>
-    </div>
-  </div>
-   </div>
-</div> -->
-
 <div class="dashboard-wrapper p-4 bg-light min-vh-100">
-    <div class="d-flex align-items-center mb-5">
-      
-      <div>
-        <h2 class="fw-bold text-dark mb-0">DashBoard </h2>
-        <p class="text-muted small mb-0">Overview of the tickets and recent activity</p>
-      </div>
+  <div class="d-flex align-items-center mb-5">
+
+    <div>
+      <h2 class="fw-bold text-dark mb-0">DashBoard </h2>
+      <p class="text-muted small mb-0">Overview of the tickets and recent activity</p>
     </div>
+  </div>
   <div class="row g-3 mb-2" *ngIf="stats && role!=='AGENT'">
     <div class="col-12 col-sm-6 col-lg-3">
       <div class="stat-card shadow-sm border-secondary-thick h-100">
@@ -145,85 +67,85 @@
       </div>
     </div>
   </div>
-  
- <div class="row g-3 mb-2" *ngIf="agentStats">
-  <div class="col-12 col-sm-6 col-lg-3">
-    <div class="stat-card shadow-sm border-primary-thick h-100">
-      <div class="d-flex justify-content-between">
-        <div>
-          <h6 class="stat-label mb-3">Current Assignments</h6>
-          <div class="stat-value text-primary">{{ agentStats.currentAssignments }}</div>
-          <small class="text-muted">Tickets in progress</small>
-        </div>
-        <div class="stat-icon-bg bg-primary-light">
-          <i class="bi bi-list-check"></i>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-12 col-sm-6 col-lg-3">
-    <div class="stat-card shadow-sm border-success-thick h-100">
-      <div class="d-flex justify-content-between">
-        <div>
-          <h6 class="stat-label mb-3">Resolved</h6>
-          <div class="stat-value text-success">{{ agentStats.resolvedCount }}</div>
-          <small class="text-muted">Closed successfully</small>
-        </div>
-        <div class="stat-icon-bg bg-success-light">
-          <i class="bi bi-check2-circle"></i>
+  <div class="row g-3 mb-2" *ngIf="agentStats">
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stat-card shadow-sm border-primary-thick h-100">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="stat-label mb-3">Current Assignments</h6>
+            <div class="stat-value text-primary">{{ agentStats.currentAssignments }}</div>
+            <small class="text-muted">Tickets in progress</small>
+          </div>
+          <div class="stat-icon-bg bg-primary-light">
+            <i class="bi bi-list-check"></i>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="col-12 col-sm-6 col-lg-3">
-    <div class="stat-card shadow-sm border-info-thick h-100">
-      <div class="d-flex justify-content-between">
-        <div>
-          <h6 class="stat-label mb-3">Resolution Rate</h6>
-          <div class="stat-value text-info">{{ agentStats.resolutionRate | percent:'1.0-2' }}</div>
-          <small class="text-muted">Efficiency ratio</small>
-        </div>
-        <div class="stat-icon-bg bg-info-light">
-          <i class="bi bi-speedometer2"></i>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stat-card shadow-sm border-success-thick h-100">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="stat-label mb-3">Resolved</h6>
+            <div class="stat-value text-success">{{ agentStats.resolvedCount }}</div>
+            <small class="text-muted">Closed successfully</small>
+          </div>
+          <div class="stat-icon-bg bg-success-light">
+            <i class="bi bi-check2-circle"></i>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="col-12 col-sm-6 col-lg-3">
-    <div class="stat-card shadow-sm border-secondary-thick h-100">
-      <div class="d-flex justify-content-between">
-        <div>
-          <h6 class="stat-label mb-3">Agent Level</h6>
-          <div class="stat-value text-secondary">{{ agentStats.agentLevel }}</div>
-          <small class="text-muted">Experience tier</small>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stat-card shadow-sm border-info-thick h-100">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="stat-label mb-3">Resolution Rate</h6>
+            <div class="stat-value text-info">{{ agentStats.resolutionRate | percent:'1.0-2' }}</div>
+            <small class="text-muted">Efficiency ratio</small>
+          </div>
+          <div class="stat-icon-bg bg-info-light">
+            <i class="bi bi-speedometer2"></i>
+          </div>
         </div>
-        <div class="stat-icon-bg bg-secondary-light">
-          <i class="bi bi-person-badge"></i>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stat-card shadow-sm border-secondary-thick h-100">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="stat-label mb-3">Agent Level</h6>
+            <div class="stat-value text-secondary">{{ agentStats.agentLevel }}</div>
+            <small class="text-muted">Experience tier</small>
+          </div>
+          <div class="stat-icon-bg bg-secondary-light">
+            <i class="bi bi-person-badge"></i>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
   <div class="row g-4 mt-1" *ngIf="role === 'ADMIN' || role === 'MANAGER'">
     <div class="col-12 col-lg-6">
-       <div class="report-card h-100 shadow-sm">
-          <app-status-summary></app-status-summary>
-       </div>
+      <div class="report-card h-100 shadow-sm">
+        <app-status-summary></app-status-summary>
+      </div>
     </div>
     <div class="col-12 col-lg-6">
-       <div class="report-card h-100 shadow-sm">
-          <app-priority-summary></app-priority-summary>
-       </div>
+      <div class="report-card h-100 shadow-sm">
+        <app-priority-summary></app-priority-summary>
+      </div>
     </div>
-    
+
   </div>
   <div class="col-12 mt-4">
-        <div class="report-card shadow-sm">
-           <app-recent-tickets></app-recent-tickets>
-        </div>
+    <div class="report-card shadow-sm">
+      <app-recent-tickets></app-recent-tickets>
     </div>
+  </div>
 </div>

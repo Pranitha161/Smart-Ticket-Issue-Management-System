@@ -1,81 +1,3 @@
-<!-- <div class="dashboard-wrapper p-4">
-  <h2 class="fw-bold mb-4">Report</h2>
-
-  <div class="row g-4">
-    <div class="col-md-6">
-      <app-status-summary></app-status-summary>
-    </div>
-    <div class="col-md-6">
-      <app-priority-summary></app-priority-summary>
-    </div>
-  
-    <div class="col-md-6">
-      <app-agent-summary></app-agent-summary>
-    </div>
-    <div class="col-md-12">
-      <app-escalation-summary></app-escalation-summary>
-    </div>
-  </div>
-</div> -->
-
-<!-- <div class="dashboard-wrapper p-3 p-md-4 bg-light min-vh-100">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="fw-bold text-dark mb-1">System Reports</h2>
-      <p class="text-muted small mb-0">Analytics & Performance Metrics</p>
-    </div>
-    <button class="btn btn-primary btn-sm shadow-sm px-3 rounded-pill">
-      <i class="bi bi-download me-2"></i>Export PDF
-    </button>
-  </div>
-
-  <div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-      <div class="report-mini-card shadow-sm border-0 card p-3">
-        <span class="text-muted tiny fw-bold">AVG RESOLUTION</span>
-        <div class="h4 fw-800 mb-0">2.4h</div>
-      </div>
-    </div>
-    <div class="col-6 col-lg-3">
-      <div class="report-mini-card shadow-sm border-0 card p-3">
-        <span class="text-muted tiny fw-bold">SLA COMPLIANCE</span>
-        <div class="h4 fw-800 mb-0 text-success">98%</div>
-      </div>
-    </div>
-    </div>
-
-  <div class="row g-4">
-    <div class="col-12 col-lg-6">
-      <div class="report-card shadow-sm">
-        <app-status-summary></app-status-summary>
-      </div>
-    </div>
-    <div class="col-12 col-lg-6">
-      <div class="report-card shadow-sm">
-        <app-priority-summary></app-priority-summary>
-      </div>
-    </div>
-     <div class="col-12 col-lg-6">
-      <div class="report-card shadow-sm">
-        <app-category-summary></app-category-summary>
-      </div>
-    </div>
-    <div class="col-12 col-lg-6">
-      <div class="report-card shadow-sm ">
-        <app-escalation-summary></app-escalation-summary>
-      </div>
-    </div>
-
-    <div class="col-12 ">
-      <div class="report-card shadow-sm">
-        <app-agent-summary></app-agent-summary>
-      </div>
-    </div>
-
-    
-  </div>
-</div> -->
-
 <div #reportContent class="dashboard-wrapper p-3 p-md-4 bg-light min-vh-100">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -104,13 +26,13 @@
     </div>
 
     <div class="col-12 col-sm-6 col-lg-3">
-      <div class="stat-card shadow-sm h-100 p-3" 
-           [ngClass]="isSlaCritical ? 'border-danger-thick' : 'border-success-thick'">
+      <div class="stat-card shadow-sm h-100 p-3"
+        [ngClass]="isSlaCritical ? 'border-danger-thick' : 'border-success-thick'">
         <div class="d-flex justify-content-between align-items-start">
           <div>
             <h6 class="stat-label mb-2">SLA Compliance</h6>
             <div class="stat-value" [ngClass]="isSlaCritical ? 'text-danger' : 'text-success'">
-                {{ slaPercentage }}%
+              {{ slaPercentage }}%
             </div>
             <small class="text-muted tiny">{{ isSlaCritical ? 'Below Target' : 'Healthy Status' }}</small>
           </div>
@@ -137,7 +59,7 @@
       </div>
     </div>
 
-    
+
     <div class="col-12 col-sm-6 col-lg-3">
       <div class="stat-card shadow-sm border-danger-thick h-100 p-3">
         <div class="d-flex justify-content-between align-items-start">
@@ -156,20 +78,20 @@
 
   <div class="row g-4">
     <div class="col-12 col-lg-6">
-       <app-status-summary></app-status-summary>
+      <app-status-summary></app-status-summary>
     </div>
     <div class="col-12 col-lg-6">
-       <app-category-summary></app-category-summary>
+      <app-category-summary></app-category-summary>
     </div>
     <div class="col-12 col-lg-6">
-       <app-priority-summary></app-priority-summary>
+      <app-priority-summary></app-priority-summary>
     </div>
-    
+
     <div class="col-12 col-lg-6">
-       <app-escalation-summary></app-escalation-summary>
+      <app-escalation-summary></app-escalation-summary>
     </div>
     <div class="col-12">
-       <app-agent-summary></app-agent-summary>
+      <app-agent-summary></app-agent-summary>
     </div>
   </div>
 </div>

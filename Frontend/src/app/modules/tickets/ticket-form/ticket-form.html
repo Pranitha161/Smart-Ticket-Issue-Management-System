@@ -1,6 +1,6 @@
 <div class="dashboard-wrapper p-2 p-md-4 bg-light">
   <div class="container-narrow mx-auto">
-    
+
     <div class="d-flex align-items-center mb-5">
       <button class="btn-back me-3" routerLink="/tickets">
         <i class="bi bi-arrow-left"></i>
@@ -14,21 +14,20 @@
     <div class="row g-4">
       <div class="col-12 col-xl-8">
         <div class="card ticket-card shadow-sm border-0 h-100">
-          <div class="card-header-accent"></div> 
+          <div class="card-header-accent"></div>
           <div class="card-body p-4 p-md-5">
             <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()" class="row g-4">
-              
+
               <div class="col-12">
                 <label class="form-label-theme">Ticket Title *</label>
-                <input type="text" class="form-control-theme" 
-                       placeholder="e.g., Cannot connect to VPN" formControlName="title" />
+                <input type="text" class="form-control-theme" placeholder="e.g., Cannot connect to VPN"
+                  formControlName="title" />
               </div>
 
               <div class="col-12">
                 <label class="form-label-theme">Description *</label>
-                <textarea class="form-control-theme" rows="6" 
-                          placeholder="Please provide as much detail as possible..." 
-                          formControlName="description"></textarea>
+                <textarea class="form-control-theme" rows="6" placeholder="Please provide as much detail as possible..."
+                  formControlName="description"></textarea>
               </div>
 
               <div class="col-md-6">
@@ -41,9 +40,8 @@
 
               <div class="col-md-6">
                 <label class="form-label-theme">Priority Level *</label>
-                <select class="form-select-theme border-start-priority" 
-                        [attr.data-priority]="ticketForm.get('priority')?.value"
-                        formControlName="priority">
+                <select class="form-select-theme border-start-priority"
+                  [attr.data-priority]="ticketForm.get('priority')?.value" formControlName="priority">
                   <option value="CRITICAL">Critical</option>
                   <option value="HIGH">High</option>
                   <option value="MEDIUM">Medium</option>

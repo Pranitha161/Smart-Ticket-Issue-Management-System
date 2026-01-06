@@ -1,64 +1,3 @@
-<!-- <div class="category-panel-wrapper">
-  <div class="panel-header mb-4">
-    <h5 class="fw-bold mb-1">Ticket Categories</h5>
-    <p class="text-muted small">Manage ticket categories</p>
-  </div>
-  <div *ngIf="categories.length === 0" class="text-muted">No categories found</div>
-  <div class="category-list d-flex flex-column gap-3">
-    <div *ngFor="let category of categories" class="category-card shadow-sm d-flex justify-content-between align-items-center p-3">
-      <div class="d-flex align-items-center gap-3">
-        <span class="badge-category">{{ category.name }}</span>
-        
-        <span class="ticket-count text-muted small">0 tickets</span>
-      </div>
-
-      <div class="category-actions">
-        <button class="btn btn-action me-2" (click)="editCategory(category)">
-          <i class="bi bi-pencil"></i>
-        </button>
-        <button class="btn btn-action text-danger" (click)="deleteCategory(category.id!)">
-          <i class="bi bi-trash"></i>
-        </button>
-      </div>
-    </div>
-
-    <button class="btn btn-add-category mt-2 py-2" (click)="openCreateForm()">
-      Add Category
-    </button>
-  </div>
-
-  <div class="modal-backdrop-custom" *ngIf="createMode || editMode">
-    <div class="modal-content-custom shadow-lg">
-      <h5 class="fw-bold mb-4">{{ createMode ? 'Create New Category' : 'Edit Category' }}</h5>
-      
-      <div class="mb-3">
-        <label class="form-label-custom">Category Name</label>
-        <input [(ngModel)]="formCategory.name" class="form-control custom-input" placeholder="e.g. Technical">
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label-custom">Description</label>
-        <input [(ngModel)]="formCategory.description" class="form-control custom-input" placeholder="Enter description">
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label-custom">Linked SLA ID</label>
-        <input [(ngModel)]="formCategory.linkedSlaId" class="form-control custom-input" placeholder="SLA-101">
-      </div>
-
-      <div class="form-check form-switch mb-4">
-        <input type="checkbox" class="form-check-input" [(ngModel)]="formCategory.active" id="activeSwitch">
-        <label class="form-check-label ms-2" for="activeSwitch">Active Status</label>
-      </div>
-
-      <div class="d-flex gap-2">
-        <button class="btn btn-dark w-100 py-2 fw-bold" (click)="saveCategory()">Save Category</button>
-        <button class="btn btn-light border w-100 py-2 fw-bold" (click)="cancel()">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
- -->
 <div class="category-panel-wrapper p-4">
   <div class="panel-header d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -72,15 +11,14 @@
 
   <div class="category-grid">
     <div *ngFor="let category of categories" class="category-modern-card" [class.inactive]="!category.active">
-      <div class="card-status-strip" 
-       [ngClass]="{
+      <div class="card-status-strip" [ngClass]="{
          'bg-danger': getSlaPriorityName(category.linkedSlaId) === 'CRITICAL',
          'bg-primary':getSlaPriorityName(category.linkedSlaId) === 'MEDIUM',
          'bg-warning': getSlaPriorityName(category.linkedSlaId) === 'HIGH',
          'bg-success': getSlaPriorityName(category.linkedSlaId) === 'LOW',
          'bg-secondary': !category.active || getSlaPriorityName(category.linkedSlaId) === 'No SLA'
        }">
-  </div>
+      </div>
       <div class="p-3">
         <div class="d-flex justify-content-between align-items-start mb-2">
           <span class="badge-category">{{ category.name }}</span>

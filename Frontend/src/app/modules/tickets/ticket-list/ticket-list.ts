@@ -35,74 +35,40 @@ export class TicketList implements OnInit {
   totalPages = 0;
   role: string = '';
   assigningTicketId: string | null = null;
-reopeningTicket: any = null;
+  reopeningTicket: any = null;
   ngOnInit(): void {
     const roles = this.authService.roles();
     this.role = roles && roles.length > 0 ? roles[0] : '';
     this.loadTickets();
   }
 
-  // loadTickets(): void {
-  //   const userId = this.authService.userId()!;
-  //   const request$ = this.role === 'USER'
-  //     ? this.ticketListService.getTicketsByUserId(userId)
-  //     : this.role === 'AGENT'
-  //       ? this.ticketListService.getTicketsByAgentId(userId)
-  //       : this.ticketListService.getTickets();
-
-  //   request$.subscribe({
-  //     next: (res) => {
-  //       this.tickets = res;
-  //       this.filteredTickets = [...this.tickets];
-  //       this.applyFilters();
-  //       this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
-  //     this.setPage(0); 
-
-  //     this.toast.show('Data Refreshed', 'success');
-  //     this.cd.detectChanges();
-  //     },
-  //     error: () => this.toast.show('Failed to load tickets', 'error')
-  //   });
-  // }
   loadTickets(): void {
-  // 1. Clear UI inputs immediately
-  this.searchTerm = '';
-  this.selectedPriority = '';
-  this.selectedStatus = '';
+    this.searchTerm = '';
+    this.selectedPriority = '';
+    this.selectedStatus = '';
 
-  const userId = this.authService.userId()!;
-  const request$ = this.role === 'USER'
-    ? this.ticketListService.getTicketsByUserId(userId)
-    : this.role === 'AGENT'
-      ? this.ticketListService.getTicketsByAgentId(userId)
-      : this.ticketListService.getTickets();
+    const userId = this.authService.userId()!;
+    const request$ = this.role === 'USER'
+      ? this.ticketListService.getTicketsByUserId(userId)
+      : this.role === 'AGENT'
+        ? this.ticketListService.getTicketsByAgentId(userId)
+        : this.ticketListService.getTickets();
 
-  request$.subscribe({
-    next: (res) => {
-
-
-      // 2. Update Master List
-      this.tickets = res;
-
-      // 3. Manually sync Filtered List to match Master List (Resetting the filter)
-      this.filteredTickets = [...this.tickets];
-
-      // 4. Reset Pagination count
-      this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
-
-      // 5. CRITICAL: Force the Paged List to fill up with the first page of data
-      if (this.filteredTickets.length > 0) {
-        this.setPage(0); 
-      } else {
-        this.pagedTickets = [];
-      }
-
-      // this.toast.show('Data Refreshed', 'success');
-      this.cd.detectChanges();
-    },
-    error: () => this.toast.show('Failed to load tickets', 'error')
-  });
-}
+    request$.subscribe({
+      next: (res) => {
+        this.tickets = res;
+        this.filteredTickets = [...this.tickets];
+        this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
+        if (this.filteredTickets.length > 0) {
+          this.setPage(0);
+        } else {
+          this.pagedTickets = [];
+        }
+        this.cd.detectChanges();
+      },
+      error: () => this.toast.show('Failed to load tickets', 'error')
+    });
+  }
   openReopenConfirm(ticket: any) {
     this.reopeningTicket = ticket;
   }
@@ -128,72 +94,48 @@ reopeningTicket: any = null;
       }
     });
   }
-  // applyFilters(): void {
-  //   const term = this.searchTerm.toLowerCase().trim();
-  //   console.log(term+" "+this.selectedPriority+" "+this.selectedStatus);
-  //   this.filteredTickets = this.tickets.filter(ticket => {
-  //     const categoryName = (this.lookup.getCategoryName(ticket.categoryId) || '').toLowerCase();
-  //     const creatorName = (this.lookup.getUserName(ticket.createdBy) || '').toLowerCase();
-  //     const title = (ticket.title || '').toLowerCase();
-  //     const displayId = (ticket.displayId || '').toLowerCase();
-  //     const matchesSearch = !term ||
-  //       title.includes(term) ||
-  //       displayId.includes(term) ||
-  //       categoryName.includes(term) ||
-  //       creatorName.includes(term);
-  //     const matchesPriority = !this.selectedPriority || ticket.priority?.toUpperCase() === this.selectedPriority.toUpperCase();
-  //     const matchesStatus = !this.selectedStatus || ticket.status?.toUpperCase() === this.selectedStatus.toUpperCase();
-  //     console.log(matchesSearch && matchesPriority && matchesStatus);
-  //     return matchesSearch && matchesPriority && matchesStatus;
-      
-  //   });
-  //   this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
-  //   this.setPage(0);
-  // }
-applyFilters(): void {
-  const term = this.searchTerm.toLowerCase().trim();
 
-  // 1. Create the filtered list
-  this.filteredTickets = this.tickets.filter(ticket => {
-    const categoryName = (this.lookup.getCategoryName(ticket.categoryId) || '').toLowerCase();
-    const creatorName = (this.lookup.getUserName(ticket.createdBy) || '').toLowerCase();
-    const title = (ticket.title || '').toLowerCase();
-    const displayId = (ticket.displayId || '').toLowerCase();
 
-    const matchesSearch = !term ||
-      title.includes(term) ||
-      displayId.includes(term) ||
-      categoryName.includes(term) ||
-      creatorName.includes(term);
+  applyFilters(): void {
+    const term = this.searchTerm.toLowerCase().trim();
 
-    // Ensure we compare Uppercase to Uppercase and handle nulls
-    const ticketPriority = (ticket.priority || '').toUpperCase();
-    const selectedPri = this.selectedPriority.toUpperCase();
-    const matchesPriority = !this.selectedPriority || ticketPriority === selectedPri;
+    this.filteredTickets = this.tickets.filter(ticket => {
+      const categoryName = (this.lookup.getCategoryName(ticket.categoryId) || '').toLowerCase();
+      const creatorName = (this.lookup.getUserName(ticket.createdBy) || '').toLowerCase();
+      const title = (ticket.title || '').toLowerCase();
+      const displayId = (ticket.displayId || '').toLowerCase();
 
-    const ticketStatus = (ticket.status || '').toUpperCase();
-    const selectedStat = this.selectedStatus.toUpperCase();
-    const matchesStatus = !this.selectedStatus || ticketStatus === selectedStat;
+      const matchesSearch = !term ||
+        title.includes(term) ||
+        displayId.includes(term) ||
+        categoryName.includes(term) ||
+        creatorName.includes(term);
 
-    const result = matchesSearch && matchesPriority && matchesStatus;
-    
-    
-    return result;
-  });
+      const ticketPriority = (ticket.priority || '').toUpperCase();
+      const selectedPri = this.selectedPriority.toUpperCase();
+      const matchesPriority = !this.selectedPriority || ticketPriority === selectedPri;
 
-  // 2. IMPORTANT: Reset pagination logic
-  this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
-  
- if (this.filteredTickets.length === 0) {
-    this.pagedTickets = []; 
-    this.currentPage = 0;
-  } else {
-    this.setPage(0); // This calls the slice logic
+      const ticketStatus = (ticket.status || '').toUpperCase();
+      const selectedStat = this.selectedStatus.toUpperCase();
+      const matchesStatus = !this.selectedStatus || ticketStatus === selectedStat;
+
+      const result = matchesSearch && matchesPriority && matchesStatus;
+
+
+      return result;
+    });
+
+    this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
+
+    if (this.filteredTickets.length === 0) {
+      this.pagedTickets = [];
+      this.currentPage = 0;
+    } else {
+      this.setPage(0);
+    }
+
+    this.cd.detectChanges();
   }
-
-  // 4. Manual trigger if needed (since you are using ChangeDetectorRef)
-  this.cd.detectChanges();
-}
   setPage(page: number): void {
     if (page >= 0 && page < this.totalPages) {
       this.currentPage = page;
@@ -250,28 +192,28 @@ applyFilters(): void {
   }
 
   reopenTicket(ticket: any) {
-   
-  this.ticketListService.reopenTicket(ticket.id).subscribe({
-  
-    next: () => {
-      this.toast.show('Ticket reopened successfully', 'success');
-      this.loadTickets();
-    },
-    error: (err) => {
-      let displayMessage = 'Failed to reopen ticket';
-      if (err.error?.message) {
-        const match = err.error.message.match(/"message":"([^"]+)"/);
-        if (match && match[1]) {
-          displayMessage = match[1];
-        } else {
-          displayMessage = err.error.message;
+
+    this.ticketListService.reopenTicket(ticket.id).subscribe({
+
+      next: () => {
+        this.toast.show('Ticket reopened successfully', 'success');
+        this.loadTickets();
+      },
+      error: (err) => {
+        let displayMessage = 'Failed to reopen ticket';
+        if (err.error?.message) {
+          const match = err.error.message.match(/"message":"([^"]+)"/);
+          if (match && match[1]) {
+            displayMessage = match[1];
+          } else {
+            displayMessage = err.error.message;
+          }
         }
+        this.toast.show(displayMessage, 'error');
+        console.log(err);
       }
-      this.toast.show(displayMessage, 'error');
-      console.log(err);
-    }
-  });
-}
+    });
+  }
 
 
 }

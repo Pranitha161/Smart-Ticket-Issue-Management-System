@@ -8,10 +8,7 @@
     <div class="row align-items-center">
       <div class="col-md-7">
         <div class="chart-container" style="position: relative; height: 220px;">
-          <canvas baseChart
-            [data]="statusChartData"
-            [options]="statusChartOptions"
-            [type]="'doughnut'">
+          <canvas baseChart [data]="statusChartData" [options]="statusChartOptions" [type]="'doughnut'">
           </canvas>
           <div class="chart-center-overlay">
             <span class="text-muted tiny fw-bold">TOTAL</span>
@@ -33,9 +30,9 @@
               </span>
             </div>
             <div class="progress" style="height: 4px;">
-              <div class="progress-bar" 
-                   [style.width.%]="(statusChartData.datasets[0].data[i]! / summaryStats.total) * 100"
-                   [style.backgroundColor]="statusColors[i]">
+              <div class="progress-bar"
+                [style.width.%]="(statusChartData.datasets[0].data[i]! / summaryStats.total) * 100"
+                [style.backgroundColor]="statusColors[i]">
               </div>
             </div>
           </div>

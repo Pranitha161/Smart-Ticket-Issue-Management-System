@@ -10,7 +10,7 @@ describe('AdminPanel', () => {
     await TestBed.configureTestingModule({
       imports: [AdminPanel]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(AdminPanel);
     component = fixture.componentInstance;

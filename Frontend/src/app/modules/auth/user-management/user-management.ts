@@ -65,11 +65,11 @@ export class UserManagement implements OnInit {
   onRoleChange(role: string) {
     this.formUser.roles = [role];
     if (role === 'AGENT') {
-      this.formUser.agentProfile = { 
-        agentLevel: 'L1', // Default level
-        categoryId: '', 
-        skills: [], 
-        currentAssignments: 0 
+      this.formUser.agentProfile = {
+        agentLevel: 'L1',
+        categoryId: '',
+        skills: [],
+        currentAssignments: 0
       };
     } else {
       this.formUser.agentProfile = null;

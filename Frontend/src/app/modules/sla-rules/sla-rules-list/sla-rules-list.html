@@ -1,45 +1,3 @@
-<!-- <div class="container my-4">
-  <h2 class="mb-4">SLA Configuration</h2>
-  <div class="row">
-    <div *ngFor="let rule of slaRules" class="col-md-3 col-sm-6 mb-4">
-      <div class="card text-center sla-card" [ngClass]="rule.priority.toLowerCase()">
-        <div class="card-body">
-          <h5 class="card-title">{{ rule.priority }} Priority</h5>
-          <p class="card-text"><strong>Response:</strong> {{ rule.responseMinutes }} minutes</p>
-          <p class="card-text"><strong>Resolution:</strong> {{ rule.resolutionMinutes }} minutes</p>
-          <button class="btn btn-primary btn-sm me-2" (click)="editRule(rule)">Edit</button>
-          <button *ngIf="!['LOW','MEDIUM','HIGH','CRITICAL'].includes(rule.priority)" 
-                  class="btn btn-danger btn-sm"
-                  (click)="deleteRule(rule.id!, rule.priority)">
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div *ngIf="editingRule" class="card mt-4">
-    <div class="card-body">
-      <h4>Edit {{ editingRule.priority }} Rule</h4>
-      <form [formGroup]="form" (ngSubmit)="saveRule()">
-        <div class="mb-3">
-          <label class="form-label">Priority</label>
-          <input type="text" class="form-control" formControlName="priority" >
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Response Minutes</label>
-          <input type="number" class="form-control" formControlName="responseMinutes">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Resolution Minutes</label>
-          <input type="number" class="form-control" formControlName="resolutionMinutes">
-        </div>
-        <button type="submit" class="btn btn-success">Update Rule</button>
-        <button type="button" class="btn btn-secondary ms-2" (click)="cancelEdit()">Cancel</button>
-      </form>
-    </div>
-  </div>
-</div> -->
-
 <div class="sla-panel-wrapper p-4">
   <div class="panel-header d-flex justify-content-between align-items-center mb-5">
     <div>
@@ -54,7 +12,7 @@
   <div class="sla-grid">
     <div *ngFor="let rule of slaRules" class="sla-glass-card" [ngClass]="rule.priority.toLowerCase()">
       <div class="card-top-accent"></div>
-      
+
       <div class="p-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div class="priority-indicator">
@@ -63,8 +21,8 @@
           </div>
           <div class="action-group">
             <button class="btn-blur-icon edit" (click)="editRule(rule)"><i class="bi bi-pencil-square"></i></button>
-            <button *ngIf="!['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(rule.priority.toUpperCase())" 
-                    class="btn-blur-icon delete ms-2" (click)="confirmDelete(rule)">
+            <button *ngIf="!['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(rule.priority.toUpperCase())"
+              class="btn-blur-icon delete ms-2" (click)="confirmDelete(rule)">
               <i class="bi bi-trash3"></i>
             </button>
           </div>
@@ -83,13 +41,14 @@
         </div>
 
         <div class="sla-timeline-viz">
-           <div class="timeline-bar-bg">
-             <div class="response-segment-fill" [style.width.%]="(rule.responseMinutes / rule.resolutionMinutes) * 100"></div>
-           </div>
-           <div class="d-flex justify-content-between mt-2">
-             <span class="tiny-text fw-bold text-muted">Acknowledge</span>
-             <span class="tiny-text fw-bold text-muted">Solve</span>
-           </div>
+          <div class="timeline-bar-bg">
+            <div class="response-segment-fill" [style.width.%]="(rule.responseMinutes / rule.resolutionMinutes) * 100">
+            </div>
+          </div>
+          <div class="d-flex justify-content-between mt-2">
+            <span class="tiny-text fw-bold text-muted">Acknowledge</span>
+            <span class="tiny-text fw-bold text-muted">Solve</span>
+          </div>
         </div>
       </div>
     </div>
@@ -101,12 +60,12 @@
       <div class="p-4">
         <h5 class="fw-bold mb-1">{{ isNewRule ? 'Create New' : 'Update' }} SLA Target</h5>
         <p class="text-muted small mb-4">Modify time constraints for support delivery.</p>
-        
+
         <form [formGroup]="form" (ngSubmit)="saveRule()">
           <div class="mb-3">
             <label class="form-label-custom">Priority Level</label>
-            <input type="text" class="custom-input" [class.read-only]="!isNewRule" 
-                   [readonly]="!isNewRule" placeholder="e.g. URGENT" formControlName="priority">
+            <input type="text" class="custom-input" [class.read-only]="!isNewRule" [readonly]="!isNewRule"
+              placeholder="e.g. URGENT" formControlName="priority">
           </div>
 
           <div class="row g-3 mb-4">
@@ -127,7 +86,8 @@
           </div>
 
           <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary-custom w-100 py-2 fw-bold" [disabled]="form.invalid">Save Policy</button>
+            <button type="submit" class="btn btn-primary-custom w-100 py-2 fw-bold" [disabled]="form.invalid">Save
+              Policy</button>
             <button type="button" class="btn btn-light-custom w-100 py-2 fw-bold" (click)="cancelEdit()">Cancel</button>
           </div>
         </form>
@@ -140,7 +100,8 @@
       <div class="text-center p-3">
         <div class="warning-icon mb-3"><i class="bi bi-exclamation-triangle-fill"></i></div>
         <h5 class="fw-bold">Delete Policy?</h5>
-        <p class="text-muted small">Are you sure you want to remove the SLA for <strong>{{ ruleToDelete.priority }}</strong>?</p>
+        <p class="text-muted small">Are you sure you want to remove the SLA for <strong>{{ ruleToDelete.priority
+            }}</strong>?</p>
         <div class="d-flex gap-2 mt-4">
           <button class="btn btn-danger-custom w-100 fw-bold" (click)="executeDelete()">Confirm Delete</button>
           <button class="btn btn-light-custom w-100 fw-bold" (click)="ruleToDelete = null">Cancel</button>

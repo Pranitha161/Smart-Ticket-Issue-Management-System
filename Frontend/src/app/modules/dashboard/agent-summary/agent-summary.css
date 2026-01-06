@@ -1,7 +1,11 @@
-/* .theme-card {
+.theme-card {
   border-radius: 16px;
   overflow: hidden;
   background: white;
+}
+
+.accent-left-purple {
+  border-left: 6px solid #5c67f2 !important;
 }
 
 .sidebar-header-slate {
@@ -11,74 +15,44 @@
   letter-spacing: 1.5px;
 }
 
-.tiny-label {
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: #94a3b8;
-  letter-spacing: 0.5px;
-  padding: 15px 10px;
-}
-
-.avatar-sm {
+.avatar-circle {
   width: 32px;
   height: 32px;
   background: #eef2ff;
   color: #5c67f2;
-  border-radius: 8px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
   font-size: 0.75rem;
-  border: 2px solid transparent;
 }
 
-.avatar-sm.border-danger {
-  border-color: #ef4444 !important;
-  background: #fef2f2;
+.tiny-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #94a3b8;
+  padding: 15px 0;
 }
 
-.badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 5px 10px;
-  border-radius: 6px;
+.tiny-text {
+  font-size: 0.7rem;
 }
 
-.bg-soft-danger { background-color: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; }
-.bg-soft-success { background-color: #f0fdf4; color: #10b981; }
-
-.table-hover tbody tr:hover {
-  background-color: #f8fafc;
-} */
- /* src/app/modules/dashboard/agent-summary/agent-summary.css */
-.theme-card { border-radius: 16px; overflow: hidden; background: white; }
-
-.accent-left-purple { border-left: 6px solid #5c67f2 !important; }
-
-.sidebar-header-slate {
-  padding: 12px 20px; font-size: 0.65rem;
-  font-weight: 800; letter-spacing: 1.5px;
+.bg-soft-danger {
+  background-color: #fef2f2;
+  border: 1px solid #fee2e2;
 }
 
-.avatar-circle {
-  width: 32px; height: 32px;
-  background: #eef2ff; color: #5c67f2;
-  border-radius: 50%; display: flex;
-  align-items: center; justify-content: center;
-  font-weight: 800; font-size: 0.75rem;
+.bg-soft-success {
+  background-color: #f0fdf4;
+  border: 1px solid #dcfce7;
 }
 
-.tiny-label { font-size: 0.6rem; font-weight: 800; color: #94a3b8; padding: 15px 0; }
-.tiny-text { font-size: 0.7rem; }
+.table> :not(caption)>*>* {
+  border-bottom-color: #f1f5f9;
+}
 
-.bg-soft-danger { background-color: #fef2f2; border: 1px solid #fee2e2; }
-.bg-soft-success { background-color: #f0fdf4; border: 1px solid #dcfce7; }
-
-.table > :not(caption) > * > * { border-bottom-color: #f1f5f9; }
-/* src/app/modules/dashboard/agent-summary/agent-summary.css */
-
-/* Add the missing dark background for the slate header */
 .sidebar-header-slate {
 
 
@@ -91,30 +65,28 @@
   text-transform: uppercase;
 }
 
-/* Improve table row height and padding to match image_103a64 */
 .table tbody tr td {
   padding-top: 1rem;
   padding-bottom: 1rem;
   vertical-align: middle;
 }
 
-/* Make Agent Names stand out more */
 .text-dark.small.fw-bold {
   font-size: 0.9rem;
   color: #1e293b !important;
 }
 
-/* Update the progress bar to be thinner and rounded */
 .progress {
   background-color: #f1f5f9;
   border-radius: 10px;
-  height: 6px !important; /* Thinner bar for more modern look */
+  height: 6px !important;
 }
 
 .progress-bar {
   border-radius: 10px;
 }
+
 .table-responsive {
-  max-height: 30vh;   /* adjust as needed */
+  max-height: 30vh;
   overflow-y: auto;
 }

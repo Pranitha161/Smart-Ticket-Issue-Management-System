@@ -16,9 +16,16 @@
     border-radius: 20px;
     overflow: hidden;
 
-    /* min-height: 100vh; */
 }
-.btn-primary-custom { background: #5c67f2; color: white; border: none; border-radius: 10px; font-weight: 600; }
+
+.btn-primary-custom {
+    background: #5c67f2;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
 .stat-glass-card:hover {
     transform: translateY(-5px);
 }
@@ -301,19 +308,14 @@
 
 .custom-table-wrapper {
     max-height: 30vh;
-    /* limit height to 70% of viewport */
     overflow-y: auto;
-    /* enable vertical scroll */
     border-radius: 8px;
-    /* optional styling */
 }
 
 .custom-table-wrapper thead th {
     position: sticky;
     top: 0;
     background: #fff;
-    /* keep header visible above rows */
     z-index: 2;
     padding: 10px;
-    /* ensure header stays on top */
 }

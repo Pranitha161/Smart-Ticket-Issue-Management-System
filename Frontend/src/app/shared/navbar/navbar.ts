@@ -2,7 +2,6 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 import { CommonModule } from '@angular/common';
-import { NotificationPanel } from '../../modules/notifications/notification-panel/notification-panel';
 import { Notifications } from '../../core/services/notifications';
 
 @Component({
@@ -30,8 +29,16 @@ export class Navbar {
       this.currentUrl = this.router.url;
     });
     effect(() => {
-      this.notificationService.historySignal();
-      this.isNavbarCleared.set(false);
+      const email = this.authService.email();
+
+      if (email) {
+
+        console.log('Syncing notifications for:', email);
+        this.notificationService.refreshHistory(email);
+      } else {
+
+        this.notificationService.clearHistory();
+      }
     });
   }
 
@@ -45,7 +52,6 @@ export class Navbar {
     return this.isNavbarCleared() ? [] : fullHistory.slice(0, 5);
   });
 
-  // 3. Simple method to hide them
   clearNavbarView(): void {
     this.isNavbarCleared.set(true);
   }

@@ -1,35 +1,14 @@
-<!-- <div class="card theme-card accent-left-purple border-0 shadow-sm h-100">
-  <div class="sidebar-header-slate">TICKET DISTRIBUTION</div>
-  
-  <div class="card-body p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h5 class="fw-bold text-dark m-0">By Category</h5>
-      <span class="badge-status-pill">Live View</span>
-    </div>
-
-    <div class="chart-container" style="height: 280px; position: relative;">
-      <canvas baseChart
-        [data]="categoryChartData"
-        [options]="categoryChartOptions"
-        [type]="'bar'">
-      </canvas>
-    </div>
-  </div>
-</div> -->
 <div class="card theme-card accent-left-purple border-0 shadow-sm h-100">
-   <div class="card-header border-0 bg-white pt-4 px-4">
+  <div class="card-header border-0 bg-white pt-4 px-4">
     <h6 class="tiny-label mb-1">TICKET CATEGORY</h6>
     <h5 class="fw-bold text-dark m-0">Category Breakdown</h5>
   </div>
-  
+
   <div class="card-body p-4">
-    
+
 
     <div class="chart-container" style="height: 280px;">
-      <canvas baseChart
-        [data]="categoryChartData"
-        [options]="categoryChartOptions"
-        [type]="'bar'">
+      <canvas baseChart [data]="categoryChartData" [options]="categoryChartOptions" [type]="'bar'">
       </canvas>
     </div>
   </div>

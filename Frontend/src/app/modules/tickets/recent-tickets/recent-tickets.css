@@ -1,47 +1,4 @@
-/* .recent-tickets {
-  background: #fff;
-  border-radius: 16px;
-}
-
-.ticket-item {
-  border: 1px solid #f0f0f0;
-  border-radius: 12px;
-  transition: background-color 0.2s;
-}
-
-.ticket-item:hover {
-    border-color: #5c67f2;
-  background-color: #f8faff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(92, 103, 242, 0.08);
-}
-
-.badge-custom {
-  padding: 4px 12px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: lowercase;
-}
-
-.badge-priority.high { background-color: #ffedd5; color: #9a3412; }
-.badge-priority.medium { background-color: #fef9c3; color: #854d0e; }
-
-
-.badge-status.in-progress { background-color: #fef9c3; color: #854d0e; }
-.badge-status.assigned { background-color: #dbeafe; color: #1e40af; }
-
-@media (max-width: 576px) {
-  .ticket-item .card-body {
-    padding: 0.75rem;
-  }
-  .badge-custom {
-    padding: 2px 8px;
-    font-size: 0.7rem;
-  }
-} */
- 
- .recent-tickets {
+.recent-tickets {
   border-radius: 20px;
   overflow: hidden;
 }
@@ -98,13 +55,36 @@
   text-transform: uppercase;
 }
 
-.priority[data-priority="CRITICAL"], .priority[data-priority="HIGH"] { background: #fee2e2; color: #ef4444; }
-.priority[data-priority="MEDIUM"] { background: #fef9c3; color: #854d0e; }
-.priority[data-priority="LOW"] { background: #f1f5f9; color: #475569; }
+.priority[data-priority="CRITICAL"],
+.priority[data-priority="HIGH"] {
+  background: #fee2e2;
+  color: #ef4444;
+}
 
-.status[data-status="OPEN"] { background: #ffedd5; color: #f59e0b; }
-.status[data-status="ASSIGNED"] { background: #dbeafe; color: #1e40af; }
-.status[data-status="RESOLVED"] { background: #dcfce7; color: #15803d; }
+.priority[data-priority="MEDIUM"] {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.priority[data-priority="LOW"] {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.status[data-status="OPEN"] {
+  background: #ffedd5;
+  color: #f59e0b;
+}
+
+.status[data-status="ASSIGNED"] {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status[data-status="RESOLVED"] {
+  background: #dcfce7;
+  color: #15803d;
+}
 
 
 .sla-badge {
@@ -121,11 +101,30 @@
 }
 
 @keyframes pulse-animation {
-  0% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.4); }
-  100% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  0% {
+    box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.4);
+  }
+
+  100% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
 }
 
-.tiny { font-size: 0.7rem; }
-.fw-600 { font-weight: 600; }
-.btn-light-primary { background: #f0f2ff; color: #5c67f2; border: none; }
-.btn-light-primary:hover { background: #5c67f2; color: #fff; } 
+.tiny {
+  font-size: 0.7rem;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+.btn-light-primary {
+  background: #f0f2ff;
+  color: #5c67f2;
+  border: none;
+}
+
+.btn-light-primary:hover {
+  background: #5c67f2;
+  color: #fff;
+}

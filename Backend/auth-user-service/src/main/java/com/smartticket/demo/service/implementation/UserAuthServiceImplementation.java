@@ -317,4 +317,13 @@ public class UserAuthServiceImplementation implements UserAuthService {
 				});
 	}
 
+	@Override
+	public Mono<User> incrementEscalatedCount(String agentId) {
+		return userauthRepo.findById(agentId).switchIfEmpty(Mono.error(new RuntimeException("Agent not found")))
+				.flatMap(agent -> {
+					agent.getAgentProfile().setEscalatedCount(agent.getAgentProfile().getEscalatedCount() + 1);
+					return userauthRepo.save(agent);
+				});
+	}
+
 }

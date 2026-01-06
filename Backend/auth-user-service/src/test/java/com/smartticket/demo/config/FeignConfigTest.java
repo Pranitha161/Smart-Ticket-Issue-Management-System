@@ -18,7 +18,7 @@ class FeignConfigTest {
 		assertNotNull(converters);
 
 		boolean hasJackson = converters.getConverters().stream()
-				.anyMatch(c -> c instanceof MappingJackson2HttpMessageConverter);
+				.anyMatch(MappingJackson2HttpMessageConverter.class::isInstance);
 
 		assertTrue(hasJackson, "Should contain MappingJackson2HttpMessageConverter");
 

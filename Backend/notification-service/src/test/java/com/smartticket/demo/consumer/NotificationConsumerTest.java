@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
-public class NotificationConsumerTest {
+class NotificationConsumerTest {
 
 	@Mock
 	private NotificationService notificationService;
@@ -102,6 +102,126 @@ public class NotificationConsumerTest {
 	@Test
 	void consume_invalidJson_doesNotThrow() {
 		consumer.consume("not-a-json");
+		verify(notificationService, never()).sendEmail(any());
+	}
+
+	@Test
+	void consume_passwordChangedEvent_success() throws Exception {
+		EventDTO event = new EventDTO();
+		event.setEventType("PASSWORD_CHANGED");
+		event.setUserId("U1");
+		event.setEmail("test@example.com");
+		String message = objectMapper.writeValueAsString(event);
+		consumer.consume(message);
+		verify(notificationService)
+				.sendEmail(argThat(notification -> notification.getSubject().contains("Password Changed")
+						&& notification.getBody().contains("updated")));
+	}
+
+	@Test
+	void consume_ticketCreatedEvent_success() throws Exception {
+		EventDTO event = new EventDTO();
+		event.setEventType("CREATED");
+		event.setTicketId("T123");
+		event.setEmail("test@example.com");
+		String message = objectMapper.writeValueAsString(event);
+		consumer.consume(message);
+		verify(notificationService).sendEmail(argThat(notification -> notification.getSubject().contains("Created")
+				&& notification.getBody().contains("created")));
+	}
+
+	@Test
+	void consume_ticketUpdatedEvent_success() throws Exception {
+		EventDTO event = new EventDTO();
+		event.setEventType("UPDATED");
+		event.setTicketId("T123");
+		event.setTicketStatus("IN_PROGRESS");
+		event.setEmail("test@example.com");
+		String message = objectMapper.writeValueAsString(event);
+		consumer.consume(message);
+		verify(notificationService).sendEmail(argThat(notification -> notification.getSubject().contains("Updated")
+				&& notification.getBody().contains("IN_PROGRESS")));
+	}
+
+	@Test
+	void consume_ticketDeletedEvent_success() throws Exception {
+		EventDTO event = new EventDTO();
+		event.setEventType("DELETED");
+		event.setTicketId("T123");
+		event.setEmail("test@example.com");
+		String message = objectMapper.writeValueAsString(event);
+		consumer.consume(message);
+		verify(notificationService).sendEmail(argThat(notification -> notification.getSubject().contains("Deleted")
+				&& notification.getBody().contains("deleted")));
+	}
+
+	@Test
+	void consume_ticketReassignedEvent_success() throws Exception {
+		EventDTO event = new EventDTO();
+		event.setEventType("REASSIGNED");
+		event.setTicketId("T123");
+		event.setAssignedTo("AgentX");
+		event.setEmail("test@example.com");
+		String message = objectMapper.writeValueAsString(event);
+		consumer.consume(message);
+		verify(notificationService).sendEmail(argThat(notification -> notification.getSubject().contains("Reassigned")
+				&& notification.getBody().contains("AgentX")));
+	}
+
+	@Test
+	void consume_ticketEscalatedEvent_success() throws Exception {
+		EventDTO event = new EventDTO();
+		event.setEventType("ESCALATED");
+		event.setTicketId("T123");
+		event.setEscalationLevel("L2");
+		event.setEmail("test@example.com");
+		String message = objectMapper.writeValueAsString(event);
+		consumer.consume(message);
+		verify(notificationService).sendEmail(argThat(notification -> notification.getSubject().contains("Escalated")
+				&& notification.getBody().contains("L2")));
+	}
+
+	@Test
+	void consume_ticketSlaBreachedEvent_success() throws Exception {
+		EventDTO event = new EventDTO();
+		event.setEventType("SLA_BREACHED");
+		event.setTicketId("T123");
+		event.setEmail("test@example.com");
+		String message = objectMapper.writeValueAsString(event);
+		consumer.consume(message);
+		verify(notificationService).sendEmail(argThat(notification -> notification.getSubject().contains("SLA Breach")
+				&& notification.getBody().contains("breached SLA")));
+	}
+
+	@Test
+	void consume_eventWithBlankEmail_fetchesFromUserClient() throws Exception {
+		EventDTO event = new EventDTO();
+		event.setEventType("CREATED");
+		event.setTicketId("T123");
+		event.setEmail(" ");
+		when(userClient.getUserEmail("U1")).thenReturn("fallback@example.com");
+		event.setUserId("U1");
+		String message = objectMapper.writeValueAsString(event);
+		consumer.consume(message);
+		verify(notificationService)
+				.sendEmail(argThat(notification -> notification.getRecipient().equals("fallback@example.com")));
+	}
+
+	@Test
+	void consume_eventWithNullTicketId_stillProcesses() throws Exception {
+		EventDTO event = new EventDTO();
+		event.setEventType("CREATED");
+		event.setTicketId(null);
+		event.setEmail("test@example.com");
+		String message = objectMapper.writeValueAsString(event);
+		consumer.consume(message);
+		verify(notificationService)
+				.sendEmail(argThat(notification -> notification.getSubject().contains("Ticket #null")));
+	}
+
+	@Test
+	void consume_eventThrowsException_doesNotPropagate() throws Exception {
+		consumer.consume("{\"eventType\": \"CREATED\", \"ticketId\": }");
 		verify(notificationService, never()).sendEmail(any());
 	}
 }

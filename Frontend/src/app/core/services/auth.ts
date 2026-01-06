@@ -13,7 +13,8 @@ export class AuthService {
   loggedIn = signal(false);
   username = signal<string | null>(null);
   roles = signal<string[]>([]);
-  userId = signal<string | null>(null);   // ✅ new signal
+  userId = signal<string | null>(null);
+  email=   signal<string | null>(null);
 
   constructor(private http: HttpClient,
     private lookup:LookupService,
@@ -24,7 +25,8 @@ export class AuthService {
       this.loggedIn.set(true);
       this.username.set(this.extractUsername(token));
       this.roles.set(this.extractRoles(token));
-      this.userId.set(this.extractUserId(token));   
+      this.userId.set(this.extractUserId(token)); 
+      this.email.set(this.extractUserEmail(token));  
     }
   }
 
@@ -45,7 +47,7 @@ export class AuthService {
     this.loggedIn.set(true);
     this.username.set(this.extractUsername(token));
     this.roles.set(this.extractRoles(token));
-    this.userId.set(this.extractUserId(token));   // ✅ update userId
+    this.userId.set(this.extractUserId(token));  
   }
 
   getToken(): string | null {
@@ -76,6 +78,14 @@ export class AuthService {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload.username || payload.sub || null;
+    } catch {
+      return null;
+    }
+  }
+  private extractUserEmail(token: string): string | null {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.email || payload.sub || null;
     } catch {
       return null;
     }

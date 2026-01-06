@@ -32,8 +32,8 @@ public interface DashBoardService {
 
 	Mono<UserStatsDto> getStats();
 
-	Mono<AgentStatsDto> getAgentStatsById(String agentId);
-
 	Flux<AgentStatsDto> getAllAgentStats();
+
+	Mono<AgentStatsDto> getAgentStatsById(String agentId);
 
 }

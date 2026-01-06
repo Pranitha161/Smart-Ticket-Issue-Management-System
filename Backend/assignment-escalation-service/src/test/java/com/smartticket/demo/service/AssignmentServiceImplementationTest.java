@@ -1,5 +1,7 @@
 package com.smartticket.demo.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.contains;
@@ -381,5 +383,78 @@ class AssignmentServiceImplementationTest {
 		when(assignmentRepo.getEscalationSummary()).thenReturn(Flux.empty());
 		StepVerifier.create(service.getEscalationSummary()).expectNextMatches(List::isEmpty).verifyComplete();
 	}
+
+//	@Test
+//	void manualAssign_ticketNotFound() {
+//	    when(ticketClient.getTicketById("T1")).thenReturn(null);
+//	    StepVerifier.create(service.manualAssign("T1", "A1", PRIORITY.HIGH, 1L))
+//	        .expectErrorMatches(e -> e.getMessage().contains("Ticket not found"))
+//	        .verify();
+//	}
+	@Test
+	void completeAssignment_saveError() {
+		assignment.setStatus(ASSIGNMENT_STATUS.ASSIGNED);
+		when(assignmentRepo.findTopByTicketIdOrderByAssignedAtDesc("T1")).thenReturn(Mono.just(assignment));
+		when(assignmentRepo.save(any())).thenReturn(Mono.error(new RuntimeException("DB error")));
+		StepVerifier.create(service.completeAssignment("T1"))
+				.expectErrorMatches(e -> e.getMessage().contains("DB error")).verify();
+	}
+
+	@Test
+	void checkAndEscalate_maxLevelNoFurtherEscalation() {
+		assignment.setDueAt(Instant.now().minus(Duration.ofMinutes(10)));
+		assignment.setEscalationLevel(3);
+		when(assignmentRepo.findTopByTicketIdOrderByAssignedAtDesc("T1")).thenReturn(Mono.just(assignment));
+		StepVerifier.create(service.checkAndEscalate("T1"))
+				.expectNextMatches(a -> a.getEscalationLevel() == 3 && a.getStatus() != ASSIGNMENT_STATUS.ESCALATED)
+				.verifyComplete();
+		verify(assignmentRepo, never()).save(any());
+		verify(eventProducer, never()).publishEscalationEvent(any(), any(), anyInt());
+	}
+
+	@Test
+	void reassign_escalatedAssignment() {
+		assignment.setStatus(ASSIGNMENT_STATUS.ESCALATED);
+		assignment.setAgentId("A1");
+		when(assignmentRepo.findTopByTicketIdOrderByAssignedAtDesc("T1")).thenReturn(Mono.just(assignment));
+		when(assignmentRepo.save(any())).thenReturn(Mono.just(assignment));
+		StepVerifier.create(service.reassign("T1", "A2"))
+				.expectNextMatches(a -> a.getAgentId().equals("A2") && a.getStatus() == ASSIGNMENT_STATUS.REASSIGNED)
+				.verifyComplete();
+		verify(eventProducer).publishAssignmentEvent("T1", "A2", "REASSIGNED");
+	}
+	@Test
+	void autoAssign_saveError() {
+	    TicketDto ticket = new TicketDto();
+	    ticket.setId("T1");
+	    ticket.setStatus(STATUS.OPEN);
+	    ticket.setPriority(PRIORITY.HIGH);
+	    ticket.setVersion(1L);
+	    SlaRule rule = new SlaRule();
+	    rule.setPriority(PRIORITY.HIGH);
+	    rule.setResolutionMinutes(30);
+	    when(ticketClient.getTicketById("T1")).thenReturn(ticket);
+	    when(slaRuleRepo.findByPriority(PRIORITY.HIGH)).thenReturn(Mono.just(rule));
+	    when(ruleEngine.pickAgentForTicket(ticket)).thenReturn("A1");
+	    when(assignmentRepo.save(any())).thenReturn(Mono.error(new RuntimeException("DB error")));
+	    StepVerifier.create(service.autoAssign("T1"))
+	        .expectErrorMatches(e -> e.getMessage().contains("DB error"))
+	        .verify();
+	}
+	@Test
+	void assignmentsPerAgent_multipleAgents() {
+	    Assignment a1 = Assignment.builder().ticketId("T1").agentId("A1").status(ASSIGNMENT_STATUS.ASSIGNED).assignedAt(Instant.now()).build();
+	    Assignment a2 = Assignment.builder().ticketId("T2").agentId("A2").status(ASSIGNMENT_STATUS.COMPLETED).assignedAt(Instant.now().minusSeconds(600)).unassignedAt(Instant.now()).build();
+	    when(assignmentRepo.findAll()).thenReturn(Flux.just(a1, a2));
+	    StepVerifier.create(service.assignmentsPerAgent())
+	        .assertNext(list -> {
+	            assertEquals(2, list.size());
+	            assertTrue(list.stream().anyMatch(dto -> dto.getAgentId().equals("A1")));
+	            assertTrue(list.stream().anyMatch(dto -> dto.getAgentId().equals("A2")));
+	        })
+	        .verifyComplete();
+	}
+
+
 
 }

@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
-public class DashBoardControllerTest {
+class DashBoardControllerTest {
 	@Mock
 	private DashBoardServiceImplementation dashboardService;
 	@InjectMocks

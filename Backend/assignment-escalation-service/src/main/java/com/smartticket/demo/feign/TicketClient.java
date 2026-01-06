@@ -13,16 +13,20 @@ import com.smartticket.demo.entity.TicketActivity;
 @FeignClient(name = "ticket-service")
 public interface TicketClient {
 
-	@GetMapping("/tickets/{id}")
+	@GetMapping("/tickets/internal/{id}")
 	TicketDto getTicketById(@PathVariable String id);
 
-	@PutMapping("/tickets/{id}/assign")
+	@PutMapping("/tickets/internal/{id}/assign")
 	void assignTicket(@PathVariable String id,@RequestParam("agentId") String agentId);
 	
-	@PutMapping("/tickets/{id}/resolve")
+	@PutMapping("/tickets/internal/{id}/escalate")
+	void escalateTicket(@PathVariable String id);
+	
+	
+	@PutMapping("/tickets/internal/{id}/resolve")
 	void resolveTicket(@PathVariable String id);
 	
-	@PostMapping("/tickets/{ticketId}/activity/comment")
+	@PostMapping("/tickets/{ticketId}/activity/internal/comment")
 	TicketActivity logActivity(@PathVariable String ticketId, @RequestParam String actorId,
 			@RequestParam String comment);
 

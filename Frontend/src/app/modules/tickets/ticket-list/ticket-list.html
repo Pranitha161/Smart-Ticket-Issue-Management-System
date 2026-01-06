@@ -586,7 +586,7 @@
           <td><span class="category-tag">{{ lookup.getCategoryName(ticket.categoryId) }}</span></td>
           <td class="text-end pe-4">
             <div class="d-flex justify-content-end gap-2">
-              <ng-container *ngIf="(role === 'ADMIN' || role === 'MANAGER') && ticket.status == 'OPEN'">
+              <ng-container *ngIf="(role === 'ADMIN' || role === 'MANAGER') && ticket.status !== 'RESOLVED'&& ticket.status!=='IN_PROGRESS'">
                 <button class="btn-action" (click)="$event.stopPropagation(); manualAssign(ticket)"
                   data-tooltip="Manual Assign">
                   <i class="bi bi-person-plus"></i>

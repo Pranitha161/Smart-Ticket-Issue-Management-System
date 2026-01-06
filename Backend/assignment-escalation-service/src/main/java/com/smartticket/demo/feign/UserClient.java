@@ -21,4 +21,5 @@ public interface UserClient {
     
     @PutMapping("/agents/{agentId}/decrement-assignments") 
     void decrementAssignments(@PathVariable("agentId") String agentId);
+    
 }

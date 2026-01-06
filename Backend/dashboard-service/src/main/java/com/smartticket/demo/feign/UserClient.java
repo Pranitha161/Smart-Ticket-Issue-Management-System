@@ -12,12 +12,12 @@ import com.smartticket.demo.dto.UserStatsDto;
 @FeignClient(name = "auth-user-service")
 public interface UserClient {
 
-	@GetMapping("/auth/users/stats")
+	@GetMapping("/dashboard/auth/users/stats")
 	UserStatsDto getUserStats();
 	
-	@GetMapping("/{agentId}/stats") 
+	@GetMapping("/dashboard/{agentId}/stats") 
 	AgentStatsDto getAgentStats(@PathVariable String agentId); 
 	
-	@GetMapping("/stats")
+	@GetMapping("/dashboard/stats")
 	List<AgentStatsDto> getAllAgentStats();
 }

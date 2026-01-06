@@ -77,14 +77,14 @@ public class DashBoardServiceImplementation implements DashBoardService {
 	@Override
 	public Mono<UserStatsDto> getStats() {
 		return Mono.fromCallable(() -> userClient.getUserStats()).subscribeOn(Schedulers.boundedElastic());
-
 	}
-	
+
 	@Override
 	public Mono<AgentStatsDto> getAgentStatsById(String agentId) {
 		return Mono.fromCallable(() -> userClient.getAgentStats(agentId)).subscribeOn(Schedulers.boundedElastic());
 
 	}
+
 	@Override
 	public Flux<AgentSummaryDto> getAssignmentsPerAgent() {
 		return Flux.defer(() -> Flux.fromIterable(assignmentClient.getAgentWorkloadSummary()))

@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
-public class UserAuthControllerTest {
+class UserAuthControllerTest {
 	@Mock
 	private UserAuthServiceImplementation userAuthService;
 	@InjectMocks
@@ -224,7 +224,6 @@ public class UserAuthControllerTest {
 
 	@Test
 	void incrementEscalatedCount_success() {
-		ApiResponse resp = new ApiResponse(true, "Agent escalted count increment");
 		when(userAuthService.incrementEscalatedCount("A1")).thenReturn(Mono.just(new User()));
 		StepVerifier.create(controller.incrementEscalatedCount("A1"))
 				.assertNext(entity -> assertEquals("Agent escalted count increment", entity.getBody().getMessage()))

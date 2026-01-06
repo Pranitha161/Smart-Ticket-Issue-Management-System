@@ -13,21 +13,21 @@ import com.smartticket.demo.dto.UserTicketStatsDto;
 
 @FeignClient(name = "ticket-service")
 public interface TicketClient {
-	@GetMapping("/tickets/status-summary")
+	@GetMapping("/tickets/dashboard/status-summary")
 	List<StatusSummaryDto> getTicketStatusSummary();
 
-	@GetMapping("/tickets/status-priority-summary")
+	@GetMapping("/tickets/dashboard/status-priority-summary")
 	List<PrioritySummaryDto> getTicketStatusPrioritySummary();
 
-	@GetMapping("/tickets/category-summary")
+	@GetMapping("/tickets/dashboard/category-summary")
 	List<CategorySummaryDto> getCategorySummary();
 	
-	@GetMapping("/tickets/user/{userId}/stats")
+	@GetMapping("/tickets/dashboard/user/{userId}/stats")
 	UserTicketStatsDto getUserStats(@PathVariable String userId);
 	
-	@GetMapping("/tickets/agent/{agentId}/stats")
+	@GetMapping("/tickets/dashboard/agent/{agentId}/stats")
 	UserTicketStatsDto getAgentStats(@PathVariable String agentId);
 	
-	@GetMapping("/tickets/global-stats")
+	@GetMapping("/tickets/dashboard/global-stats")
 	UserTicketStatsDto getGlobalStats();
 }

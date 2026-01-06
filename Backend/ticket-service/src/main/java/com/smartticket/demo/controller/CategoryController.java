@@ -2,6 +2,7 @@ package com.smartticket.demo.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +29,8 @@ public class CategoryController {
 	public CategoryController(CategoryServiceImplementation categoryService) {
 		this.categoryService = categoryService;
 	}
-
+	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/create")
 	public Mono<ResponseEntity<ApiResponse>> createCategory(@RequestBody Category category) {
 		return categoryService.createCategory(category).map(saved -> ResponseEntity.status(HttpStatus.CREATED)
@@ -36,7 +38,7 @@ public class CategoryController {
 
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping("/internal/{id}")
 	public Mono<ResponseEntity<Category>> getCategoryById(@PathVariable String id) {
 		return categoryService.getCategoryById(id).map(category -> ResponseEntity.ok(category))
 				.defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
@@ -47,6 +49,7 @@ public class CategoryController {
 		return categoryService.getAllCategories();
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{id}")
 	public Mono<ResponseEntity<ApiResponse>> updateCategory(@PathVariable String id, @RequestBody Category category) {
 		return categoryService.updateCategory(id, category).map(
@@ -54,7 +57,8 @@ public class CategoryController {
 				.defaultIfEmpty(
 						ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Category not found")));
 	}
-
+	
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public Mono<ResponseEntity<ApiResponse>> deleteCategory(@PathVariable String id,
 			@RequestParam(required = false) String reassignTo) {

@@ -8,5 +8,6 @@ export const routes: Routes = [
     },
     { path: 'tickets', loadChildren: () => import('./modules/tickets/tickets-module').then(m => m.TicketsModule) },
     {path:'sla-rules',loadChildren:()=>import('./modules/sla-rules/sla-rules-module').then(m=>m.SlaRulesModule)},
-    {path:'dashboard',loadChildren:()=>import('./modules/dashboard/dashboard-module').then(m=>m.DashboardModule)}
+    {path:'dashboard',loadChildren:()=>import('./modules/dashboard/dashboard-module').then(m=>m.DashboardModule)},
+     {path:'notifications',loadChildren:()=>import('./modules/notifications/notifications-module').then(m=>m.NotificationsModule)}
 ];

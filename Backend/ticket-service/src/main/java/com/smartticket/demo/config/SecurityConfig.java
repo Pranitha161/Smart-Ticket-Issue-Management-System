@@ -33,7 +33,7 @@ public class SecurityConfig {
 	public SecurityWebFilterChain security(ServerHttpSecurity http,
 			Converter<Jwt, ? extends Mono<? extends AbstractAuthenticationToken>> jwtAuthConverter) {
 		return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
-				.authorizeExchange(ex -> ex.pathMatchers("/auth/login", "/auth/register", "/auth/request-reset",
+				.authorizeExchange(ex -> ex.pathMatchers("/auth/login", "/auth/register", "/auth/request-reset","/categories/internal/**",
 						"/auth/reset-password/**", "/v3/api-docs/**", "/swagger-ui/**", "/tickets/dashboard/**",   "/tickets/internal/**","/tickets/*/activity/internal/comment")
 						.permitAll().anyExchange()
 						.authenticated())

@@ -222,4 +222,30 @@ public class UserAuthControllerTest {
 		}).verifyComplete();
 	}
 
+	@Test
+	void incrementEscalatedCount_success() {
+		ApiResponse resp = new ApiResponse(true, "Agent escalted count increment");
+		when(userAuthService.incrementEscalatedCount("A1")).thenReturn(Mono.just(new User()));
+		StepVerifier.create(controller.incrementEscalatedCount("A1"))
+				.assertNext(entity -> assertEquals("Agent escalted count increment", entity.getBody().getMessage()))
+				.verifyComplete();
+	}
+
+	@Test
+	void enableUser_success() {
+		ApiResponse resp = new ApiResponse(true, "User enabled successfully");
+		when(userAuthService.enableUserById("U1")).thenReturn(Mono.just(resp));
+		StepVerifier.create(controller.enableUser("U1")).assertNext(entity -> assertTrue(entity.getBody().isSuccess()))
+				.verifyComplete();
+	}
+
+	@Test
+	void enableUser_notFound() {
+		when(userAuthService.enableUserById("U1")).thenReturn(Mono.error(new RuntimeException("User not found")));
+		StepVerifier.create(controller.enableUser("U1")).assertNext(entity -> {
+			assertEquals(HttpStatus.NOT_FOUND, entity.getStatusCode());
+			assertEquals("User not found", entity.getBody().getMessage());
+		}).verifyComplete();
+	}
+
 }

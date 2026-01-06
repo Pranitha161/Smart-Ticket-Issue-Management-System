@@ -45,7 +45,7 @@ public class UserAuthController {
 
 	@PostMapping("/auth/login")
 	public Mono<ResponseEntity<ApiResponse>> login(@RequestBody LoginRequest request) {
-		return userAuthService.login(request).map(response -> ResponseEntity.ok(response));
+		return userAuthService.login(request).map(ResponseEntity::ok);
 	}
 
 	@GetMapping("/auth/{id}")
@@ -56,25 +56,25 @@ public class UserAuthController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/auth/{id}")
 	public Mono<ResponseEntity<ApiResponse>> deleteUserById(@PathVariable String id) {
-		return userAuthService.deleteUserById(id).map(response -> ResponseEntity.ok(response));
+		return userAuthService.deleteUserById(id).map(ResponseEntity::ok);
 	}
 
 	@PostMapping("/auth/request-reset")
 	public Mono<ResponseEntity<ApiResponse>> requestPasswordReset(@RequestParam String email) {
-		return userAuthService.requestPasswordReset(email).map(response -> ResponseEntity.ok(response));
+		return userAuthService.requestPasswordReset(email).map(ResponseEntity::ok);
 	}
 
 	@PostMapping("/auth/reset-password")
 	public Mono<ResponseEntity<ApiResponse>> resetPassword(@RequestParam String token,
 			@RequestParam String newPassword) {
-		return userAuthService.resetPassword(token, newPassword).map(response -> ResponseEntity.ok(response));
+		return userAuthService.resetPassword(token, newPassword).map(ResponseEntity::ok);
 	}
 
 	@PostMapping("/auth/change-password")
 	public Mono<ResponseEntity<ApiResponse>> changePassword(@RequestParam String userName,
 			@RequestParam String oldPassword, @RequestParam String newPassword) {
 		return userAuthService.changePassword(userName, oldPassword, newPassword)
-				.map(response -> ResponseEntity.ok(response));
+				.map(ResponseEntity::ok);
 	}
 
 	@GetMapping("/users")
@@ -156,7 +156,7 @@ public class UserAuthController {
 
 	@PutMapping("/{id}/enable")
 	public Mono<ResponseEntity<ApiResponse>> enableUser(@PathVariable String id) {
-		return userAuthService.enableUserById(id).map(response -> ResponseEntity.ok(response)).onErrorResume(ex -> Mono
+		return userAuthService.enableUserById(id).map(ResponseEntity::ok).onErrorResume(ex -> Mono
 				.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, ex.getMessage()))));
 	}
 

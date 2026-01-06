@@ -36,8 +36,10 @@ public class SecurityConfig {
                 
                 
                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .pathMatchers("/v3/api-docs/**",
-                    "/swagger-ui/**").permitAll()
+                .pathMatchers("/*/swagger-ui.html").permitAll()
+                .pathMatchers("/*/swagger-ui/**").permitAll()
+                .pathMatchers("/*/v3/api-docs/**").permitAll()
+                .pathMatchers("/webjars/**", "/*/webjars/**").permitAll()
                 .pathMatchers("/auth-user-service/auth/**").permitAll()
                 .pathMatchers("/actuator/**").permitAll()
                 .pathMatchers("/actuator/**").permitAll()

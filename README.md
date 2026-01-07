@@ -102,6 +102,9 @@ The Smart Ticket Issue & Management System provides organizations with a cloud-n
 | **CI/CD**            | Jenkins, Docker, Docker Compose |
 | **Deployment**       | Netlify (Frontend), Dockerized microservices |
 
+> 🔑 **Config Server Repo**: All microservices fetch their configuration from a dedicated GitHub repository
+>  `https://github.com/Pranitha161/Smart-Ticket-Issue-Management-System-Config-Server` 
+> Each service has its own `application-{service}.properties` file stored here.
 ---
 
 ##  Basic Setup Instructions
@@ -140,7 +143,7 @@ npm install
 ng serve -o
 ```
 ### 7. Access the Application
-```bash
+
 
 Frontend UI → http://localhost:4200
 
@@ -150,4 +153,3 @@ Service Registry (Eureka) → http://localhost:8761
 
 Config Server → http://localhost:8888
 
-```

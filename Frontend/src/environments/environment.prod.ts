@@ -4,7 +4,8 @@ export const environment = {
   endpoints: {
     auth: '/auth-user-service',
     tickets: '/ticket-service',
-    assignments: '/assignment-service',
+    assignments: '/assignment-escalation-service',
+    dashboards: '/dashboard-service',
     notifications: '/notification-service'
   }
 };

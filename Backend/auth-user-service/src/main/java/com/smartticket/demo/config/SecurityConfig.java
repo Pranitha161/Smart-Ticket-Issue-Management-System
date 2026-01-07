@@ -36,8 +36,11 @@ public class SecurityConfig {
             .authorizeExchange(ex -> ex
                 .pathMatchers(
                    "/auth/**",
+                   "/swagger-ui/index.html",
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
+                    "/webjars/**",         
+                    "/favicon.ico",
                     "/dashboard/**",
                     "/internal/**"
                 ).permitAll()

@@ -1,0 +1,1238 @@
+{
+	"info": {
+		"_postman_id": "87420e62-d910-4093-a0cf-35fd026c463b",
+		"name": "Smart ticket management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41536920"
+	},
+	"item": [
+		{
+			"name": "Auth Service",
+			"item": [
+				{
+					"name": "SignUp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"password\": \"admin123\",\r\n    \"email\": \"pranithareddy160805@gmail.com\",\r\n    \"roles\": [\r\n        \"ADMIN\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetEmail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/auth/{id}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"auth",
+								"{id}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTU4ODczNWJlZGFiMjYyYWU0ZDhkNGYiLCJlbWFpbCI6InVzZXIxMjNAZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c2VyMSIsInJvbGVzIjpbIlVTRVIiXSwiaWF0IjoxNzY3NDk2Nzg0LCJleHAiOjE3Njc1MDAzODR9.24zfW8r8F9CjWkCuN4Rd4WRpOIur0UDjzeAK8bPTA4A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/auth/6959dbeaa4a70d04589a2c4b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"auth",
+								"6959dbeaa4a70d04589a2c4b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request Password Reset",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/auth/request-reset",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"auth",
+								"request-reset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Passoword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/auth/reset-password",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"auth",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Users",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/users/6950dc147dae187e1ce755df",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"users",
+								"6950dc147dae187e1ce755df"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By Email",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"password\": \"admin123\",\r\n    \"email\": \"pranithareddy160805@gmail.com\",\r\n    \"roles\": [\r\n        \"ADMIN\"\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/users/email/{email}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"users",
+								"email",
+								"{email}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User By id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Create User (Admin Role)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"password\": \"admin123\",\r\n    \"email\": \"pranithareddy160805@gmail.com\",\r\n    \"roles\": [\r\n        \"ADMIN\"\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Swagger",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/v3/api-docs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"v3",
+								"api-docs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Increment Assignments",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"password\": \"admin123\",\r\n    \"email\": \"pranithareddy160805@gmail.com\",\r\n    \"roles\": [\r\n        \"ADMIN\"\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/internal/agents/{id}/increment-assignments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"internal",
+								"agents",
+								"{id}",
+								"increment-assignments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Increment Resolved Count",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/internal/agents/{id}/resolved",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"internal",
+								"agents",
+								"{id}",
+								"resolved"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Increment Escalated count",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTVkNzEzMmNhZTYwMzZiMzM4OTMyY2UiLCJlbWFpbCI6InByYW5pdGhhcmVkZHlAdGlja2V0LmNvbSIsInVzZXJuYW1lIjoiYWRtaW4xMiIsInJvbGVzIjpbIkFETUlOIl0sImlhdCI6MTc2NzczMjMwNSwiZXhwIjoxNzY3NzM1OTA1fQ.kyytEdmkJEFbKdVt7yMPu5kPx-JxlxHh2QanRFy9Zjs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/agents/695d24051414c64f505922d6/unresolved",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"agents",
+								"695d24051414c64f505922d6",
+								"unresolved"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get agents By Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/internal/internal/agents",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"internal",
+								"internal",
+								"agents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enalbe User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"password\": \"admin123\",\r\n    \"email\": \"pranithareddy160805@gmail.com\",\r\n    \"roles\": [\r\n        \"ADMIN\"\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8765/auth-user-service/{id}/enable",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"auth-user-service",
+								"{id}",
+								"enable"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ticket Service",
+			"item": [
+				{
+					"name": "Category",
+					"item": [
+						{
+							"name": "Create category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTUwZGMxNDdkYWUxODdlMWNlNzU1ZGYiLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAZ21haWwuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc2NzAwMjcxOSwiZXhwIjoxNzY3MDA2MzE5fQ.4BKOER-bzUMxQGsPFiv7yY5YD1aMlrEbGT9su-mZhC8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Hardware Issues\",\r\n    \"description\": \"Tickets related to hardware failures like laptops, desktops, printers\",\r\n    \"linkedSlaId\": \"sla101\",\r\n    \"active\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8765/ticket-service/categories/create",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8765",
+									"path": [
+										"ticket-service",
+										"categories",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all categories",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Update category",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Get categories by id",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Category",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8765/ticket-service/categories/{id}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8765",
+									"path": [
+										"ticket-service",
+										"categories",
+										"{id}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Ticket Activity",
+					"item": [
+						{
+							"name": "getTimeline",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"password\": \"admin123\",\r\n    \"email\": \"pranithareddy160805@gmail.com\",\r\n    \"roles\": [\r\n        \"ADMIN\"\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8765/ticket-service/tickets/{}/activity",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8765",
+									"path": [
+										"ticket-service",
+										"tickets",
+										"{}",
+										"activity"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Log activity",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8765/ticket-service/tickets/{}/activity/internal/comment",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8765",
+									"path": [
+										"ticket-service",
+										"tickets",
+										"{}",
+										"activity",
+										"internal",
+										"comment"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Ticket",
+					"item": [
+						{
+							"name": "Update ticket",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTUwZGMxNDdkYWUxODdlMWNlNzU1ZGYiLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAZ21haWwuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc2NzAwMjcxOSwiZXhwIjoxNzY3MDA2MzE5fQ.4BKOER-bzUMxQGsPFiv7yY5YD1aMlrEbGT9su-mZhC8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Unable to login to portal website\",\r\n    \"description\": \"User reports that login fails with error code 401 despite correct credentials.\",\r\n    \"status\": \"OPEN\",\r\n    \"priority\": \"HIGH\",\r\n    \"createdBy\": \"6950dc147dae187e1ce755df\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8765/ticket-service/tickets/69510383bbb3e37045da04ad",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8765",
+									"path": [
+										"ticket-service",
+										"tickets",
+										"69510383bbb3e37045da04ad"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Ticket",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Network outage in branch office\",\r\n    \"description\": \"Users cannot connect to VPN\",\r\n    \"priority\": \"HIGH\",\r\n    \"createdBy\": \"69580384a6738a0ce21b3ba9\",\r\n    \"categoryId\": \"6952593153097a1b45fb9cdb\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/tickets/create",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"tickets",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Close Ticket",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "ReopenTicket",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTUwZGMxNDdkYWUxODdlMWNlNzU1ZGYiLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAZ21haWwuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc2NzAwMjcxOSwiZXhwIjoxNzY3MDA2MzE5fQ.4BKOER-bzUMxQGsPFiv7yY5YD1aMlrEbGT9su-mZhC8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8765/ticket-service/tickets/69510383bbb3e37045da04ad/reopen",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8765",
+									"path": [
+										"ticket-service",
+										"tickets",
+										"69510383bbb3e37045da04ad",
+										"reopen"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get recent tickets",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Get ticket by UserID",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Get ticket by id",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Recent agent tickets",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "get all tickets",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Assignment-Escalation Service",
+			"item": [
+				{
+					"name": "SLA_Rules",
+					"item": [
+						{
+							"name": "Add sla rules",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTU1MzZjYWU4NTI5MzVkZTlmNTNmNzciLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAdGVzdDEyLmNvbSIsInVzZXJuYW1lIjoicHJhbml0aGExMjEyIiwicm9sZXMiOlsiQURNSU4iXSwiaWF0IjoxNzY3MTk4ODA2LCJleHAiOjE3NjcyMDI0MDZ9.JSwoLSw_NMVFojJPdGeRLJpMac1ULpZkFACeBl_Hf20",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"priority\": \"CRITICAL\",\r\n  \"responseMinutes\": 60,\r\n  \"resolutionMinutes\": 480\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8765/assignment-escalation-service/sla-rules",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8765",
+									"path": [
+										"assignment-escalation-service",
+										"sla-rules"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "modify sla-rules",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Get all sla-rules",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Assignment",
+					"item": [
+						{
+							"name": "Manual Assignment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTU1MzZjYWU4NTI5MzVkZTlmNTNmNzciLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAdGVzdDEyLmNvbSIsInVzZXJuYW1lIjoicHJhbml0aGExMjEyIiwicm9sZXMiOlsiQURNSU4iXSwiaWF0IjoxNzY3MTk4ODA2LCJleHAiOjE3NjcyMDI0MDZ9.JSwoLSw_NMVFojJPdGeRLJpMac1ULpZkFACeBl_Hf20",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8765/assignment-escalation-service/assignments/manual?ticketId=6952696953097a1b45fb9cdc&agentId=695263612d2979203e0b3282&priority=HIGH",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8765",
+									"path": [
+										"assignment-escalation-service",
+										"assignments",
+										"manual"
+									],
+									"query": [
+										{
+											"key": "ticketId",
+											"value": "6952696953097a1b45fb9cdc"
+										},
+										{
+											"key": "agentId",
+											"value": "695263612d2979203e0b3282"
+										},
+										{
+											"key": "priority",
+											"value": "HIGH"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check-escalation",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTUwZGMxNDdkYWUxODdlMWNlNzU1ZGYiLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAZ21haWwuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc2NzAwNjc0MiwiZXhwIjoxNzY3MDEwMzQyfQ.Xim-jd46953qzZzxOfnPrR7gUHYay1isWG2RmjFOjB4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8765/assignment-escalation-service/assignments/69510383bbb3e37045da04ad/check-escalation",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8765",
+									"path": [
+										"assignment-escalation-service",
+										"assignments",
+										"69510383bbb3e37045da04ad",
+										"check-escalation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Make assignment complete",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTUwZGMxNDdkYWUxODdlMWNlNzU1ZGYiLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAZ21haWwuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc2NzAwNjc0MiwiZXhwIjoxNzY3MDEwMzQyfQ.Xim-jd46953qzZzxOfnPrR7gUHYay1isWG2RmjFOjB4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8765/assignment-escalation-service/assignments/69510383bbb3e37045da04ad/complete",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8765",
+									"path": [
+										"assignment-escalation-service",
+										"assignments",
+										"69510383bbb3e37045da04ad",
+										"complete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Auto Assign",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "DashBoard Service",
+			"item": [
+				{
+					"name": "Ticket Status summary Report",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTUwZGMxNDdkYWUxODdlMWNlNzU1ZGYiLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAZ21haWwuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc2NzAyNDU0NSwiZXhwIjoxNzY3MDI4MTQ1fQ.yj4PMhXtmGm9dFDVjxdUKEQb3Vn1Vph056HRy5TckG4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/dashboard-service/dashboard/tickets/status-summary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"dashboard-service",
+								"dashboard",
+								"tickets",
+								"status-summary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "priority Summary Report",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTUwZGMxNDdkYWUxODdlMWNlNzU1ZGYiLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAZ21haWwuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc2NzAyNDU0NSwiZXhwIjoxNzY3MDI4MTQ1fQ.yj4PMhXtmGm9dFDVjxdUKEQb3Vn1Vph056HRy5TckG4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/dashboard-service/dashboard/tickets/status-priority-summary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"dashboard-service",
+								"dashboard",
+								"tickets",
+								"status-priority-summary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Category Report",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Agent Summary",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTUwZGMxNDdkYWUxODdlMWNlNzU1ZGYiLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAZ21haWwuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc2NzAyNDU0NSwiZXhwIjoxNzY3MDI4MTQ1fQ.yj4PMhXtmGm9dFDVjxdUKEQb3Vn1Vph056HRy5TckG4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/dashboard-service/dashboard/assignments/agent-summary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"dashboard-service",
+								"dashboard",
+								"assignments",
+								"agent-summary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tickets Stats for particular User By ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTU5MGZmZGI3MDQwNTM3YzZlN2JlYTEiLCJlbWFpbCI6InByYW5pdGhhcmVkZHkxNjA4MDVAZ21haWwuY29tIiwidXNlcm5hbWUiOiJhZG1pbjEyMyIsInJvbGVzIjpbIkFETUlOIl0sImlhdCI6MTc2NzY4NDcwMywiZXhwIjoxNzY3Njg4MzAzfQ.zZEztIB_z4LXq6osZ8N4SBjlO7ubh1KZAipkjM58MHU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/dashboard-service/dashboard/tickets/user/69588735bedab262ae4d8d4f/stats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"dashboard-service",
+								"dashboard",
+								"tickets",
+								"user",
+								"69588735bedab262ae4d8d4f",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Particular Agent Stats",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Ticket Global Stats",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTVhNGZiMmVmYTE1OTFkYTlmODg2NWEiLCJlbWFpbCI6ImFnZW50MUB0aWNrZXQuY29tIiwidXNlcm5hbWUiOiJhZ2VudDEiLCJyb2xlcyI6WyJBR0VOVCJdLCJpYXQiOjE3Njc2Nzk4MzAsImV4cCI6MTc2NzY4MzQzMH0.Fb6YDky7ZxrZEqgxrDszIClum7YsJa5U47IpEiTP6_s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/dashboard-service/dashboard/tickets/global-stats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"dashboard-service",
+								"dashboard",
+								"tickets",
+								"global-stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Stats",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Escalation Report",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Circuit Breaker",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "All Agents Stats",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTVhNGZiMmVmYTE1OTFkYTlmODg2NWEiLCJlbWFpbCI6ImFnZW50MUB0aWNrZXQuY29tIiwidXNlcm5hbWUiOiJhZ2VudDEiLCJyb2xlcyI6WyJBR0VOVCJdLCJpYXQiOjE3Njc2Nzk4MzAsImV4cCI6MTc2NzY4MzQzMH0.Fb6YDky7ZxrZEqgxrDszIClum7YsJa5U47IpEiTP6_s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/dashboard-service/dashboard/stats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"dashboard-service",
+								"dashboard",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Send Notification",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTVkNzEzMmNhZTYwMzZiMzM4OTMyY2UiLCJlbWFpbCI6InByYW5pdGhhcmVkZHlAdGlja2V0LmNvbSIsInVzZXJuYW1lIjoiYWRtaW4xMiIsInJvbGVzIjpbIkFETUlOIl0sImlhdCI6MTc2NzczNjAxNywiZXhwIjoxNzY3NzM5NjE3fQ._dUV-X3CRjEyVHP200qYvbyG4LWtPyfQOWCjW1-CzQo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"sender\": \"support@smartticket.com\",\r\n  \"recipient\": \"user@example.com\",\r\n  \"subject\": \"Ticket Update\",\r\n  \"body\": \"Your ticket #123 has been resolved.\",\r\n  \"eventType\": \"TICKET_RESOLVED\",\r\n  \"createdAt\": \"2026-01-07T03:45:00Z\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8765/notification-service/notifications/send",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"notification-service",
+								"notifications",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Notification status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTVkNzEzMmNhZTYwMzZiMzM4OTMyY2UiLCJlbWFpbCI6InByYW5pdGhhcmVkZHlAdGlja2V0LmNvbSIsInVzZXJuYW1lIjoiYWRtaW4xMiIsInJvbGVzIjpbIkFETUlOIl0sImlhdCI6MTc2NzczNjAxNywiZXhwIjoxNzY3NzM5NjE3fQ._dUV-X3CRjEyVHP200qYvbyG4LWtPyfQOWCjW1-CzQo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/notification-service/notifications/status/695d88c6a97710a56cf2ca14",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"notification-service",
+								"notifications",
+								"status",
+								"695d88c6a97710a56cf2ca14"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "History using email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8765/notification-service/hisotry/{email}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8765",
+							"path": [
+								"notification-service",
+								"hisotry",
+								"{email}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

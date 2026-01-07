@@ -104,9 +104,9 @@ The Smart Ticket Issue & Management System provides organizations with a cloud-n
 
 
 ---
->  **Config Server Repo**: All microservices fetch their configuration from a dedicated GitHub repository
->  `https://github.com/Pranitha161/Smart-Ticket-Issue-Management-System-Config-Server` 
-> Each service has its own `application-{service}.properties` file stored here.
+ **Config Server Repo**: All microservices fetch their configuration from a dedicated GitHub repository
+ `https://github.com/Pranitha161/Smart-Ticket-Issue-Management-System-Config-Server` 
+ Each service has its own `application-{service}.properties` file stored here.
 
 ##  Basic Setup Instructions
 

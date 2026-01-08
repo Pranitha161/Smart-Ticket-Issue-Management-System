@@ -104,7 +104,7 @@ The Smart Ticket Issue & Management System provides organizations with a cloud-n
 
 
 ---
- **Config Server**: Centralized configuration ([Config-Server](https://github.com/Pranitha161/flight-booking-system-jwt-config-server))
+ **Config Server**: Centralized configuration ([Config-Server](https://github.com/Pranitha161/Smart-Ticket-Issue-Management-System-Config-Server))
 
 ##  Basic Setup Instructions
 

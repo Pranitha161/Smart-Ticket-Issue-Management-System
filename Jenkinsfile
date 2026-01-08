@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        
         SMTP_USER = credentials('smtp-user')
         SMTP_PASS = credentials('smtp-pass')
     }
@@ -36,7 +35,7 @@ pipeline {
                         sh """
                             echo "Building ${svc}"
                             cd ${svc}
-                            ./mvnw  package -DskipTests
+                            ./mvnw clean package -DskipTests
                         """
                     }
                 }
@@ -45,9 +44,10 @@ pipeline {
 
         stage('Generate .env') {
             steps {
-                sh '''
-                set -e
-                cat > .env <<EOF
+                dir('Backend') {
+                    sh '''
+                    set -e
+                    cat > .env <<EOF
 KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 KAFKA_GROUP_ID=smart-ticket-service-group
 
@@ -59,31 +59,38 @@ SMTP_PROTOCOL=smtp
 
 SPRING_PROFILES_ACTIVE=docker
 EOF
-                echo "Generated .env (secrets not printed)"
-                '''
+                    echo "Generated Backend/.env (secrets not printed)"
+                    '''
+                }
             }
         }
 
         stage('Build Docker Images') {
             steps {
-                sh 'docker-compose --env-file .env build'
+                dir('Backend') {
+                    sh 'docker-compose --env-file .env build'
+                }
             }
         }
 
         stage('Deploy (Optional)') {
             when { expression { return env.DEPLOY?.toBoolean() } }
             steps {
-                sh '''
-                docker-compose --env-file .env up -d
-                docker-compose ps
-                '''
+                dir('Backend') {
+                    sh '''
+                    docker-compose --env-file .env up -d
+                    docker-compose ps
+                    '''
+                }
             }
         }
     }
 
     post {
         always {
-            sh 'docker-compose logs --tail=100 || true'
+            dir('Backend') {
+                sh 'docker-compose logs --tail=100 || true'
+            }
         }
     }
 }

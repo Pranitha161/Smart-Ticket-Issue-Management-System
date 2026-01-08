@@ -12,22 +12,33 @@
                         <label class="form-label text-white">Email</label>
                         <input type="email" class="form-control custom-input" formControlName="email"
                             placeholder="example@mail.com">
+                        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+                            class="error-msg"> <small *ngIf="loginForm.get('email')?.errors?.['required']">Email is
+                                required.</small> <small *ngIf="loginForm.get('email')?.errors?.['email']">Please enter
+                                a valid email address.</small> </div>
                     </div>
                     <div class="mb-2">
                         <label class="form-label text-white">Password</label>
                         <input type="password" class="form-control custom-input" formControlName="password"
                             placeholder="Min. 8 characters">
+                        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                            class="error-msg">
+                            <small>Password is required.</small>
+                        </div>
+
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
 
                         <a [routerLink]="['/auth/forgot-password']" class="text-white small text-decoration-none">Forgot
                             Password?</a>
                     </div>
+
                     <button type="submit" class="btn btn-light w-100 fw-bold py-2 rounded-3"
                         [disabled]="loginForm.invalid">
                         Sign In
                     </button>
                 </form>
+
                 <p class="mt-4 text-center text-white small">
                     Don't have an account? <a [routerLink]="['/auth/signup']" class="text-white fw-bold">Create
                         Account</a>

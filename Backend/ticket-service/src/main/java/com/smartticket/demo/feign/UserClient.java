@@ -6,16 +6,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @FeignClient(name = "auth-user-service")
 public interface UserClient {
-	@PutMapping("/agents/{agentId}/resolved") 
+	@PutMapping("/internal/agents/{agentId}/resolved") 
 	void incrementResolvedCount(@PathVariable("agentId") String agentId);
 	
-	 @PutMapping("/agents/{agentId}/unresolved")
-		void incrementEscalatedCount(@PathVariable String agentId);
+	 @PutMapping("/internal/agents/{agentId}/unresolved")
+		void incrementEscalatedCount(@PathVariable("agentId") String agentId);
 	 
-	 @PutMapping("/agents/{agentId}/increment-assignments") 
+	 @PutMapping("/internal/agents/{agentId}/increment-assignments") 
 	    void incrementAssignments(@PathVariable("agentId") String agentId);
 	    
-	    @PutMapping("/agents/{agentId}/decrement-assignments") 
+	    @PutMapping("/internal/agents/{agentId}/decrement-assignments") 
 	    void decrementAssignments(@PathVariable("agentId") String agentId);
 	    
 }

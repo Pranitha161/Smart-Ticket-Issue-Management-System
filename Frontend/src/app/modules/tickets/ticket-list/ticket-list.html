@@ -59,7 +59,8 @@
                 <div class="text-muted tiny">
                   By {{lookup.getUserName(ticket.createdBy)}}
                   <span class="mx-1">•</span>
-                  <span>{{ticket.createdAt | date:'MMM d, h:mm a'}}</span>
+                  <span>{{ ticket.createdAt | date:'MMM d, h:mm a' }}</span>
+
                 </div>
               </div>
             </div>
@@ -74,7 +75,7 @@
           <td class="text-end pe-4">
             <div class="d-flex justify-content-end gap-2">
               <ng-container
-                *ngIf="(role === 'ADMIN' || role === 'MANAGER') && ticket.status !== 'RESOLVED'&& ticket.status!=='IN_PROGRESS'">
+                *ngIf="(role === 'ADMIN' || role === 'MANAGER') && (ticket.status === 'OPEN'||ticket.status==='ESCALATED')">
                 <button class="btn-action" (click)="$event.stopPropagation(); manualAssign(ticket)"
                   data-tooltip="Manual Assign">
                   <i class="bi bi-person-plus"></i>
@@ -82,6 +83,18 @@
                 <button class="btn-action magic" (click)="$event.stopPropagation(); autoAssign(ticket)"
                   data-tooltip="Smart Auto-Assign">
                   <i class="bi bi-magic"></i>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="role === 'USER' && ticket.status === 'OPEN'">
+                <button class="btn-action close" (click)="$event.stopPropagation(); openCloseConfirm(ticket)"
+                  title="Close Ticket" data-tooltip="Close Ticket">
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="role === 'USER' && ticket.status === 'OPEN'">
+                <button class="btn-action update" (click)="$event.stopPropagation(); openUpdateModal(ticket)"
+                  title="Update Ticket" data-tooltip="Update Ticket">
+                  <i class="bi bi-pencil-square"></i>
                 </button>
               </ng-container>
               <ng-container *ngIf="role === 'USER' && ticket.status === 'RESOLVED'">
@@ -146,4 +159,78 @@
       </div>
     </div>
   </div>
+  <div class="custom-modal-backdrop" *ngIf="closingTicket">
+    <div class="custom-modal-card animate-in text-center">
+      <div class="modal-accent bg-danger"></div>
+      <div class="p-4">
+        <div class="icon-circle bg-danger-light mx-auto mb-3">
+          <i class="bi bi-x-circle text-danger fs-4"></i>
+        </div>
+        <h5 class="fw-bold mb-2">Close Ticket?</h5>
+        <p class="text-muted small">
+          Are you sure you want to close ticket
+          <span class="fw-bold text-dark">#{{closingTicket.displayId}}</span>?
+        </p>
+
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn-danger w-100" (click)="confirmClose()">Close Ticket</button>
+          <button class="btn-light w-100" (click)="closingTicket = null">Go Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="custom-modal-backdrop" *ngIf="updatingTicket">
+    <div class="custom-modal-card animate-in">
+      <div class="modal-accent bg-info"></div>
+      <div class="p-4">
+        <h5 class="fw-bold mb-3">Update Ticket</h5>
+        <p class="text-muted small mb-4">Modify the details of your ticket.</p>
+        <div class="mb-3">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-control" [(ngModel)]="updatingTicket.title">
+          <div *ngIf="updatingTicket?.title && updatingTicket.title.trim().length < 3" class="error-msg"> <small>Title
+              must be at least 3 characters.</small> </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" [(ngModel)]="updatingTicket.description"></textarea>
+          <div *ngIf="updatingTicket?.description && updatingTicket.description.trim().length < 10" class="error-msg">
+            <small>Description must be at least 10 characters.</small> </div>
+        </div>
+
+        <select class="form-select" [(ngModel)]="updatingTicket.categoryId"
+          (change)="onCategoryChange(updatingTicket.categoryId)">
+          <option *ngFor="let cat of lookup.getCategoryList()" [value]="cat.id">
+            {{ cat.name }}
+          </option>
+        </select>
+
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn-info w-100" (click)="confirmUpdate()" [disabled]="!isUpdateFormValid()"
+            [ngClass]="isUpdateFormValid() ? 'btn-info' : 'btn-light'">Save Changes</button>
+          <button class="btn-light w-100" (click)="updatingTicket = null">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination-controls d-flex justify-content-center mt-3" *ngIf="totalPages > 1">
+
+    <button class="btn btn-light me-2" [disabled]="currentPage === 0" (click)="setPage(currentPage - 1)">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+
+    <ng-container *ngFor="let page of [].constructor(totalPages); let i = index">
+      <button class="btn btn-outline-primary mx-1 " [class.active]="i === currentPage" (click)="setPage(i)">
+        {{ i + 1 }}
+      </button>
+    </ng-container>
+
+
+    <button class="btn btn-light ms-2" [disabled]="currentPage >= totalPages - 1" (click)="setPage(currentPage + 1)">
+      <i class="bi bi-arrow-right"></i>
+    </button>
+  </div>
+
 </div>

@@ -33,7 +33,9 @@
               <div class="d-flex justify-content-between align-items-start">
                 <span class="activity-type">
                   {{ act?.actionType }}
-                  <span *ngIf="act?.actorName" class="text-muted small">by {{ act.actorName }}</span>
+                  <span *ngIf="act?.actorName" class="text-muted small">
+                    {{ act?.actionType?.toLowerCase().includes('assign') ? 'to' : 'by' }} {{ act.actorName }}
+                  </span>
                 </span>
               </div>
               <span class="activity-time">{{ act?.timestamp | date:'M/d/yy, h:mm a' }}</span>
@@ -57,7 +59,7 @@
     <div class="col-lg-4">
       <div class="glass-card p-4 " style="top: 20px;">
         <h4 class="sidebar-title mb-4">Ticket Details</h4>
-        
+
         <div *ngIf="canStartWork()" class="mb-4">
           <button class="btn-start-theme w-100" (click)="openConfirm('START')">
             <i class="bi bi-play-fill me-2"></i> Start Work
@@ -140,7 +142,7 @@
       'bg-success': pendingAction === 'RESOLVE',
       'bg-warning': pendingAction === 'REOPEN'
     }" style="height: 5px;"></div>
-    
+
     <div class="p-4">
       <div class="mb-3">
         <i class="bi display-5" [ngClass]="{
@@ -149,16 +151,15 @@
           'bi-exclamation-circle text-warning': pendingAction === 'REOPEN'
         }"></i>
       </div>
-      
+
       <h5 class="fw-bold mb-3">Confirm Action</h5>
       <p class="text-muted">
-        Are you sure you want to <strong>{{ pendingAction | lowercase }}</strong> 
+        Are you sure you want to <strong>{{ pendingAction | lowercase }}</strong>
         ticket <br> #{{ ticket?.displayId }}?
       </p>
 
       <div class="d-flex gap-2 mt-4">
-        <button class="btn w-100 text-white fw-bold" 
-          [ngClass]="{
+        <button class="btn w-100 text-white fw-bold" [ngClass]="{
             'btn-primary': pendingAction === 'START',
             'btn-success': pendingAction === 'RESOLVE',
             'btn-warning': pendingAction === 'REOPEN'

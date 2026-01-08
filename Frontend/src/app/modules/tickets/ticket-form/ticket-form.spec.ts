@@ -11,7 +11,6 @@ describe('TicketForm', () => {
       imports: [TicketForm]
     })
     .compileComponents();
-
     fixture = TestBed.createComponent(TicketForm);
     component = fixture.componentInstance;
     await fixture.whenStable();

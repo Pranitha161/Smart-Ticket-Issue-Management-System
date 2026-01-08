@@ -96,29 +96,35 @@ public class CatergoryServiceImplmentationTest {
 
 	@Test
 	void deleteCategory_successWithReassign() {
-		Ticket ticket = Ticket.builder().id("T1").categoryId("C1").build();
-		when(ticketRepo.findByCategoryId("C1")).thenReturn(Mono.just(ticket));
-		when(ticketRepo.save(any(Ticket.class))).thenReturn(Mono.just(ticket));
-		when(categoryRepo.deleteById("C1")).thenReturn(Mono.empty());
-		StepVerifier.create(service.deleteCategory("C1", "C2")).verifyComplete();
+	    Ticket ticket = Ticket.builder().id("T1").categoryId("C1").build();
+	    when(ticketRepo.findByCategoryId("C1")).thenReturn(Flux.just(ticket));
+	    when(ticketRepo.save(any(Ticket.class))).thenReturn(Mono.just(ticket));
+	    when(categoryRepo.deleteById("C1")).thenReturn(Mono.empty());
+
+	    StepVerifier.create(service.deleteCategory("C1", "C2")).verifyComplete();
 	}
+
 
 	@Test
 	void deleteCategory_ticketsExistWithoutReassign() {
-		Ticket ticket = Ticket.builder().id("T1").categoryId("C1").build();
-		when(ticketRepo.findByCategoryId("C1")).thenReturn(Mono.just(ticket));
-		when(categoryRepo.deleteById("C1")).thenReturn(Mono.empty());
-		StepVerifier.create(service.deleteCategory("C1", null))
-				.expectErrorMatches(ex -> ex instanceof IllegalArgumentException
-						&& ex.getMessage().equals("Tickets exist, reassign required"))
-				.verify();
+	    Ticket ticket = Ticket.builder().id("T1").categoryId("C1").build();
+	    when(ticketRepo.findByCategoryId("C1")).thenReturn(Flux.just(ticket));
+	    when(categoryRepo.deleteById("C1")).thenReturn(Mono.empty());
+
+	    StepVerifier.create(service.deleteCategory("C1", null))
+	        .expectErrorMatches(ex -> ex instanceof IllegalArgumentException
+	            && ex.getMessage().equals("Tickets exist, reassign required"))
+	        .verify();
 	}
+
 
 	@Test
 	void deleteCategory_noTickets() {
-		when(ticketRepo.findByCategoryId("C1")).thenReturn(Mono.empty());
-		when(categoryRepo.deleteById("C1")).thenReturn(Mono.empty());
-		StepVerifier.create(service.deleteCategory("C1", null)).verifyComplete();
+	    when(ticketRepo.findByCategoryId("C1")).thenReturn(Flux.empty());
+	    when(categoryRepo.deleteById("C1")).thenReturn(Mono.empty());
+
+	    StepVerifier.create(service.deleteCategory("C1", null)).verifyComplete();
 	}
+
 
 }

@@ -47,23 +47,25 @@ export class CategorySummary implements OnInit {
       }
     }
   };
-
+  
   ngOnInit(): void {
-    this.dashboardService.getCategorySummary().subscribe(data => {
+  this.dashboardService.getCategorySummary().subscribe(data => {
+    const baseShades = ['#5c67f2', '#7a83f5', '#9aa1f7', '#3f4bd9', '#2a36b8'];
 
-      this.categoryChartData = {
-        labels: data.map(d => this.lookup.getCategoryName(d.categoryId)),
-        datasets: [{
-          label: 'Tickets',
-          data: data.map(d => d.count),
-          backgroundColor: '#5c67f2',
-          borderRadius: 4,
-          barThickness: 18
-        }]
-      };
+    this.categoryChartData = {
+      labels: data.map(d => this.lookup.getCategoryName(d.categoryId)),
+      datasets: [{
+        label: 'Tickets',
+        data: data.map(d => d.count),
+        backgroundColor: data.map((_, i) => baseShades[i % baseShades.length]),
+        borderRadius: 4,
+        barThickness: 18
+      }]
+    };
 
-      this.cd.detectChanges();
-      this.categoryChart?.update();
-    });
-  }
+    this.cd.detectChanges();
+    this.categoryChart?.update();
+  });
+}
+
 }

@@ -4,7 +4,7 @@ import { TicketService } from '../../../core/services/ticket';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth';
 import { RouterLink } from '@angular/router';
-import { Category, CategoryDto } from '../../../core/services/category';
+import { CategoryDto } from '../../../core/services/category';
 import { LookupService } from '../../../core/services/lookup-service';
 import { Toast } from '../../../core/services/toast';
 
@@ -21,39 +21,51 @@ export class TicketForm implements OnInit {
   categories: CategoryDto[] = [];
   constructor(
     private fb: FormBuilder,
-    private ticketService: TicketService, 
-    private authService: AuthService, 
-    private toast:Toast,
-    private lookup: LookupService, 
+    private ticketService: TicketService,
+    private authService: AuthService,
+    private toast: Toast,
+    private lookup: LookupService,
     private cd: ChangeDetectorRef) { }
   ngOnInit(): void {
     this.ticketForm = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
       categoryId: ['', Validators.required],
-      priority: ['MEDIUM', Validators.required],
+      priority: [{ value: 'MEDIUM', disabled: true }, Validators.required],
       createdBy: [this.authService.userId()]
     });
     this.categories = this.lookup.getCategoryList();
-    
+    console.log(this.categories);
+    this.ticketForm.get('categoryId')?.valueChanges.subscribe(catId => {
+      const priority = this.lookup.getPriorityForCategory(catId);
+      const priorityControl = this.ticketForm.get('priority');
+      if (priorityControl) {
+        priorityControl.enable({ emitEvent: false });
+        priorityControl.setValue(priority, { emitEvent: false });
+        priorityControl.disable({ emitEvent: false });
+      }
+    });
+
   }
   getPriorityClass() {
-  const val = this.ticketForm.get('priority')?.value;
-  return val ? `priority-${val}` : '';
-}
+    const val = this.ticketForm.get('priority')?.value;
+    return val ? `priority-${val}` : '';
+  }
   onSubmit(): void {
     
     if (this.ticketForm.valid) {
-      this.ticketService.createTicket(this.ticketForm.value).subscribe({
+      const payload = { ...this.ticketForm.value, priority: this.ticketForm.get('priority')?.value || 'MEDIUM', status: 'OPEN' };
+      this.ticketService.createTicket(payload).subscribe({
         next: (res) => {
-          this.toast.show(res.message||'Ticket created successfully!', 'success');
+          console.log(res);
+          this.toast.show(res.message || 'Ticket created successfully!', 'success');
           this.ticketForm.reset({ priority: 'MEDIUM', status: 'OPEN' });
-          
+          this.cd.detectChanges();
         },
         error: (err) => {
-          const errorMsg = err.error?.message ||'Failed to create ticket. Please try again.'; 
+          const errorMsg = err.error?.message || 'Failed to create ticket. Please try again.';
           this.toast.show(errorMsg, 'error');
-         
+          this.cd.detectChanges();
         }
       });
     }

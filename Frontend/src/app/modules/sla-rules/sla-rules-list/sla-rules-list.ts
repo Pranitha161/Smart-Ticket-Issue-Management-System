@@ -50,37 +50,42 @@ export class SlaRulesList implements OnInit {
   }
 
   openCreateModal() {
-  this.isNewRule = true;
-  // Cast to any to bypass the strict literal check for the initial empty state
-  this.editingRule = { 
-    priority: '' as any, 
-    responseMinutes: 0, 
-    resolutionMinutes: 0 
-  } as SlaRuleModel;
-  
-  this.form.reset();
-  this.form.get('priority')?.enable();
-}
+    this.isNewRule = true;
+
+    this.editingRule = {
+      priority: '' as any,
+      responseMinutes: 0,
+      resolutionMinutes: 0
+    } as SlaRuleModel;
+
+    this.form.reset();
+    this.form.get('priority')?.enable();
+  }
 
   editRule(rule: SlaRuleModel): void {
     this.isNewRule = false;
     this.editingRule = rule;
     this.form.patchValue(rule);
-    
-    // Disable priority field if it's a baseline system rule
+
     if (['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(rule.priority.toUpperCase())) {
       this.form.get('priority')?.disable();
     } else {
       this.form.get('priority')?.enable();
     }
   }
-  
+
 
   saveRule(): void {
     if (this.form.invalid) return;
 
-    const formData = this.form.getRawValue();
-    const payload: SlaRuleModel = { ...this.editingRule, ...formData };
+    const formData = this.form.getRawValue() as {
+      priority: string;
+      responseMinutes: number;
+      resolutionMinutes: number;
+    };
+    const payload: SlaRuleModel = { ...this.editingRule, ...formData, priority: formData.priority.trim().toUpperCase() as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+ };
+
 
     const request = (!this.isNewRule && payload.id)
       ? this.slaRuleService.updateRule(payload.id, payload)

@@ -30,8 +30,13 @@ export class Category {
     return this.http.put<CategoryDto>(`${this.baseUrl}/${id}`, category);
   }
 
-  deleteCategory(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  deleteCategory(id: string, reassignTo?: string): Observable<void> {
+    let url = `${this.baseUrl}/${id}`;
+    if (reassignTo) {
+      url += `?reassignTo=${reassignTo}`;
+    }
+    return this.http.delete<void>(url);
   }
+
 }
 

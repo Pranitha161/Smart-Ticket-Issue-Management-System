@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CreateUserRequest, User, UserStatsDto } from '../../shared/models/authuser.model';
 import { AgentStatsDto } from '../../shared/models/dashboard.model';
+import { ApiResponse } from '../../shared/models/api-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,7 @@ export class AdminUser {
   getAgentsByCategory(categoryId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/agents?category=${categoryId}`);
   }
+
   changePassword(userName: string, oldPassword: string, newPassword: string): Observable<any> {
     return this.http.post<any>(
       `${this.baseUrl}/auth/change-password`,
@@ -70,11 +72,15 @@ export class AdminUser {
     );
   }
   getAgentSummaryStats(agentId: string): Observable<AgentStatsDto> {
-      return this.http.get<AgentStatsDto>(`${this.baseUrl}/${agentId}/stats`);
-    }
-  
-    getAllAgentStats(): Observable<AgentStatsDto[]> {
-      return this.http.get<AgentStatsDto[]>(`${this.baseUrl}/stats`);
-    }
+    return this.http.get<AgentStatsDto>(`${this.baseUrl}/${agentId}/stats`);
+  }
 
+  getAllAgentStats(): Observable<AgentStatsDto[]> {
+    return this.http.get<AgentStatsDto[]>(`${this.baseUrl}/stats`);
+  }
+
+  enableUser(id: string): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(`${this.baseUrl}/${id}/enable`, {});
+
+  }
 }

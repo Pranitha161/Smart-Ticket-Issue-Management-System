@@ -166,7 +166,8 @@ export class TicketList implements OnInit {
     const ticket = this.tickets.find(t => t.id === ticketId);
     if (!agentId) return this.toast.show('Select an agent first', 'error');
     this.assignmentService.manualAssign(ticketId, agentId, ticket.priority, ticket.version).subscribe({
-      next: () => {
+      next: (res) => {
+        console.log(res);
         this.toast.show('Ticket Assigned Successfully', 'success');
         this.assigningTicketId = null;
         this.loadTickets();
@@ -211,6 +212,85 @@ export class TicketList implements OnInit {
         }
         this.toast.show(displayMessage, 'error');
         console.log(err);
+      }
+    });
+  }
+  closingTicket: any = null;
+
+  openCloseConfirm(ticket: any) {
+    this.closingTicket = ticket;
+  }
+
+  confirmClose() {
+    if (!this.closingTicket) return;
+
+    this.ticketListService.closeTicket(this.closingTicket.id).subscribe({
+      next: () => {
+        this.toast.show('Ticket closed successfully', 'success');
+        this.closingTicket = null;
+        this.loadTickets();
+      },
+      error: (err) => {
+        let displayMessage = 'Failed to close ticket';
+        if (err.error?.message) {
+          const match = err.error.message.match(/"message":"([^"]+)"/);
+          displayMessage = (match && match[1]) ? match[1] : err.error.message;
+        }
+        this.toast.show(displayMessage, 'error');
+        this.closingTicket = null;
+        console.error(err);
+      }
+    });
+  }
+  onCategoryChange(categoryId: string) {
+    const priority = this.lookup.getPriorityForCategory(categoryId);
+    if (this.updatingTicket) {
+      this.updatingTicket.priority = priority;
+    }
+  }
+
+  updatingTicket: any = null;
+
+  isUpdateFormValid(): boolean {
+    if (!this.updatingTicket) return false;
+    if (!this.updatingTicket.title || this.updatingTicket.title.trim().length < 3) {
+      return false;
+    }
+    if (!this.updatingTicket.description || this.updatingTicket.description.trim().length < 10) {
+      return false;
+    }
+    if (!this.updatingTicket.categoryId) {
+      return false;
+    }
+    if (!this.updatingTicket.priority) {
+      return false;
+    }
+    return true;
+  }
+
+
+  openUpdateModal(ticket: any) {
+    this.updatingTicket = { ...ticket };
+  }
+
+  confirmUpdate() {
+    if (!this.updatingTicket) return;
+
+    this.ticketListService.updateTicket(this.updatingTicket.id, this.updatingTicket).subscribe({
+      next: () => {
+        this.toast.show('Ticket updated successfully', 'success');
+        this.updatingTicket = null;
+        this.loadTickets();
+      },
+      error: (err) => {
+        let displayMessage = 'Failed to update ticket';
+        if (err.error?.message) {
+          const match = err.error.message.match(/"message":"([^"]+)"/);
+          displayMessage = (match && match[1]) ? match[1] : err.error.message;
+        }
+        this.toast.show(displayMessage, 'error');
+        this.updatingTicket = null;
+        console.error(err);
       }
     });
   }

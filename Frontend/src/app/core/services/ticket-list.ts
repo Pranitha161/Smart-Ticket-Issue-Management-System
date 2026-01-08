@@ -1,4 +1,3 @@
-// src/app/core/services/ticket-list.service.ts
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { TicketService } from './ticket'; 
@@ -50,6 +49,15 @@ export class ticketListService {
 
   autoAssign(ticketId: string): Observable<Assignment> {
     return this.assignmentService.autoAssign(ticketId);
+  }
+  
+  closeTicket(id: string): Observable<any> {
+    return this.ticketService.closeTicket(id);
+  }
+
+  
+  updateTicket(id: string, ticket: any): Observable<any> {
+    return this.ticketService.updateTicket(id,ticket);
   }
 
   private enrichTicket(ticket: any): any {

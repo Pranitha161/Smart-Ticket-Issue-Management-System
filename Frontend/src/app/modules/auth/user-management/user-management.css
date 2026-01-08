@@ -271,6 +271,11 @@
     border-top: 5px solid #ef4444;
 }
 
+.enable-confirm-card {
+    max-width: 400px !important;
+    border-top: 5px solid #21923b;
+}
+
 .warning-icon-wrapper {
     width: 60px;
     height: 60px;

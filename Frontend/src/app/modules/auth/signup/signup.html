@@ -28,14 +28,31 @@
                     <div class="mb-3">
                         <label class="form-label text-white">Password</label>
                         <input type="password" class="form-control custom-input" formControlName="password">
+                        <div *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched"
+                            class="error-msg"> <small *ngIf="signupForm.get('password')?.errors?.['required']">Password
+                                is required.</small> <small *ngIf="signupForm.get('password')?.errors?.['minlength']">
+                                Password must be at least 6 characters long. </small>
+                        </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-white">Confirm Password</label>
-                        <input type="password" class="form-control custom-input">
+                        <input type="password" class="form-control custom-input" formControlName="confirmPassword">
+                        <div *ngIf="signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched"
+                            class="error-msg">
+                            <small *ngIf="signupForm.get('confirmPassword')?.errors?.['required']">
+                                Confirm Password is required.
+                            </small>
+                        </div>
+
+                        <div *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmPassword')?.touched"
+                            class="error-msg">
+                            <small>Passwords do not match.</small>
+                        </div>
+
                     </div>
 
-                   
+
                     <button type="submit" class="btn btn-light w-100 fw-bold py-2 rounded-3 mt-2"
                         [disabled]="signupForm.invalid">
                         Create your Account
@@ -48,7 +65,7 @@
                 </p>
 
 
-                
+
             </div>
         </div>
     </div>

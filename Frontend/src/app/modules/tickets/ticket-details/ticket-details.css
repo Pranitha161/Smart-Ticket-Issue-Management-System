@@ -103,8 +103,22 @@
   font-weight: 700;
   transition: 0.3s;
 }
+.btn-start-theme {
+  background: #52b788;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: 0.3s;
+}
+
 
 .btn-resolve-theme:hover {
+  background: #40916c;
+  transform: translateY(-2px);
+}
+.btn-start-theme:hover {
   background: #40916c;
   transform: translateY(-2px);
 }
@@ -118,7 +132,7 @@
   font-weight: 600;
 }
 
-/* Timeline */
+
 .timeline-item {
   display: flex;
   gap: 20px;
@@ -156,7 +170,7 @@
   color: #94a3b8;
 }
 
-/* Inputs */
+
 .theme-input {
   width: 100%;
   border: 1px solid #e2e8f0;
@@ -172,7 +186,7 @@
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
-/* Avatar */
+
 .avatar-circle {
   width: 42px;
   height: 42px;

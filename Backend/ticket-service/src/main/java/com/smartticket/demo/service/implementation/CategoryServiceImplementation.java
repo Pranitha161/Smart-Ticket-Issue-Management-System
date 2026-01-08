@@ -44,6 +44,7 @@ public class CategoryServiceImplementation implements CategoryService {
 			existing.setName(updatedCategory.getName());
 			existing.setDescription(updatedCategory.getDescription());
 			existing.setLinkedSlaId(updatedCategory.getLinkedSlaId());
+			existing.setActive(updatedCategory.isActive());
 			return categoryRepo.save(existing);
 		});
 	}
@@ -57,7 +58,7 @@ public class CategoryServiceImplementation implements CategoryService {
 			} else {
 				return Mono.error(new IllegalArgumentException("Tickets exist, reassign required"));
 			}
-		}).then(categoryRepo.deleteById(id));
+		}).then().then(categoryRepo.deleteById(id));
 	}
 
 }

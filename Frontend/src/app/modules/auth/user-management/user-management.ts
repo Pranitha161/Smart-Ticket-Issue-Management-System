@@ -9,6 +9,7 @@ import { Toast } from '../../../core/services/toast';
 import { User, UserStatsDto } from '../../../shared/models/authuser.model';
 import { DashboardService } from '../../../core/services/dashboard';
 
+
 @Component({
   selector: 'app-user-management',
   standalone: true,
@@ -75,8 +76,27 @@ export class UserManagement implements OnInit {
       this.formUser.agentProfile = null;
     }
   }
+  isUserFormValid(): boolean {
+  if (!this.formUser.username || !this.formUser.email) return false;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(this.formUser.email)) return false;
+
+  if (this.modalMode === 'create' && (!this.formUser.password || this.formUser.password.length < 6)) {
+    return false;
+  }
+
+  if (this.formUser.roles[0] === 'AGENT') {
+    if (!this.formUser.agentProfile?.agentLevel || !this.formUser.agentProfile?.categoryId) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
   saveUser() {
+   
     const payload = { ...this.formUser };
     if (this.formUser.roles[0] === 'AGENT') {
       payload.agentProfile.skills = this.skillsInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
@@ -92,7 +112,7 @@ export class UserManagement implements OnInit {
         this.lookup.refreshUsers();
         this.loadData();
         this.cancel();
-      }
+      }, error: () => { this.toast.show(`Error ${this.modalMode}ing user`, 'error'); }
     });
   }
 
@@ -119,6 +139,36 @@ export class UserManagement implements OnInit {
       });
     }
   }
+
+  userToEnable: User | null = null;
+
+  enableUser(user: User): void {
+    this.userToEnable = user;
+  }
+
+  confirmEnable(): void {
+    if (this.userToEnable) {
+      this.adminUserService.enableUser(this.userToEnable.id).subscribe({
+        next: (res) => {
+          if (res.success) {
+
+            this.toast.show('User enabled successfully', 'success');
+            this.userToEnable!.enabled = true;
+            this.lookup.refreshUsers();
+            this.loadData();
+          } else {
+            this.toast.show(res.message, 'error');
+          }
+          this.userToEnable = null;
+        },
+        error: () => {
+          this.toast.show('Error enabling user', 'error');
+          this.userToEnable = null;
+        }
+      });
+    }
+  }
+
 
   cancel() { this.modalMode = null; }
 

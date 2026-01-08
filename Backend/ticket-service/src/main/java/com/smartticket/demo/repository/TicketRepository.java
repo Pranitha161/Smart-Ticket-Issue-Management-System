@@ -19,7 +19,7 @@ public interface TicketRepository extends ReactiveMongoRepository<Ticket, String
 
 	Flux<Ticket> findByCreatedBy(String userId);
 
-	Mono<Ticket> findByCategoryId(String categoryId);
+	Flux<Ticket> findByCategoryId(String categoryId);
 
 	Flux<Ticket> findTop5ByOrderByCreatedAtDesc();
 

@@ -17,6 +17,6 @@ export class Activity {
   }
 
   logActivity(ticketId: string, actorId: string, comment: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/tickets/${ticketId}/activity/comment`, null, { params: { actorId, comment } });
+    return this.http.post<any>(`${this.baseUrl}/tickets/${ticketId}/activity/internal/comment`, null, { params: { actorId, comment } });
   }
 }

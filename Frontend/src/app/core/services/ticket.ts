@@ -38,7 +38,7 @@ export class TicketService {
   }
 
   resolveTicket(id: string): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}/resolve`, {});
+    return this.http.put(`${this.baseUrl}/internal/${id}/resolve`, {});
   }
 
   reopenTicket(id: string): Observable<any> {

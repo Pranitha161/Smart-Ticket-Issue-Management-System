@@ -84,6 +84,7 @@ public class TicketServiceImplementation implements TicketService {
 		return ticketRepo.findById(id).flatMap(existing -> {
 			existing.setTitle(updatedTicket.getTitle());
 			existing.setDescription(updatedTicket.getDescription());
+			existing.setCategoryId(updatedTicket.getCategoryId());
 			existing.setPriority(updatedTicket.getPriority());
 			existing.setUpdatedAt(LocalDateTime.now());
 			return ticketRepo.save(existing).flatMap(saved -> logActivity(saved, ACTION_TYPE.UPDATED));
@@ -97,8 +98,8 @@ public class TicketServiceImplementation implements TicketService {
 					if (ticket.getStatus() == STATUS.CLOSED) {
 						return Mono.error(new RuntimeException("Ticket already closed"));
 					}
-					if (ticket.getStatus() == STATUS.OPEN) {
-						return Mono.error(new RuntimeException("Ticket must be assigned before closing"));
+					if (ticket.getStatus() == STATUS.ASSIGNED) {
+						return Mono.error(new RuntimeException("Ticket is assigned cannot close"));
 					}
 					ticket.setStatus(STATUS.CLOSED);
 					ticket.setUpdatedAt(LocalDateTime.now());
@@ -161,8 +162,9 @@ public class TicketServiceImplementation implements TicketService {
 					}
 					ticket.setStatus(STATUS.RESOLVED);
 					ticket.setVersion(0L);
-					ticket.setAssignedTo(null);
+					
 					userClient.incrementResolvedCount(ticket.getAssignedTo());
+					ticket.setAssignedTo(null);
 					ticket.setUpdatedAt(LocalDateTime.now());
 					
 					return ticketRepo.save(ticket).flatMap(saved -> logActivity(saved, ACTION_TYPE.RESOLVED))

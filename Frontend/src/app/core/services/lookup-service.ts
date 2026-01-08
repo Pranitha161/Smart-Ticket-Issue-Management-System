@@ -40,7 +40,7 @@ export class LookupService {
   }
 
   getCategoryName(id?: string): string {
-   
+
     return id ? (this.categories.get(id)?.name || id) : '';
   }
 
@@ -68,7 +68,12 @@ export class LookupService {
     return Array.from(this.slas.values());
   }
 
-
+  getPriorityForCategory(categoryId: string): string {
+    const category = this.categories.get(categoryId);
+    if (!category?.linkedSlaId) return 'MEDIUM';
+    const sla = this.slas.get(category.linkedSlaId);
+    return sla?.priority || 'MEDIUM';
+  }
 
   async refreshCategories(): Promise<void> {
     const context = { context: new HttpContext().set(BYPASS_LOGIC, true) };

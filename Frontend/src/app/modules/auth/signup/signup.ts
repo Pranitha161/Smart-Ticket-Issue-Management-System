@@ -25,10 +25,19 @@ export class Signup implements OnInit {
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required],
       role: ['USER', Validators.required],
       agentLevel: ['']
-    });
+    },{ validators: this.passwordMatchValidator });
   }
+
+  passwordMatchValidator(form: FormGroup) {
+  const password = form.get('password')?.value;
+  const confirmPassword = form.get('confirmPassword')?.value;
+  if (!password || !confirmPassword) { return null; }
+  return password === confirmPassword ? null : { passwordMismatch: true };
+}
+
 
   onSubmit(): void {
     if (this.signupForm.invalid) {
@@ -37,7 +46,7 @@ export class Signup implements OnInit {
     }
 
     const formValue = { ...this.signupForm.value };
-
+    delete formValue.confirmPassword;
     formValue.roles = [formValue.role];
     delete formValue.role;
     if (formValue.roles[0] !== 'AGENT') {

@@ -23,6 +23,8 @@ export class CategoryPanel implements OnInit {
   categoryToDelete: CategoryDto | null = null;
   createMode = false;
   editMode = false;
+  reassignToId: string | null = null;
+
 
   get slasList() {
     return this.lookup.getSlaList();
@@ -50,6 +52,20 @@ export class CategoryPanel implements OnInit {
       error: (err) => this.toast.show(err.error?.message || err.message, 'error')
     });
   }
+  
+  isCategoryFormValid(): boolean {
+    if (!this.formCategory.name || this.formCategory.name.trim().length < 3) {
+      return false;
+    }
+    if (this.formCategory.description && this.formCategory.description.length > 200) {
+      return false;
+    }
+    if (this.formCategory.linkedSlaId &&
+      !this.slasList.some(s => s.id === this.formCategory.linkedSlaId)) {
+      return false;
+    }
+    return true;
+  }
 
   saveCategory(): void {
     const request = this.createMode
@@ -74,20 +90,23 @@ export class CategoryPanel implements OnInit {
 
   executeDelete(): void {
     if (this.categoryToDelete?.id) {
-      this.categoryService.deleteCategory(this.categoryToDelete.id).subscribe({
+      this.categoryService.deleteCategory(this.categoryToDelete.id, this.reassignToId || undefined).subscribe({
         next: () => {
           this.toast.show('Category deleted', 'success');
           this.lookup.refreshCategories();
           this.categoryToDelete = null;
+          this.reassignToId = null;
           this.loadCategories();
         },
         error: (err) => {
           this.toast.show(err.error?.message || err.message, 'error');
           this.categoryToDelete = null;
+          this.reassignToId = null;
         }
       });
     }
   }
+
 
   openCreateForm(): void {
     this.createMode = true;

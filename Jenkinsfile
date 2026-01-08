@@ -68,7 +68,6 @@ pipeline {
         }
 
         stage('Deploy (Optional)') {
-            when { expression { return env.DEPLOY?.toBoolean() } }
             steps {
                 dir('Backend') {
                     bat "docker-compose --env-file .env up -d"

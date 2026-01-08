@@ -8,7 +8,6 @@ pipeline {
 
     options {
         timestamps()
-        ansiColor('xterm')
     }
 
     stages {
@@ -35,7 +34,7 @@ pipeline {
                         sh """
                             echo "Building ${svc}"
                             cd ${svc}
-                            ./mvnw clean package -DskipTests
+                            ./mvnw package -DskipTests
                         """
                     }
                 }

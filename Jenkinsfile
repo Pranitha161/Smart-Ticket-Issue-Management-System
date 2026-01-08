@@ -31,10 +31,10 @@ pipeline {
                         "Backend/smartticket-api-gateway"
                     ]
                     for (svc in services) {
-                        sh """
-                            echo "Building ${svc}"
+                        bat """
+                            echo Building ${svc}
                             cd ${svc}
-                            ./mvnw package -DskipTests
+                            mvnw.cmd package -DskipTests
                         """
                     }
                 }
@@ -44,22 +44,17 @@ pipeline {
         stage('Generate .env') {
             steps {
                 dir('Backend') {
-                    sh '''
-                    set -e
-                    cat > .env <<EOF
-KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-KAFKA_GROUP_ID=smart-ticket-service-group
-
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USERNAME=${SMTP_USER}
-SMTP_PASSWORD=${SMTP_PASS}
-SMTP_PROTOCOL=smtp
-
-SPRING_PROFILES_ACTIVE=docker
-EOF
-                    echo "Generated Backend/.env (secrets not printed)"
-                    '''
+                    bat """
+                        echo KAFKA_BOOTSTRAP_SERVERS=kafka:9092 > .env
+                        echo KAFKA_GROUP_ID=smart-ticket-service-group >> .env
+                        echo SMTP_HOST=smtp.gmail.com >> .env
+                        echo SMTP_PORT=587 >> .env
+                        echo SMTP_USERNAME=%SMTP_USER% >> .env
+                        echo SMTP_PASSWORD=%SMTP_PASS% >> .env
+                        echo SMTP_PROTOCOL=smtp >> .env
+                        echo SPRING_PROFILES_ACTIVE=docker >> .env
+                        echo Generated Backend\\.env (secrets not printed)
+                    """
                 }
             }
         }
@@ -67,7 +62,7 @@ EOF
         stage('Build Docker Images') {
             steps {
                 dir('Backend') {
-                    sh 'docker-compose --env-file .env build'
+                    bat "docker-compose --env-file .env build"
                 }
             }
         }
@@ -76,10 +71,8 @@ EOF
             when { expression { return env.DEPLOY?.toBoolean() } }
             steps {
                 dir('Backend') {
-                    sh '''
-                    docker-compose --env-file .env up -d
-                    docker-compose ps
-                    '''
+                    bat "docker-compose --env-file .env up -d"
+                    bat "docker-compose ps"
                 }
             }
         }
@@ -88,12 +81,12 @@ EOF
     post {
         always {
             dir('Backend') {
-                sh 'docker-compose logs --tail=100 || true'
+                bat "docker-compose logs --tail=100 || exit 0"
             }
         }
         cleanup {
             dir('Backend') {
-                sh 'rm -f .env || true'
+                bat "del .env || exit 0"
                 echo "Cleaned up Backend/.env after build"
             }
         }

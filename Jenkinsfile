@@ -92,5 +92,11 @@ EOF
                 sh 'docker-compose logs --tail=100 || true'
             }
         }
+        cleanup {
+            dir('Backend') {
+                sh 'rm -f .env || true'
+                echo "Cleaned up Backend/.env after build"
+            }
+        }
     }
 }

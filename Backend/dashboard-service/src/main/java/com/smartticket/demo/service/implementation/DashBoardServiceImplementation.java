@@ -69,9 +69,9 @@ public class DashBoardServiceImplementation implements DashBoardService {
 	}
 
 	@CircuitBreaker(name = "dashboardServiceCircuitBreaker", fallbackMethod = "agentStatsFallback")
-	@TimeLimiter(name = "dashboardServiceCircuitBreaker")
 	public Mono<UserTicketStatsDto> getAgentStats(String agentId) {
 	    return Mono.fromCallable(() -> ticketClient.getAgentStats(agentId))
+	    		.timeout(Duration.ofSeconds(2)) 
 	               .subscribeOn(Schedulers.boundedElastic());
 	}
 

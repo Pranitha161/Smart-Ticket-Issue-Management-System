@@ -68,11 +68,25 @@ public class DashBoardServiceImplementation implements DashBoardService {
 		return Mono.fromCallable(() -> ticketClient.getUserStats(userId)).subscribeOn(Schedulers.boundedElastic());
 	}
 
-	@Override
+	@CircuitBreaker(name = "dashboardServiceCircuitBreaker", fallbackMethod = "agentStatsFallback")
+	@TimeLimiter(name = "dashboardServiceCircuitBreaker")
 	public Mono<UserTicketStatsDto> getAgentStats(String agentId) {
-		return Mono.fromCallable(() -> ticketClient.getAgentStats(agentId)).subscribeOn(Schedulers.boundedElastic());
-
+	    return Mono.fromCallable(() -> ticketClient.getAgentStats(agentId))
+	               .subscribeOn(Schedulers.boundedElastic());
 	}
+
+	public Mono<UserTicketStatsDto> agentStatsFallback(String agentId, Throwable t) {
+	    System.err.println("Fallback triggered for agent " + agentId + ": " + t.getMessage());
+
+	    UserTicketStatsDto fallbackDto = new UserTicketStatsDto();
+	    fallbackDto.setTotal(0L);
+	    fallbackDto.setOpen(0L);
+	    fallbackDto.setResolved(0L);
+	    fallbackDto.setCritical(0L);
+
+	    return Mono.just(fallbackDto);
+	}
+
 
 	@Override
 	public Mono<UserTicketStatsDto> getGlobalStats() {

@@ -43,7 +43,7 @@ public class DashBoardServiceImplementation implements DashBoardService {
 
 	public Flux<StatusSummaryDto> statusSummaryFallback(Throwable t) {
 		System.err.println("Fallback triggered: " + t.getMessage());
-		return Flux.empty();
+		return Flux.error(new RuntimeException("Fallback triggered"));
 	}
 
 	@Override

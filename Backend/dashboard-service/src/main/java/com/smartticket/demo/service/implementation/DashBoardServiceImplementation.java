@@ -16,6 +16,7 @@ import com.smartticket.demo.feign.UserClient;
 import com.smartticket.demo.service.DashBoardService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -36,6 +37,7 @@ public class DashBoardServiceImplementation implements DashBoardService {
 
 	@Override
 	@CircuitBreaker(name = "dashboardServiceCircuitBreaker", fallbackMethod = "statusSummaryFallback")
+	@TimeLimiter(name = "dashboardServiceCircuitBreaker")
 	public Flux<StatusSummaryDto> getTicketStatusSummary() {
 		return Flux.defer(() -> Flux.fromIterable(ticketClient.getTicketStatusSummary()))
 				.subscribeOn(Schedulers.boundedElastic());

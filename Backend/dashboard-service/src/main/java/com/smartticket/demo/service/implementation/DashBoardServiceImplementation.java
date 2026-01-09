@@ -1,5 +1,7 @@
 package com.smartticket.demo.service.implementation;
 
+import java.time.Duration;
+
 import org.springframework.stereotype.Service;
 
 import com.smartticket.demo.dto.AgentStatsDto;
@@ -37,11 +39,12 @@ public class DashBoardServiceImplementation implements DashBoardService {
 
 	@Override
 	@CircuitBreaker(name = "dashboardServiceCircuitBreaker", fallbackMethod = "statusSummaryFallback")
-	@TimeLimiter(name = "dashboardServiceCircuitBreaker")
 	public Flux<StatusSummaryDto> getTicketStatusSummary() {
-		return Flux.defer(() -> Flux.fromIterable(ticketClient.getTicketStatusSummary()))
-				.subscribeOn(Schedulers.boundedElastic());
+	    return Flux.defer(() -> Flux.fromIterable(ticketClient.getTicketStatusSummary()))
+	               .timeout(Duration.ofSeconds(2)) 
+	               .subscribeOn(Schedulers.boundedElastic());
 	}
+
 
 	public Flux<StatusSummaryDto> statusSummaryFallback(Throwable t) {
 		System.err.println("Fallback triggered: " + t.getMessage());

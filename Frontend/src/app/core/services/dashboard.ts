@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { PrioritySummaryDto, StatusSummaryDto, UserTicketStatsDto } from '../../shared/models/ticket.model';
 import { AgentStatsDto, AgentSummaryDto, CategorySummaryDto, EscalationSummaryDto } from '../../shared/models/dashboard.model';
 import { environment } from '../../../environments/environment';
@@ -47,9 +47,10 @@ export class DashboardService {
     return this.http.get<EscalationSummaryDto[]>(`${this.baseUrl}/assignments/escalation-summary`);
   }
 
-  getAgentSummaryStats(agentId: string): Observable<AgentStatsDto> {
-    return this.http.get<AgentStatsDto>(`${this.baseUrl}/${agentId}/stats`);
-  }
+  // getAgentSummaryStats(agentId: string): Observable<AgentStatsDto> {
+  //   return this.http.get<AgentStatsDto>(`${this.baseUrl}/${agentId}/stats`);
+  // }
+  getAgentSummaryStats(agentId: string): Observable<AgentStatsDto> { return this.http.get<AgentStatsDto>(`${this.baseUrl}/${agentId}/stats`) .pipe( catchError(err => { console.error('Fallback triggered for agent summary stats:', err); return of({ agentId: agentId, agentLevel: 'FALLBACK', currentAssignments: 0, resolvedCount: 0, resolutionRate: 0 } as AgentStatsDto); }) ); }
 
   getAllAgentStats(): Observable<AgentStatsDto[]> {
     return this.http.get<AgentStatsDto[]>(`${this.baseUrl}/stats`);

@@ -58,6 +58,7 @@ export class TicketList implements OnInit {
       next: (res) => {
         this.tickets = res;
         this.filteredTickets = [...this.tickets];
+        console.log(this.filteredTickets+" "+this.role);
         this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
         if (this.filteredTickets.length > 0) {
           this.setPage(0);
@@ -149,20 +150,13 @@ export class TicketList implements OnInit {
   }
 
   getAgentsForCurrentCategory(): any[] {
-    const ticket = this.tickets.find(t => t.id === this.assigningTicketId);
-
-    if (!ticket) return [];
-
-    return this.lookup.getUserList().filter((u: any) => {
-      const isAgent = u.roles && u.roles.includes('AGENT');
-
-      return isAgent && u.agentProfile.categoryId === ticket.categoryId;
-
+    const ticket = this.tickets.find(t => t.id === this.assigningTicketId); if (!ticket) return [];
+    let agents = this.lookup.getUserList().filter((u: any) => {
+      const isAgent = u.roles?.includes('AGENT'); return isAgent && u.agentProfile?.categoryId === ticket.categoryId;
     });
+    if (agents.length === 0) { agents = this.lookup.getUserList().filter((u: any) => u.roles?.includes('AGENT')); } return agents;
   }
-
   confirmAssign(ticketId: string, agentId: string) {
-    console.log('yes');
     const ticket = this.tickets.find(t => t.id === ticketId);
     if (!agentId) return this.toast.show('Select an agent first', 'error');
     this.assignmentService.manualAssign(ticketId, agentId, ticket.priority, ticket.version).subscribe({

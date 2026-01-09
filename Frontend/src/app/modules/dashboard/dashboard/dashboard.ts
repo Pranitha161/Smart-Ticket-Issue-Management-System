@@ -3,15 +3,12 @@ import { CommonModule } from '@angular/common';
 import { TicketService } from '../../../core/services/ticket';
 import { UserTicketStats } from '../../../shared/models/ticket.model';
 import { AuthService } from '../../../core/services/auth';
-import { TicketList } from '../../tickets/ticket-list/ticket-list';
 import { RecentTickets } from '../../tickets/recent-tickets/recent-tickets';
-
 import { BaseChartDirective } from 'ng2-charts';
 import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
 import { StatusSummary } from '../status-summary/status-summary';
 import { PrioritySummary } from '../priority-summary/priority-summary';
 import { AssignmentEscalation } from '../../../core/services/assignment-escalation';
-import { EscalationSummaryDto } from '../../../shared/models/assignment-escalation.model';
 import { DashboardService } from '../../../core/services/dashboard';
 import { AgentStatsDto } from '../../../shared/models/dashboard.model';
 import { AdminUser } from '../../../core/services/admin-user';
@@ -49,7 +46,7 @@ export class Dashboard implements OnInit {
     private ticketService: TicketService,
     private dashboardService: DashboardService,
     private authService: AuthService,
-    private userService:AdminUser,
+    private userService: AdminUser,
     private assignmentService: AssignmentEscalation,
     private cd: ChangeDetectorRef
   ) { }
@@ -63,7 +60,7 @@ export class Dashboard implements OnInit {
 
       this.dashboardService.getGlobalStats().subscribe(data => {
         this.stats = data;
-        
+
         this.cd.detectChanges();
       });
 

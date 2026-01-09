@@ -20,7 +20,7 @@
                     <div class="mb-2">
                         <label class="form-label text-white">Password</label>
                         <input type="password" class="form-control custom-input" formControlName="password"
-                            placeholder="Min. 8 characters">
+                            placeholder="Min. 3 characters">
                         <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
                             class="error-msg">
                             <small>Password is required.</small>

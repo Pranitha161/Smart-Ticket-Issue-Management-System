@@ -52,12 +52,13 @@ export class CategoryPanel implements OnInit {
       error: (err) => this.toast.show(err.error?.message || err.message, 'error')
     });
   }
-  
+
   isCategoryFormValid(): boolean {
     if (!this.formCategory.name || this.formCategory.name.trim().length < 3) {
       return false;
     }
-    if (this.formCategory.description && this.formCategory.description.length > 200) {
+    if (!this.formCategory.description || this.formCategory.description.trim().length < 10) { return false; }
+    if (this.formCategory.description.length > 200) {
       return false;
     }
     if (this.formCategory.linkedSlaId &&
@@ -79,7 +80,7 @@ export class CategoryPanel implements OnInit {
         this.cancel();
       },
       error: (err) => {
-        this.toast.show(err.error?.message || err.message, 'error');
+        this.toast.show("Invalid request: apart from base categories, new categories cannot be created", 'error');
       }
     });
   }

@@ -1,4 +1,4 @@
-<app-navbar *ngIf="isLoggedIn()"></app-navbar>
+<!-- <app-navbar *ngIf="isLoggedIn()"></app-navbar>
 
 <div class="content-wrapper">
   <app-sidebar *ngIf="isLoggedIn()"></app-sidebar>
@@ -7,6 +7,17 @@
     <router-outlet></router-outlet>
   </main>
 
+</div>
+
+<app-toast></app-toast> -->
+<app-navbar *ngIf="isLoggedIn()"></app-navbar>
+
+<div class="content-wrapper">
+  <app-sidebar *ngIf="isLoggedIn()"></app-sidebar>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
 </div>
 
 <app-toast></app-toast>

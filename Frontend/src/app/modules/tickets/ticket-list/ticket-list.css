@@ -350,7 +350,7 @@ thead th {
 }
 
 .modal-accent.bg-danger {
-  background:  #f50b0b;
+  background: #f50b0b;
 }
 
 .theme-input {
@@ -395,7 +395,7 @@ thead th {
   cursor: pointer;
 }
 
-.btn-info  {
+.btn-info {
   background: #12e4f3;
   color: white;
   border: none;
@@ -443,4 +443,44 @@ thead th {
 
 .animate-in {
   animation: modalIn 0.25s ease-out;
+}
+
+@media (max-width: 768px) {
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    display: none;
+  }
+
+  .ticket-container {
+    padding: 1rem;
+  }
+
+  .header-section h2 {
+    font-size: 1.25rem;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .select-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .form-select-sm {
+    flex: 1;
+    min-width: auto;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .btn-action {
+    width: 32px;
+    height: 32px;
+  }
 }

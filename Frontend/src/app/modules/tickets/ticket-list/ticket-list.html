@@ -59,7 +59,7 @@
                 <div class="text-muted tiny">
                   By {{lookup.getUserName(ticket.createdBy)}}
                   <span class="mx-1">•</span>
-                  <span>{{ ticket.createdAt | date:'MMM d, h:mm a' }}</span>
+                  <span>{{ ticket.createdAt | date:'MMM d' }}</span>
 
                 </div>
               </div>
@@ -75,7 +75,7 @@
           <td class="text-end pe-4">
             <div class="d-flex justify-content-end gap-2">
               <ng-container
-                *ngIf="(role === 'ADMIN' || role === 'MANAGER') && (ticket.status === 'OPEN'||ticket.status==='ESCALATED')">
+                *ngIf="( role === 'MANAGER') && (ticket.status === 'OPEN'||ticket.status==='ESCALATED')">
                 <button class="btn-action" (click)="$event.stopPropagation(); manualAssign(ticket)"
                   data-tooltip="Manual Assign">
                   <i class="bi bi-person-plus"></i>
@@ -97,7 +97,7 @@
                   <i class="bi bi-pencil-square"></i>
                 </button>
               </ng-container>
-              <ng-container *ngIf="role === 'USER' && ticket.status === 'RESOLVED'">
+              <ng-container *ngIf="role === 'USER' &&( ticket.status === 'RESOLVED'||ticket.status==='CLOSED')">
                 <button class="btn-action reopen" (click)="$event.stopPropagation(); openReopenConfirm(ticket)"
                   title="Reopen" data-tooltip="Reopen Ticket">
                   <i class="bi bi-arrow-counterclockwise"></i>
